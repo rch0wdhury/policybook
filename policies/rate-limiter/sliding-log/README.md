@@ -104,10 +104,10 @@ still integer arithmetic.
 <!-- bench:start -->
 | Trace | Accept rate | Peak / 100 ms | Throughput |
 |---|---:|---:|---:|
-| `steady` | 0.9772 (−0.0228) | 22 | 32,700,000/s |
-| `bursty` | 0.9692 (−0.0308) | 62 | 46,700,000/s |
-| `many-keys` | 1 | 69 | 11,200,000/s |
-| `overload` | 0.3374 (−0.3373) | 38 | 49,700,000/s |
+| `steady` | 0.9772 (−0.0228) | 22 | 16,600,000/s |
+| `bursty` | 0.9692 (−0.0308) | 62 | 21,700,000/s |
+| `many-keys` | 1 | 69 | 6,360,000/s |
+| `overload` | 0.3374 (−0.3373) | 38 | 23,900,000/s |
 
 Accept rate alone ranks nothing here: under sustained overload every correct limiter admits rate times time, so these converge by construction. Read the domain README, because the choice is made on memory, on behaviour at a window seam, and on what distributes. Throughput is machine-dependent and is never asserted.
 

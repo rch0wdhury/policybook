@@ -114,10 +114,10 @@ from a new one. Keeping them here puts the memory into the benchmark's
 <!-- bench:start -->
 | Trace | Accept rate | Peak / 100 ms | Throughput |
 |---|---:|---:|---:|
-| `steady` | 1 | 22 | 42,500,000/s |
-| `bursty` | 1 | 62 | 47,500,000/s |
-| `many-keys` | 1 | 69 | 22,500,000/s |
-| `overload` | 0.3429 (−0.3317) | 36 | 44,100,000/s |
+| `steady` | 1 | 22 | 20,600,000/s |
+| `bursty` | 1 | 62 | 21,900,000/s |
+| `many-keys` | 1 | 69 | 12,500,000/s |
+| `overload` | 0.3429 (−0.3317) | 36 | 21,900,000/s |
 
 Accept rate alone ranks nothing here: under sustained overload every correct limiter admits rate times time, so these converge by construction. Read the domain README, because the choice is made on memory, on behaviour at a window seam, and on what distributes. Throughput is machine-dependent and is never asserted.
 

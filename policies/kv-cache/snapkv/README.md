@@ -146,9 +146,9 @@ so this is lossless, and it halves the largest allocation in the domain.
 <!-- bench:start -->
 | Trace | Retained mass | Heavy-hitter recall | Throughput |
 |---|---:|---:|---:|
-| `decode-4096@256` | 0.7834 | 0.8902 | 65,300/s |
-| `decode-4096@512` | 0.8212 (−0.0028) | 0.9019 | 50,700/s |
-| `decode-4096@1024` | 0.8880 | 0.9412 | 37,000/s |
+| `decode-4096@256` | 0.7834 | 0.8902 | 31,200/s |
+| `decode-4096@512` | 0.8212 (−0.0028) | 0.9019 | 23,200/s |
+| `decode-4096@1024` | 0.8880 | 0.9412 | 16,500/s |
 
 Both columns are proxies for output quality, not measurements of it, so read the domain README before drawing conclusions. They also disagree: the policies leading on retained mass are not the ones leading on heavy-hitter recall, and ranking by either alone will mislead you. Rows are one budget each, because the ordering changes with the budget. Throughput is machine-dependent and is never asserted.
 

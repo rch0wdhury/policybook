@@ -1,6 +1,6 @@
 {
   "policy": "retry/equal-jitter",
-  "generatedAt": "2026-01-01T00:00:00Z",
+  "generatedAt": "2026-08-31T02:47:48.047Z",
   "coreVersion": "0.1.0",
   "traces": {
     "outage-30s": {
@@ -12,7 +12,7 @@
         "peakRetryShare": 0.031083
       },
       "perf": {
-        "opsPerSec": 8720000
+        "opsPerSec": 4320000
       }
     }
   }

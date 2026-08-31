@@ -79,9 +79,9 @@ kept positions, which is not true of any attention-aware policy here.
 <!-- bench:start -->
 | Trace | Retained mass | Heavy-hitter recall | Throughput |
 |---|---:|---:|---:|
-| `decode-4096@256` | 0.5966 (−0.1867) | 0.7422 | 97,200/s |
-| `decode-4096@512` | 0.6555 (−0.1685) | 0.7741 | 96,100/s |
-| `decode-4096@1024` | 0.7541 (−0.1339) | 0.8337 | 91,100/s |
+| `decode-4096@256` | 0.5966 (−0.1867) | 0.7422 | 51,000/s |
+| `decode-4096@512` | 0.6555 (−0.1685) | 0.7741 | 49,400/s |
+| `decode-4096@1024` | 0.7541 (−0.1339) | 0.8337 | 46,900/s |
 
 Both columns are proxies for output quality, not measurements of it, so read the domain README before drawing conclusions. They also disagree: the policies leading on retained mass are not the ones leading on heavy-hitter recall, and ranking by either alone will mislead you. Rows are one budget each, because the ordering changes with the budget. Throughput is machine-dependent and is never asserted.
 

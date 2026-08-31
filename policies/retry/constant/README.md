@@ -73,7 +73,7 @@ this policy wins.
 <!-- bench:start -->
 | Trace | Success rate | Peak retry share | Throughput |
 |---|---:|---:|---:|
-| `outage-30s` | 0.0180 (−0.9780) | 0.1442 | 14,900,000/s |
+| `outage-30s` | 0.0180 (−0.9780) | 0.1442 | 6,270,000/s |
 
 Success rate is what a client gets. Peak retry share is what the recovering service pays, and the two trade against each other. Throughput is machine-dependent and is never asserted.
 

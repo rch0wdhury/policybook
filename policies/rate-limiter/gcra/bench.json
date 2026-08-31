@@ -1,6 +1,6 @@
 {
   "policy": "rate-limiter/gcra",
-  "generatedAt": "2026-01-01T00:00:00Z",
+  "generatedAt": "2026-08-31T02:47:48.047Z",
   "coreVersion": "0.1.0",
   "traces": {
     "steady": {
@@ -10,7 +10,7 @@
         "entriesTracked": 1
       },
       "perf": {
-        "opsPerSec": 55700000
+        "opsPerSec": 26100000
       }
     },
     "bursty": {
@@ -20,7 +20,7 @@
         "entriesTracked": 1
       },
       "perf": {
-        "opsPerSec": 65700000
+        "opsPerSec": 30200000
       }
     },
     "many-keys": {
@@ -31,7 +31,7 @@
         "entriesTracked": 7278
       },
       "perf": {
-        "opsPerSec": 31000000
+        "opsPerSec": 16500000
       }
     },
     "overload": {
@@ -41,7 +41,7 @@
         "entriesTracked": 1
       },
       "perf": {
-        "opsPerSec": 73000000
+        "opsPerSec": 35700000
       }
     }
   }

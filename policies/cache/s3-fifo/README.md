@@ -126,10 +126,10 @@ a key and two bits.
 <!-- bench:start -->
 | Trace | Hit rate | Evictions | Throughput |
 |---|---:|---:|---:|
-| `zipf-1.0-100k` | 0.7300 (−0.0039) | 25,999 | 20,500,000/s |
-| `zipf-0.75-1m` | 0.4856 (−0.0115) | 504,390 | 10,700,000/s |
-| `scan-heavy` | 0.6734 (−0.0012) | 34,277 | 19,500,000/s |
-| `shifting-popularity` | 0.6849 (−0.0039) | 30,514 | 19,100,000/s |
+| `zipf-1.0-100k` | 0.7300 (−0.0039) | 25,999 | 10,800,000/s |
+| `zipf-0.75-1m` | 0.4856 (−0.0115) | 504,390 | 4,940,000/s |
+| `scan-heavy` | 0.6734 (−0.0012) | 34,277 | 9,970,000/s |
+| `shifting-popularity` | 0.6849 (−0.0039) | 30,514 | 10,100,000/s |
 
 Hit rate is the number that matters, and the bracketed figure is the gap to the best online policy in this domain on that trace. Throughput is machine-dependent and is never asserted.
 

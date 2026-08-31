@@ -103,7 +103,7 @@ and O(1) on the hinted path. O(1) space.
 <!-- bench:start -->
 | Trace | Success rate | Peak retry share | Throughput |
 |---|---:|---:|---:|
-| `outage-30s` | 0.9960 | 0.2335 | 8,670,000/s |
+| `outage-30s` | 0.9960 | 0.2335 | 3,650,000/s |
 
 Success rate is what a client gets. Peak retry share is what the recovering service pays, and the two trade against each other. Throughput is machine-dependent and is never asserted.
 

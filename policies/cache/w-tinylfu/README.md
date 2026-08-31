@@ -124,10 +124,10 @@ hold.
 <!-- bench:start -->
 | Trace | Hit rate | Evictions | Throughput |
 |---|---:|---:|---:|
-| `zipf-1.0-100k` | 0.7339 | 25,605 | 12,400,000/s |
-| `zipf-0.75-1m` | 0.4971 | 492,903 | 7,950,000/s |
-| `scan-heavy` | 0.6746 | 34,146 | 11,800,000/s |
-| `shifting-popularity` | 0.6597 (−0.0290) | 33,028 | 11,300,000/s |
+| `zipf-1.0-100k` | 0.7339 | 25,605 | 6,430,000/s |
+| `zipf-0.75-1m` | 0.4971 | 492,903 | 3,970,000/s |
+| `scan-heavy` | 0.6746 | 34,146 | 6,090,000/s |
+| `shifting-popularity` | 0.6597 (−0.0290) | 33,028 | 5,900,000/s |
 
 Hit rate is the number that matters, and the bracketed figure is the gap to the best online policy in this domain on that trace. Throughput is machine-dependent and is never asserted.
 

@@ -90,10 +90,10 @@ less than [LRU](../lru/)'s 46.8, because one bit replaces a second list link.
 <!-- bench:start -->
 | Trace | Hit rate | Evictions | Throughput |
 |---|---:|---:|---:|
-| `zipf-1.0-100k` | 0.6850 (−0.0489) | 30,496 | 33,400,000/s |
-| `zipf-0.75-1m` | 0.4145 (−0.0826) | 575,490 | 20,000,000/s |
-| `scan-heavy` | 0.6222 (−0.0524) | 39,800 | 33,300,000/s |
-| `shifting-popularity` | 0.6748 (−0.0139) | 31,518 | 34,300,000/s |
+| `zipf-1.0-100k` | 0.6850 (−0.0489) | 30,496 | 18,000,000/s |
+| `zipf-0.75-1m` | 0.4145 (−0.0826) | 575,490 | 10,100,000/s |
+| `scan-heavy` | 0.6222 (−0.0524) | 39,800 | 17,500,000/s |
+| `shifting-popularity` | 0.6748 (−0.0139) | 31,518 | 18,300,000/s |
 
 Hit rate is the number that matters, and the bracketed figure is the gap to the best online policy in this domain on that trace. Throughput is machine-dependent and is never asserted.
 

@@ -1,6 +1,6 @@
 {
   "policy": "rate-limiter/sliding-counter",
-  "generatedAt": "2026-01-01T00:00:00Z",
+  "generatedAt": "2026-08-31T02:47:48.047Z",
   "coreVersion": "0.1.0",
   "traces": {
     "steady": {
@@ -10,7 +10,7 @@
         "entriesTracked": 1
       },
       "perf": {
-        "opsPerSec": 42000000
+        "opsPerSec": 21000000
       }
     },
     "bursty": {
@@ -20,7 +20,7 @@
         "entriesTracked": 1
       },
       "perf": {
-        "opsPerSec": 49400000
+        "opsPerSec": 22600000
       }
     },
     "many-keys": {
@@ -31,7 +31,7 @@
         "entriesTracked": 7278
       },
       "perf": {
-        "opsPerSec": 24300000
+        "opsPerSec": 12400000
       }
     },
     "overload": {
@@ -41,7 +41,7 @@
         "entriesTracked": 1
       },
       "perf": {
-        "opsPerSec": 45500000
+        "opsPerSec": 22100000
       }
     }
   }

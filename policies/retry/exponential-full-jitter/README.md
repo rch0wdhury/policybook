@@ -88,7 +88,7 @@ its parameters and its random stream.
 <!-- bench:start -->
 | Trace | Success rate | Peak retry share | Throughput |
 |---|---:|---:|---:|
-| `outage-30s` | 0.1990 (−0.7970) | 0.0255 | 8,500,000/s |
+| `outage-30s` | 0.1990 (−0.7970) | 0.0255 | 4,260,000/s |
 
 Success rate is what a client gets. Peak retry share is what the recovering service pays, and the two trade against each other. Throughput is machine-dependent and is never asserted.
 

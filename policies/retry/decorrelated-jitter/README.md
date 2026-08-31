@@ -95,7 +95,7 @@ ceiling. O(1) space: a single integer of state.
 <!-- bench:start -->
 | Trace | Success rate | Peak retry share | Throughput |
 |---|---:|---:|---:|
-| `outage-30s` | 0.2580 (−0.7380) | 0.0106 | 8,970,000/s |
+| `outage-30s` | 0.2580 (−0.7380) | 0.0106 | 4,540,000/s |
 
 Success rate is what a client gets. Peak retry share is what the recovering service pays, and the two trade against each other. Throughput is machine-dependent and is never asserted.
 

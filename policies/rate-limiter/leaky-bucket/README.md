@@ -111,10 +111,10 @@ three integers per tracked key.
 <!-- bench:start -->
 | Trace | Accept rate | Peak / 100 ms | Throughput |
 |---|---:|---:|---:|
-| `steady` | 1 | 22 | 49,100,000/s |
-| `bursty` | 1 | 62 | 59,000,000/s |
-| `many-keys` | 1 | 69 | 26,400,000/s |
-| `overload` | 0.3429 (−0.3317) | 36 | 48,700,000/s |
+| `steady` | 1 | 22 | 25,000,000/s |
+| `bursty` | 1 | 62 | 27,300,000/s |
+| `many-keys` | 1 | 69 | 13,900,000/s |
+| `overload` | 0.3429 (−0.3317) | 36 | 26,200,000/s |
 
 Accept rate alone ranks nothing here: under sustained overload every correct limiter admits rate times time, so these converge by construction. Read the domain README, because the choice is made on memory, on behaviour at a window seam, and on what distributes. Throughput is machine-dependent and is never asserted.
 

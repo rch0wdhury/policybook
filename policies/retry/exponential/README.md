@@ -88,7 +88,7 @@ multiplications in practice. O(1) space.
 <!-- bench:start -->
 | Trace | Success rate | Peak retry share | Throughput |
 |---|---:|---:|---:|
-| `outage-30s` | 0.4000 (−0.5960) | 0.1508 | 12,400,000/s |
+| `outage-30s` | 0.4000 (−0.5960) | 0.1508 | 5,590,000/s |
 
 Success rate is what a client gets. Peak retry share is what the recovering service pays, and the two trade against each other. Throughput is machine-dependent and is never asserted.
 

@@ -98,9 +98,9 @@ since the pinned positions need no storage.
 <!-- bench:start -->
 | Trace | Retained mass | Heavy-hitter recall | Throughput |
 |---|---:|---:|---:|
-| `decode-4096@256` | 0.7367 (−0.0467) | 0.8594 | 101,000/s |
-| `decode-4096@512` | 0.7862 (−0.0379) | 0.8835 | 101,000/s |
-| `decode-4096@1024` | 0.8662 (−0.0218) | 0.9276 | 95,000/s |
+| `decode-4096@256` | 0.7367 (−0.0467) | 0.8594 | 49,200/s |
+| `decode-4096@512` | 0.7862 (−0.0379) | 0.8835 | 48,000/s |
+| `decode-4096@1024` | 0.8662 (−0.0218) | 0.9276 | 45,300/s |
 
 Both columns are proxies for output quality, not measurements of it, so read the domain README before drawing conclusions. They also disagree: the policies leading on retained mass are not the ones leading on heavy-hitter recall, and ranking by either alone will mislead you. Rows are one budget each, because the ordering changes with the budget. Throughput is machine-dependent and is never asserted.
 

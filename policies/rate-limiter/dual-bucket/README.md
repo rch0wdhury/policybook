@@ -106,10 +106,10 @@ integers per tracked key: two balances, two carries, and one timestamp.
 <!-- bench:start -->
 | Trace | Accept rate | Peak / 100 ms | Throughput |
 |---|---:|---:|---:|
-| `steady` | 1 | 22 | 45,200,000/s |
-| `bursty` | 1 | 62 | 57,100,000/s |
-| `many-keys` | 1 | 69 | 24,600,000/s |
-| `overload` | 0.6747 | 49 | 49,500,000/s |
+| `steady` | 1 | 22 | 23,200,000/s |
+| `bursty` | 1 | 62 | 25,700,000/s |
+| `many-keys` | 1 | 69 | 14,600,000/s |
+| `overload` | 0.6747 | 49 | 25,600,000/s |
 
 Accept rate alone ranks nothing here: under sustained overload every correct limiter admits rate times time, so these converge by construction. Read the domain README, because the choice is made on memory, on behaviour at a window seam, and on what distributes. Throughput is machine-dependent and is never asserted.
 

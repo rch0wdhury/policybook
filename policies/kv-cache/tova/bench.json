@@ -1,6 +1,6 @@
 {
   "policy": "kv-cache/tova",
-  "generatedAt": "2026-01-01T00:00:00Z",
+  "generatedAt": "2026-08-31T02:47:48.047Z",
   "coreVersion": "0.1.0",
   "traces": {
     "decode-4096@256": {
@@ -10,7 +10,7 @@
         "evictionCalls": 3840
       },
       "perf": {
-        "opsPerSec": 93100
+        "opsPerSec": 45300
       }
     },
     "decode-4096@512": {
@@ -20,7 +20,7 @@
         "evictionCalls": 3584
       },
       "perf": {
-        "opsPerSec": 87300
+        "opsPerSec": 41400
       }
     },
     "decode-4096@1024": {
@@ -30,7 +30,7 @@
         "evictionCalls": 3072
       },
       "perf": {
-        "opsPerSec": 76400
+        "opsPerSec": 36300
       }
     }
   }

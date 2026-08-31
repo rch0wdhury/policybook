@@ -85,10 +85,10 @@ the CLOCK family exists.
 <!-- bench:start -->
 | Trace | Hit rate | Evictions | Throughput |
 |---|---:|---:|---:|
-| `zipf-1.0-100k` | 0.6746 (−0.0593) | 31,536 | 29,100,000/s |
-| `zipf-0.75-1m` | 0.4023 (−0.0948) | 587,730 | 17,700,000/s |
-| `scan-heavy` | 0.6139 (−0.0607) | 40,701 | 29,100,000/s |
-| `shifting-popularity` | 0.6665 (−0.0222) | 32,345 | 29,900,000/s |
+| `zipf-1.0-100k` | 0.6746 (−0.0593) | 31,536 | 14,500,000/s |
+| `zipf-0.75-1m` | 0.4023 (−0.0948) | 587,730 | 8,060,000/s |
+| `scan-heavy` | 0.6139 (−0.0607) | 40,701 | 14,200,000/s |
+| `shifting-popularity` | 0.6665 (−0.0222) | 32,345 | 14,700,000/s |
 
 Hit rate is the number that matters, and the bracketed figure is the gap to the best online policy in this domain on that trace. Throughput is machine-dependent and is never asserted.
 

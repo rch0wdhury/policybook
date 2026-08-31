@@ -100,10 +100,10 @@ keeps the state so that the memory cost shows up in the benchmark's
 <!-- bench:start -->
 | Trace | Accept rate | Peak / 100 ms | Throughput |
 |---|---:|---:|---:|
-| `steady` | 0.9927 (−0.0073) | 22 | 72,800,000/s |
-| `bursty` | 0.9692 (−0.0308) | 62 | 92,600,000/s |
-| `many-keys` | 1 | 69 | 29,700,000/s |
-| `overload` | 0.3374 (−0.3373) | 46 | 89,700,000/s |
+| `steady` | 0.9927 (−0.0073) | 22 | 31,500,000/s |
+| `bursty` | 0.9692 (−0.0308) | 62 | 37,700,000/s |
+| `many-keys` | 1 | 69 | 15,500,000/s |
+| `overload` | 0.3374 (−0.3373) | 46 | 44,800,000/s |
 
 Accept rate alone ranks nothing here: under sustained overload every correct limiter admits rate times time, so these converge by construction. Read the domain README, because the choice is made on memory, on behaviour at a window seam, and on what distributes. Throughput is machine-dependent and is never asserted.
 

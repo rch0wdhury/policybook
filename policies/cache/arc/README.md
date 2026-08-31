@@ -115,10 +115,10 @@ than wasteful: ARC tracks two keys for every entry it caches.
 <!-- bench:start -->
 | Trace | Hit rate | Evictions | Throughput |
 |---|---:|---:|---:|
-| `zipf-1.0-100k` | 0.7248 (−0.0092) | 26,525 | 22,300,000/s |
-| `zipf-0.75-1m` | 0.4753 (−0.0218) | 514,723 | 14,900,000/s |
-| `scan-heavy` | 0.6687 (−0.0059) | 34,784 | 24,600,000/s |
-| `shifting-popularity` | 0.6887 | 30,129 | 25,600,000/s |
+| `zipf-1.0-100k` | 0.7248 (−0.0092) | 26,525 | 12,900,000/s |
+| `zipf-0.75-1m` | 0.4753 (−0.0218) | 514,723 | 6,800,000/s |
+| `scan-heavy` | 0.6687 (−0.0059) | 34,784 | 12,500,000/s |
+| `shifting-popularity` | 0.6887 | 30,129 | 12,700,000/s |
 
 Hit rate is the number that matters, and the bracketed figure is the gap to the best online policy in this domain on that trace. Throughput is machine-dependent and is never asserted.
 

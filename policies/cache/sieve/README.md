@@ -108,10 +108,10 @@ removes from the front.
 <!-- bench:start -->
 | Trace | Hit rate | Evictions | Throughput |
 |---|---:|---:|---:|
-| `zipf-1.0-100k` | 0.7273 (−0.0067) | 26,273 | 33,100,000/s |
-| `zipf-0.75-1m` | 0.4768 (−0.0203) | 513,203 | 18,900,000/s |
-| `scan-heavy` | 0.6686 (−0.0060) | 34,795 | 33,400,000/s |
-| `shifting-popularity` | 0.6101 (−0.0786) | 37,992 | 31,200,000/s |
+| `zipf-1.0-100k` | 0.7273 (−0.0067) | 26,273 | 17,100,000/s |
+| `zipf-0.75-1m` | 0.4768 (−0.0203) | 513,203 | 9,560,000/s |
+| `scan-heavy` | 0.6686 (−0.0060) | 34,795 | 16,500,000/s |
+| `shifting-popularity` | 0.6101 (−0.0786) | 37,992 | 15,500,000/s |
 
 Hit rate is the number that matters, and the bracketed figure is the gap to the best online policy in this domain on that trace. Throughput is machine-dependent and is never asserted.
 

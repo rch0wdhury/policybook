@@ -1,6 +1,6 @@
 {
   "policy": "rate-limiter/sliding-log",
-  "generatedAt": "2026-01-01T00:00:00Z",
+  "generatedAt": "2026-08-31T02:47:48.047Z",
   "coreVersion": "0.1.0",
   "traces": {
     "steady": {
@@ -10,7 +10,7 @@
         "entriesTracked": 1
       },
       "perf": {
-        "opsPerSec": 32700000
+        "opsPerSec": 16600000
       }
     },
     "bursty": {
@@ -20,7 +20,7 @@
         "entriesTracked": 1
       },
       "perf": {
-        "opsPerSec": 46700000
+        "opsPerSec": 21700000
       }
     },
     "many-keys": {
@@ -31,7 +31,7 @@
         "entriesTracked": 7278
       },
       "perf": {
-        "opsPerSec": 11200000
+        "opsPerSec": 6360000
       }
     },
     "overload": {
@@ -41,7 +41,7 @@
         "entriesTracked": 1
       },
       "perf": {
-        "opsPerSec": 49700000
+        "opsPerSec": 23900000
       }
     }
   }

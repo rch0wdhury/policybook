@@ -124,10 +124,10 @@ benchmark's `entriesTracked` column rather than hiding it behind a sweep.
 <!-- bench:start -->
 | Trace | Accept rate | Peak / 100 ms | Throughput |
 |---|---:|---:|---:|
-| `steady` | 0.9847 (−0.0153) | 22 | 42,000,000/s |
-| `bursty` | 0.9692 (−0.0308) | 62 | 49,400,000/s |
-| `many-keys` | 1 | 69 | 24,300,000/s |
-| `overload` | 0.3373 (−0.3374) | 36 | 45,500,000/s |
+| `steady` | 0.9847 (−0.0153) | 22 | 21,000,000/s |
+| `bursty` | 0.9692 (−0.0308) | 62 | 22,600,000/s |
+| `many-keys` | 1 | 69 | 12,400,000/s |
+| `overload` | 0.3373 (−0.3374) | 36 | 22,100,000/s |
 
 Accept rate alone ranks nothing here: under sustained overload every correct limiter admits rate times time, so these converge by construction. Read the domain README, because the choice is made on memory, on behaviour at a window seam, and on what distributes. Throughput is machine-dependent and is never asserted.
 

@@ -110,10 +110,10 @@ real cost, and it is why OPT is a benchmarking tool rather than a library.
 <!-- bench:start -->
 | Trace | Hit rate | Evictions | Throughput |
 |---|---:|---:|---:|
-| `zipf-1.0-100k` | 0.8087 | 18,133 | 15,500,000/s |
-| `zipf-0.75-1m` | 0.6399 | 350,137 | 11,200,000/s |
-| `scan-heavy` | 0.7473 | 26,290 | 14,100,000/s |
-| `shifting-popularity` | 0.7939 | 19,614 | 15,900,000/s |
+| `zipf-1.0-100k` | 0.8087 | 18,133 | 7,840,000/s |
+| `zipf-0.75-1m` | 0.6399 | 350,137 | 4,340,000/s |
+| `scan-heavy` | 0.7473 | 26,290 | 7,050,000/s |
+| `shifting-popularity` | 0.7939 | 19,614 | 7,840,000/s |
 
 Offline bound: this row is what no online policy can exceed, not a result to compare against.
 

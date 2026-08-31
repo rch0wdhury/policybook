@@ -1,6 +1,6 @@
 {
   "policy": "cache/w-tinylfu",
-  "generatedAt": "2026-01-01T00:00:00Z",
+  "generatedAt": "2026-08-31T02:47:48.047Z",
   "coreVersion": "0.1.0",
   "traces": {
     "zipf-1.0-100k": {
@@ -9,7 +9,7 @@
         "evictions": 25605
       },
       "perf": {
-        "opsPerSec": 12400000
+        "opsPerSec": 6430000
       }
     },
     "zipf-0.75-1m": {
@@ -18,7 +18,7 @@
         "evictions": 492903
       },
       "perf": {
-        "opsPerSec": 7950000
+        "opsPerSec": 3970000
       }
     },
     "scan-heavy": {
@@ -27,7 +27,7 @@
         "evictions": 34146
       },
       "perf": {
-        "opsPerSec": 11800000
+        "opsPerSec": 6090000
       }
     },
     "shifting-popularity": {
@@ -36,7 +36,7 @@
         "evictions": 33028
       },
       "perf": {
-        "opsPerSec": 11300000
+        "opsPerSec": 5900000
       }
     }
   }

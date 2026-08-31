@@ -98,9 +98,9 @@ O(kept) time per decode step and per eviction. O(`budget`) space: per slot,
 <!-- bench:start -->
 | Trace | Retained mass | Heavy-hitter recall | Throughput |
 |---|---:|---:|---:|
-| `decode-4096@256` | 0.7781 (−0.0052) | 0.8823 | 93,100/s |
-| `decode-4096@512` | 0.8240 | 0.9098 | 87,300/s |
-| `decode-4096@1024` | 0.8859 (−0.0022) | 0.9372 | 76,400/s |
+| `decode-4096@256` | 0.7781 (−0.0052) | 0.8823 | 45,300/s |
+| `decode-4096@512` | 0.8240 | 0.9098 | 41,400/s |
+| `decode-4096@1024` | 0.8859 (−0.0022) | 0.9372 | 36,300/s |
 
 Both columns are proxies for output quality, not measurements of it, so read the domain README before drawing conclusions. They also disagree: the policies leading on retained mass are not the ones leading on heavy-hitter recall, and ranking by either alone will mislead you. Rows are one budget each, because the ordering changes with the budget. Throughput is machine-dependent and is never asserted.
 

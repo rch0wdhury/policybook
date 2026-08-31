@@ -74,10 +74,10 @@ one genuine operational advantage over LRU and worth remembering.
 <!-- bench:start -->
 | Trace | Hit rate | Evictions | Throughput |
 |---|---:|---:|---:|
-| `zipf-1.0-100k` | 0.6306 (−0.1034) | 35,943 | 108,000,000/s |
-| `zipf-0.75-1m` | 0.3655 (−0.1316) | 624,524 | 95,900,000/s |
-| `scan-heavy` | 0.5763 (−0.0982) | 44,755 | 112,000,000/s |
-| `shifting-popularity` | 0.6261 (−0.0626) | 36,391 | 110,000,000/s |
+| `zipf-1.0-100k` | 0.6306 (−0.1034) | 35,943 | 53,900,000/s |
+| `zipf-0.75-1m` | 0.3655 (−0.1316) | 624,524 | 45,500,000/s |
+| `scan-heavy` | 0.5763 (−0.0982) | 44,755 | 52,800,000/s |
+| `shifting-popularity` | 0.6261 (−0.0626) | 36,391 | 53,800,000/s |
 
 Hit rate is the number that matters, and the bracketed figure is the gap to the best online policy in this domain on that trace. Throughput is machine-dependent and is never asserted.
 

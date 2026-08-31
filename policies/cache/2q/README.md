@@ -102,10 +102,10 @@ case for 2Q is its explicitness rather than its footprint.
 <!-- bench:start -->
 | Trace | Hit rate | Evictions | Throughput |
 |---|---:|---:|---:|
-| `zipf-1.0-100k` | 0.7147 (−0.0192) | 27,529 | 23,200,000/s |
-| `zipf-0.75-1m` | 0.4650 (−0.0321) | 525,009 | 10,800,000/s |
-| `scan-heavy` | 0.6587 (−0.0158) | 35,856 | 20,300,000/s |
-| `shifting-popularity` | 0.6792 (−0.0095) | 31,082 | 20,600,000/s |
+| `zipf-1.0-100k` | 0.7147 (−0.0192) | 27,529 | 12,200,000/s |
+| `zipf-0.75-1m` | 0.4650 (−0.0321) | 525,009 | 5,460,000/s |
+| `scan-heavy` | 0.6587 (−0.0158) | 35,856 | 11,000,000/s |
+| `shifting-popularity` | 0.6792 (−0.0095) | 31,082 | 11,500,000/s |
 
 Hit rate is the number that matters, and the bracketed figure is the gap to the best online policy in this domain on that trace. Throughput is machine-dependent and is never asserted.
 

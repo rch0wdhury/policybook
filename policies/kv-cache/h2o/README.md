@@ -122,9 +122,9 @@ This is the first policy in the domain whose per-step cost grows with the cache.
 <!-- bench:start -->
 | Trace | Retained mass | Heavy-hitter recall | Throughput |
 |---|---:|---:|---:|
-| `decode-4096@256` | 0.6439 (−0.1395) | 0.8863 | 92,100/s |
-| `decode-4096@512` | 0.7149 (−0.1092) | 0.9137 | 82,700/s |
-| `decode-4096@1024` | 0.7844 (−0.1036) | 0.9451 | 76,400/s |
+| `decode-4096@256` | 0.6439 (−0.1395) | 0.8863 | 45,900/s |
+| `decode-4096@512` | 0.7149 (−0.1092) | 0.9137 | 41,300/s |
+| `decode-4096@1024` | 0.7844 (−0.1036) | 0.9451 | 35,400/s |
 
 Both columns are proxies for output quality, not measurements of it, so read the domain README before drawing conclusions. They also disagree: the policies leading on retained mass are not the ones leading on heavy-hitter recall, and ranking by either alone will mislead you. Rows are one budget each, because the ordering changes with the budget. Throughput is machine-dependent and is never asserted.
 

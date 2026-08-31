@@ -98,10 +98,10 @@ approximate frequencies in a few bits per entry instead, and ages them.
 <!-- bench:start -->
 | Trace | Hit rate | Evictions | Throughput |
 |---|---:|---:|---:|
-| `zipf-1.0-100k` | 0.7273 (−0.0067) | 26,273 | 24,800,000/s |
-| `zipf-0.75-1m` | 0.4768 (−0.0203) | 513,205 | 16,600,000/s |
-| `scan-heavy` | 0.6686 (−0.0060) | 34,795 | 24,900,000/s |
-| `shifting-popularity` | 0.3229 (−0.3658) | 66,712 | 18,500,000/s |
+| `zipf-1.0-100k` | 0.7273 (−0.0067) | 26,273 | 12,100,000/s |
+| `zipf-0.75-1m` | 0.4768 (−0.0203) | 513,205 | 7,500,000/s |
+| `scan-heavy` | 0.6686 (−0.0060) | 34,795 | 11,300,000/s |
+| `shifting-popularity` | 0.3229 (−0.3658) | 66,712 | 8,470,000/s |
 
 Hit rate is the number that matters, and the bracketed figure is the gap to the best online policy in this domain on that trace. Throughput is machine-dependent and is never asserted.
 

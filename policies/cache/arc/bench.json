@@ -1,6 +1,6 @@
 {
   "policy": "cache/arc",
-  "generatedAt": "2026-01-01T00:00:00Z",
+  "generatedAt": "2026-08-31T02:47:48.047Z",
   "coreVersion": "0.1.0",
   "traces": {
     "zipf-1.0-100k": {
@@ -9,7 +9,7 @@
         "evictions": 26525
       },
       "perf": {
-        "opsPerSec": 22300000
+        "opsPerSec": 12900000
       }
     },
     "zipf-0.75-1m": {
@@ -18,7 +18,7 @@
         "evictions": 514723
       },
       "perf": {
-        "opsPerSec": 14900000
+        "opsPerSec": 6800000
       }
     },
     "scan-heavy": {
@@ -27,7 +27,7 @@
         "evictions": 34784
       },
       "perf": {
-        "opsPerSec": 24600000
+        "opsPerSec": 12500000
       }
     },
     "shifting-popularity": {
@@ -36,7 +36,7 @@
         "evictions": 30129
       },
       "perf": {
-        "opsPerSec": 25600000
+        "opsPerSec": 12700000
       }
     }
   }
