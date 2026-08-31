@@ -1,0 +1,55 @@
+{
+  "id": "kv-cache/snapkv",
+  "name": "SnapKV",
+  "domain": "kv-cache",
+  "summary": "Score on the last few steps only, then max-pool across neighbouring positions so an important token drags its neighbours in with it. A forgetting window plus a defence against keeping half a phrase.",
+  "source": {
+    "title": "SnapKV: LLM Knows What You are Looking for Before Generation",
+    "authors": [
+      "Yuhong Li",
+      "Yingbing Huang",
+      "Bowen Yang",
+      "Bharat Venkitesh",
+      "Acyr Locatelli",
+      "Hanchen Ye",
+      "Tianle Cai",
+      "Patrick Lewis",
+      "Deming Chen"
+    ],
+    "venue": "NeurIPS",
+    "year": 2024,
+    "url": "https://arxiv.org/abs/2404.14469"
+  },
+  "complexity": { "time": "O(budget * obsWindow)", "space": "O(budget * obsWindow)" },
+  "params": [
+    {
+      "name": "budget",
+      "type": "number",
+      "default": 512,
+      "description": "Maximum token positions kept in the cache."
+    },
+    {
+      "name": "recentWindow",
+      "type": "number",
+      "default": 32,
+      "description": "The most recent positions, never evicted whatever their score."
+    },
+    {
+      "name": "obsWindow",
+      "type": "number",
+      "default": 16,
+      "description": "How many recent decode steps the score is summed over."
+    },
+    {
+      "name": "poolKernel",
+      "type": "number",
+      "default": 7,
+      "description": "Width of the max-pool across neighbouring kept positions. Must be odd."
+    }
+  ],
+  "tags": ["attention-aware", "observation-window", "max-pooling", "recency"],
+  "recommended": false,
+  "ports": ["ts", "python", "c"],
+  "notes": null,
+  "status": "stable"
+}

@@ -1,0 +1,39 @@
+{
+  "id": "kv-cache/streaming-llm",
+  "name": "StreamingLLM",
+  "domain": "kv-cache",
+  "summary": "A sliding window that also pins the first few tokens. Those \"attention sinks\" absorb attention no matter what they contain, and keeping four of them is most of the quality a cheap policy can recover.",
+  "source": {
+    "title": "Efficient Streaming Language Models with Attention Sinks",
+    "authors": [
+      "Guangxuan Xiao",
+      "Yuandong Tian",
+      "Beidi Chen",
+      "Song Han",
+      "Mike Lewis"
+    ],
+    "venue": "ICLR",
+    "year": 2024,
+    "url": "https://arxiv.org/abs/2309.17453"
+  },
+  "complexity": { "time": "O(1)", "space": "O(budget)" },
+  "params": [
+    {
+      "name": "budget",
+      "type": "number",
+      "default": 512,
+      "description": "Maximum token positions kept in the cache."
+    },
+    {
+      "name": "sinks",
+      "type": "number",
+      "default": 4,
+      "description": "How many of the first positions are pinned and never evicted."
+    }
+  ],
+  "tags": ["attention-sinks", "simple", "attention-free", "recency", "streaming"],
+  "recommended": true,
+  "ports": ["ts", "python", "c"],
+  "notes": null,
+  "status": "stable"
+}

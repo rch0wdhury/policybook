@@ -1,0 +1,479 @@
+name: CI
+
+# Mirrors the local verify commands. If a job here does
+# something the local commands do not, the loop cannot catch it before pushing,
+# so keep the two in step.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  NODE_VERSION: "22"
+  PNPM_VERSION: "10"
+
+jobs:
+  typescript:
+    name: TypeScript
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      # The CLI tests spawn dist/cli.js. Without this build, four of them
+      # failed on any fresh checkout and eleven more silently skipped behind
+      # their existsSync guard — a suite that could never go red in CI.
+      - name: Build the CLI
+        run: |
+          pnpm --filter policybook build
+          test -f packages/cli/dist/cli.js
+
+      - name: Test
+        # The web suite runs in the Web job of this same workflow; running it
+        # here too doubled the largest suite per CI pass for nothing.
+        run: pnpm exec vitest run --exclude "apps/web/**"
+
+      - name: Validate the catalog
+        run: pnpm check
+
+      - name: Vectors are reproducible
+        run: |
+          pnpm gen:vectors --all
+          if [ -n "$(git status --porcelain)" ]; then git status --short; git diff; exit 1; fi
+
+  python:
+    name: Python
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86 # v5
+        with:
+          enable-cache: true
+
+      - name: Install
+        run: uv pip install --system -e packages/python pytest mypy ruff
+
+      - name: Test
+        run: pytest packages/python/tests -q
+
+      - name: Typecheck
+        run: mypy --strict packages/python/policybook
+
+      - name: Lint
+        run: ruff check packages/python
+
+  c:
+    name: C (${{ matrix.name }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: ubuntu gcc
+            os: ubuntu-latest
+            cc: gcc
+          - name: ubuntu clang
+            os: ubuntu-latest
+            cc: clang
+          - name: macos clang
+            os: macos-latest
+            cc: clang
+          # MSVC is the compiler most likely to disagree, and the one the loop
+          # cannot check locally. /W4 /WX comes from the
+          # CMakeLists, so this is the same warning bar as everywhere else.
+          - name: windows msvc
+            os: windows-latest
+            cc: ""
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Install ninja (Linux)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y ninja-build
+
+      - name: Install ninja (macOS)
+        if: runner.os == 'macOS'
+        run: brew install ninja
+
+      - name: Configure
+        env:
+          CC: ${{ matrix.cc }}
+        run: cmake -S packages/c -B build -DCMAKE_BUILD_TYPE=Debug
+
+      - name: Build
+        run: cmake --build build --config Debug
+
+      - name: Test
+        run: ctest --test-dir build --build-config Debug --output-on-failure
+
+  c-m32:
+    name: C (32-bit)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      # Pointer width is the assumption most likely to be wrong in code that
+      # indexes with uint32_t and sizes with size_t. The loop cannot check this
+      # locally — gcc-multilib needs sudo — so CI is the only
+      # place it is ever exercised.
+      - name: Install multilib and ninja
+        run: sudo apt-get update && sudo apt-get install -y gcc-multilib ninja-build
+
+      - name: Configure
+        run: cmake -S packages/c -B build-m32 -G Ninja -DPB_M32=ON
+
+      - name: Build
+        run: cmake --build build-m32
+
+      - name: Test
+        run: ctest --test-dir build-m32 --output-on-failure
+
+  c-sanitizers:
+    name: C (ASan + UBSan)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Install ninja
+        run: sudo apt-get update && sudo apt-get install -y ninja-build
+
+      - name: Configure
+        env:
+          CC: clang
+        run: cmake -S packages/c -B build-asan -G Ninja -DPB_SANITIZE=both
+
+      - name: Build
+        run: cmake --build build-asan
+
+      - name: Test
+        run: ctest --test-dir build-asan --output-on-failure
+
+  c-fuzz:
+    name: C (fuzzers, 60s each)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Install ninja
+        run: sudo apt-get update && sudo apt-get install -y ninja-build
+
+      # Sixty seconds each is not a thorough campaign — it is a smoke test that
+      # the harnesses still build and that an obvious regression trips them.
+      # The deterministic standalone drivers run in the ctest jobs above on
+      # every build, which is where the routine coverage comes from.
+      # Each run seeds from the committed corpus, so a committed crasher is
+      # replayed on every CI pass — a crash file that nothing ever replays is
+      # not a regression test, it is a souvenir.
+      - name: Configure
+        env:
+          CC: clang
+        run: cmake -S packages/c -B build-fuzz -G Ninja -DPB_FUZZ=ON
+
+      - name: Build
+        run: cmake --build build-fuzz
+
+      - name: Fuzz cache
+        run: ./build-fuzz/fuzz_cache -max_total_time=60 packages/c/fuzz/corpus/cache
+
+      - name: Fuzz rate-limiter
+        run: ./build-fuzz/fuzz_ratelimiter -max_total_time=60 packages/c/fuzz/corpus/rate-limiter
+
+      - name: Fuzz kv-cache
+        run: ./build-fuzz/fuzz_kvcache -max_total_time=60 packages/c/fuzz/corpus/kv-cache
+
+  c-package:
+    name: C (install, single header, examples)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Install ninja
+        run: sudo apt-get update && sudo apt-get install -y ninja-build
+
+      # The amalgamated header is committed, so regenerating it must be a no-op.
+      - name: Single header is in sync
+        run: |
+          pnpm tsx scripts/amalgamate-c.ts
+          if [ -n "$(git status --porcelain -- packages/c/dist)" ]; then git status --short -- packages/c/dist; git diff -- packages/c/dist; exit 1; fi
+
+      - name: Build and install
+        run: |
+          cmake -S packages/c -B build-rel -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX="$PWD/c-install"
+          cmake --build build-rel
+          cmake --install build-rel
+          ctest --test-dir build-rel --output-on-failure
+
+      # The examples are documentation, and documentation that does not compile
+      # is worse than none. They build from the install prefix, as a reader
+      # would, with nothing from the source tree on the include path.
+      - name: Examples build and run
+        run: bash packages/c/examples/run-all.sh "$PWD/c-install"
+
+      # No include path, no library: if this compiles, the header stands alone.
+      - name: Single header stands alone
+        run: |
+          cc -std=c99 -Wall -Wextra -Werror \
+            -I packages/c/dist packages/c/examples/single-header-check.c \
+            -lm -o single-header-check
+          ./single-header-check
+
+  python-package:
+    name: Python (wheel installs clean)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86 # v5
+        with:
+          enable-cache: true
+
+      # Building and installing into an empty environment is the only way to
+      # find out whether the wheel actually carries what it claims — a missing
+      # py.typed or an accidental dependency passes every other check here.
+      - name: Build
+        run: uv build --directory packages/python
+
+      - name: Install into a fresh environment and import every domain
+        run: |
+          uv venv /tmp/pbtest --python 3.12
+          uv pip install --python /tmp/pbtest/bin/python packages/python/dist/*.whl
+          /tmp/pbtest/bin/python -c "
+          from policybook.cache import Sieve
+          from policybook.rate_limiter import TokenBucket
+          from policybook.retry import ExponentialFullJitter
+          from policybook.kv_cache import H2o, StreamingLlm
+          c = Sieve(capacity=3); c.on_access('a', hit=False)
+          print('ok', c.size())
+          "
+
+  generated-files:
+    name: Generated files are in sync
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # Everything generated is committed, so regenerating must be a no-op.
+      # A diff here means someone edited a generated file by hand, or changed
+      # the code that produces it without regenerating. Checked with
+      # `git status --porcelain` rather than `git diff --exit-code`: diff is
+      # blind to a brand-new untracked file, which is exactly what a
+      # generator's first output for a new domain is.
+      - name: Rng vectors (C)
+        run: |
+          pnpm tsx scripts/gen-c-rng-vectors.ts
+          if [ -n "$(git status --porcelain -- packages/c/tests/gen)" ]; then git status --short -- packages/c/tests/gen; git diff -- packages/c/tests/gen; exit 1; fi
+
+      - name: Policy vectors (C)
+        run: |
+          pnpm gen:c-vectors
+          if [ -n "$(git status --porcelain -- packages/c/tests/gen)" ]; then git status --short -- packages/c/tests/gen; git diff -- packages/c/tests/gen; exit 1; fi
+
+      # The Python package and the C library are assembled from policies/**.
+      # A drift here means someone edited a generated copy, or changed a policy
+      # without re-assembling — either way the shipped code no longer matches
+      # the registry.
+      - name: Assembled packages are in sync
+        run: |
+          pnpm assemble
+          if [ -n "$(git status --porcelain)" ]; then git status --short; git diff; exit 1; fi
+
+      # The committed trace prefixes are what the Python and C parity tests
+      # compare against. If a generator changed, this is where it shows.
+      - name: Trace prefixes are in sync
+        run: |
+          pnpm tsx packages/core/scripts/dump-trace-prefix.ts
+          if [ -n "$(git status --porcelain)" ]; then git status --short; git diff; exit 1; fi
+
+      - name: Trace parity tests (C) are in sync
+        run: |
+          pnpm tsx scripts/gen-c-trace-parity.ts
+          if [ -n "$(git status --porcelain -- packages/c/tests/gen)" ]; then git status --short -- packages/c/tests/gen; git diff -- packages/c/tests/gen; exit 1; fi
+
+      # The committed cross-language decision hashes: the record the Python
+      # and C parity suites replay against.
+      - name: Decision parity is in sync
+        run: |
+          pnpm tsx scripts/gen-decision-parity.ts
+          if [ -n "$(git status --porcelain)" ]; then git status --short; git diff; exit 1; fi
+
+      - name: Line endings
+        run: pnpm run eol
+
+  web:
+    name: Web
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      # The site arrives with T38. Guarding on the directory rather than
+      # commenting the job out means it starts working the moment it exists,
+      # instead of being remembered about later.
+      - name: Is there a site yet?
+        id: site
+        run: |
+          if [ -d apps/web ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "apps/web does not exist yet; skipping (T38)."
+          fi
+
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+        if: steps.site.outputs.present == 'true'
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        if: steps.site.outputs.present == 'true'
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install
+        if: steps.site.outputs.present == 'true'
+        run: pnpm install --frozen-lockfile
+
+      # Includes bench-parity — the guarantee the whole site rests on: the
+      # runner's numbers equal the committed bench.json numbers exactly, at
+      # full trace length. This job owns that check; the TypeScript job
+      # excludes apps/web so the suite runs once per CI pass.
+      - name: Site tests
+        if: steps.site.outputs.present == 'true'
+        run: pnpm exec vitest run apps/web
+
+      - name: Build
+        if: steps.site.outputs.present == 'true'
+        run: pnpm --filter web build
+
+      - name: Contrast
+        if: steps.site.outputs.present == 'true' && hashFiles('apps/web/scripts/check-contrast.ts') != ''
+        run: pnpm tsx apps/web/scripts/check-contrast.ts
+
+      # Asserts on content derived from the catalog and the policies, not on
+      # page chrome: a check for text this repository wrote into the template
+      # passes just as happily when the data behind it has vanished.
+      - name: Pages carry their content
+        if: steps.site.outputs.present == 'true' && hashFiles('apps/web/scripts/check-dist.mjs') != ''
+        run: |
+          node apps/web/scripts/check-dist.mjs \
+            --page index.html --contains github \
+            --page p/cache/sieve/index.html --contains "policybook add cache/sieve" --contains "When not to use it" \
+            --page compare/kv-cache/index.html --contains H2O --contains TOVA \
+            --page tutorial/index.html --contains CachePolicy --contains EvictNewest
+
+      # The house style bans em-dashes and semicolons from anything a reader
+      # sees; code samples keep their syntax. Checked on the built pages, so
+      # every source of prose is covered at once.
+      - name: Prose carries no em-dashes or semicolons
+        if: steps.site.outputs.present == 'true' && hashFiles('apps/web/scripts/check-prose.mjs') != ''
+        run: node apps/web/scripts/check-prose.mjs
+
+      # The bundle budgets arrive with T47, alongside the script that checks
+      # them. Same reasoning as the site guard above.
+      - name: Bundle budgets
+        if: steps.site.outputs.present == 'true' && hashFiles('apps/web/scripts/check-bundle-size.ts') != ''
+        run: pnpm tsx apps/web/scripts/check-bundle-size.ts --all
+
+      # Best-effort. The static checks above
+      # cannot tell whether the worker starts or the canvas paints, which is
+      # most of what a reader meets. `smoke.mjs` exits 0 with a note when the
+      # browser is unavailable, so this fails on a broken site and not on a
+      # runner that cannot host one.
+      - name: Install a browser
+        if: steps.site.outputs.present == 'true' && hashFiles('apps/web/scripts/smoke.mjs') != ''
+        continue-on-error: true
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Smoke test in a real browser
+        if: steps.site.outputs.present == 'true' && hashFiles('apps/web/scripts/smoke.mjs') != ''
+        run: node apps/web/scripts/smoke.mjs
+
+  # The registry's central promise — a copied policy compiles and reproduces
+  # its vectors with nothing else present, and the npm tarball layout can
+  # serve `add` outside a checkout. This script existed since T36; no workflow
+  # ran it.
+  fresh-project:
+    name: Copied policies stand alone
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Build the CLI
+        run: pnpm --filter policybook build
+
+      - name: Every copied policy stands alone
+        run: bash packages/cli/tests/fresh-project.sh
+
+  actionlint:
+    name: Workflows lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      # Pinned by version and checksum: this is the one place CI executes a
+      # third-party binary, and "whatever main serves today" is not a
+      # dependency, it is a standing invitation.
+      - name: Lint workflows
+        run: |
+          curl -fsSL -o actionlint.tar.gz \
+            https://github.com/rhysd/actionlint/releases/download/v1.7.12/actionlint_1.7.12_linux_amd64.tar.gz
+          echo "8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8  actionlint.tar.gz" | sha256sum -c -
+          tar -xzf actionlint.tar.gz actionlint
+          ./actionlint -color

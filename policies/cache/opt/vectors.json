@@ -1,0 +1,450 @@
+{
+  "policy": "cache/opt",
+  "version": 1,
+  "cases": [
+    {
+      "name": "smoke: the key needed furthest away is evicted",
+      "params": {
+        "capacity": 2,
+        "future": [
+          1,
+          2,
+          3,
+          3,
+          2,
+          1
+        ]
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onAccess",
+          "args": [
+            1,
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            2,
+            false
+          ]
+        },
+        {
+          "call": "nextUseOf",
+          "args": [
+            1
+          ],
+          "expect": 5
+        },
+        {
+          "call": "nextUseOf",
+          "args": [
+            2
+          ],
+          "expect": 4
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            3,
+            false
+          ]
+        },
+        {
+          "call": "nextUseOf",
+          "args": [
+            3
+          ],
+          "expect": 3
+        },
+        {
+          "call": "evict",
+          "expect": 1
+        },
+        {
+          "call": "size",
+          "expect": 2
+        }
+      ]
+    },
+    {
+      "name": "boundary: a key never used again is evicted at once",
+      "params": {
+        "capacity": 2,
+        "future": [
+          1,
+          2,
+          3,
+          1,
+          2
+        ]
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onAccess",
+          "args": [
+            1,
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            2,
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            3,
+            false
+          ]
+        },
+        {
+          "call": "nextUseOf",
+          "args": [
+            3
+          ],
+          "expect": 5
+        },
+        {
+          "call": "evict",
+          "expect": 3
+        },
+        {
+          "call": "nextUseOf",
+          "args": [
+            1
+          ],
+          "expect": 3
+        }
+      ]
+    },
+    {
+      "name": "distinguishing: OPT declines to cache what it will never serve",
+      "params": {
+        "capacity": 3,
+        "future": [
+          7,
+          0,
+          1,
+          2,
+          0,
+          3,
+          0,
+          4,
+          2,
+          3,
+          0,
+          3,
+          2,
+          1,
+          2,
+          0,
+          1,
+          7,
+          0,
+          1
+        ]
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onAccess",
+          "args": [
+            7,
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            0,
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            1,
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            2,
+            false
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": 7
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            0,
+            true
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            3,
+            false
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": 1
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            0,
+            true
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            4,
+            false
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": 4
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            2,
+            true
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            3,
+            true
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            0,
+            true
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            3,
+            true
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            2,
+            true
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            1,
+            false
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": 3
+        }
+      ]
+    },
+    {
+      "name": "tiebreak: among keys never used again, the earliest inserted goes",
+      "params": {
+        "capacity": 2,
+        "future": [
+          1,
+          2,
+          3
+        ]
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onAccess",
+          "args": [
+            1,
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            2,
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            3,
+            false
+          ]
+        },
+        {
+          "call": "nextUseOf",
+          "args": [
+            1
+          ],
+          "expect": 3
+        },
+        {
+          "call": "nextUseOf",
+          "args": [
+            2
+          ],
+          "expect": 3
+        },
+        {
+          "call": "nextUseOf",
+          "args": [
+            3
+          ],
+          "expect": 3
+        },
+        {
+          "call": "evict",
+          "expect": 1
+        }
+      ]
+    },
+    {
+      "name": "a hit pushes a key's next use further out",
+      "params": {
+        "capacity": 2,
+        "future": [
+          1,
+          2,
+          1,
+          3,
+          1
+        ]
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onAccess",
+          "args": [
+            1,
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            2,
+            false
+          ]
+        },
+        {
+          "call": "nextUseOf",
+          "args": [
+            1
+          ],
+          "expect": 2
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            1,
+            true
+          ]
+        },
+        {
+          "call": "nextUseOf",
+          "args": [
+            1
+          ],
+          "expect": 4
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            3,
+            false
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": 2
+        }
+      ]
+    },
+    {
+      "name": "a single slot keeps whichever key returns soonest",
+      "params": {
+        "capacity": 1,
+        "future": [
+          1,
+          2,
+          2,
+          1
+        ]
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onAccess",
+          "args": [
+            1,
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            2,
+            false
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": 1
+        },
+        {
+          "call": "size",
+          "expect": 1
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            2,
+            true
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            1,
+            false
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": 2
+        }
+      ]
+    }
+  ]
+}

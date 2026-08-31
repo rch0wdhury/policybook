@@ -1,0 +1,21 @@
+{
+  "id": "kv-cache/sliding-window",
+  "name": "Sliding Window",
+  "domain": "kv-cache",
+  "summary": "Keep the most recent tokens and forget the rest. The honest baseline: most attention is recent, so this is far better than it sounds and far worse than it needs to be.",
+  "source": { "type": "folklore" },
+  "complexity": { "time": "O(1)", "space": "O(budget)" },
+  "params": [
+    {
+      "name": "budget",
+      "type": "number",
+      "default": 512,
+      "description": "Maximum token positions kept in the cache."
+    }
+  ],
+  "tags": ["baseline", "simple", "attention-free", "recency"],
+  "recommended": false,
+  "ports": ["ts", "python", "c"],
+  "notes": null,
+  "status": "stable"
+}

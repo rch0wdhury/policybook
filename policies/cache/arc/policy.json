@@ -1,0 +1,27 @@
+{
+  "id": "cache/arc",
+  "name": "ARC",
+  "domain": "cache",
+  "summary": "Balance recency against frequency and tune the balance from ghost hits. The standard against which adaptive policies are measured.",
+  "source": {
+    "title": "ARC: A Self-Tuning, Low Overhead Replacement Cache",
+    "authors": ["Nimrod Megiddo", "Dharmendra S. Modha"],
+    "venue": "FAST",
+    "year": 2003,
+    "url": null
+  },
+  "complexity": { "time": "O(1)", "space": "O(n)" },
+  "params": [
+    {
+      "name": "capacity",
+      "type": "number",
+      "default": 1000,
+      "description": "Maximum number of entries held."
+    }
+  ],
+  "tags": ["adaptive", "scan-resistant", "ghost-queue", "recency", "frequency"],
+  "recommended": false,
+  "ports": ["ts", "python", "c"],
+  "notes": "IBM held US patent 6,996,676 on this algorithm. See the README Notes section before commercial use.",
+  "status": "stable"
+}

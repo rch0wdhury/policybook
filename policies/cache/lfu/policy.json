@@ -1,0 +1,27 @@
+{
+  "id": "cache/lfu",
+  "name": "LFU",
+  "domain": "cache",
+  "summary": "Evict the key used least often. Wins on stable skewed traffic, but holds yesterday's winners forever when popularity shifts.",
+  "source": {
+    "title": "An O(1) algorithm for implementing the LFU cache eviction scheme",
+    "authors": ["Ketan Shah", "Anirban Mitra", "Dhruv Matani"],
+    "venue": null,
+    "year": 2010,
+    "url": null
+  },
+  "complexity": { "time": "O(1)", "space": "O(n)" },
+  "params": [
+    {
+      "name": "capacity",
+      "type": "number",
+      "default": 1000,
+      "description": "Maximum number of entries held."
+    }
+  ],
+  "tags": ["frequency", "baseline", "no-aging"],
+  "recommended": false,
+  "ports": ["ts", "python", "c"],
+  "notes": null,
+  "status": "stable"
+}

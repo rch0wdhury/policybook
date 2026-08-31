@@ -1,0 +1,27 @@
+{
+  "id": "rate-limiter/dual-bucket",
+  "name": "Dual bucket",
+  "domain": "rate-limiter",
+  "summary": "Requests per minute and tokens per minute, checked together and charged atomically. The shape every LLM API uses, and the only policy here that sees both ways a caller can overwhelm you.",
+  "source": { "type": "folklore" },
+  "complexity": { "time": "O(1)", "space": "O(k) for k keys, five integers each" },
+  "params": [
+    {
+      "name": "requestsPerMin",
+      "type": "number",
+      "default": 500,
+      "description": "Calls allowed per minute, regardless of size."
+    },
+    {
+      "name": "tokensPerMin",
+      "type": "number",
+      "default": 200000,
+      "description": "Units of work allowed per minute, summed over calls."
+    }
+  ],
+  "tags": ["llm-api", "two-dimensional", "no-window", "atomic-charge"],
+  "recommended": false,
+  "ports": ["ts", "python", "c"],
+  "notes": "Each dimension is a token bucket with a per-minute period. The charge is atomic: if either dimension would refuse, neither is charged, so a caller refused for tokens has not quietly spent a request too. retryAfter reports the later of the two dimensions and assumes a smallest possible call, since the interface has no cost argument.",
+  "status": "stable"
+}

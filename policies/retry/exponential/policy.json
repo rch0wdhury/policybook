@@ -1,0 +1,33 @@
+{
+  "id": "retry/exponential",
+  "name": "Exponential",
+  "domain": "retry",
+  "summary": "Double the wait after every failure, up to a cap. Load on a struggling service falls geometrically, but every client still comes back at the same instant.",
+  "source": { "type": "folklore" },
+  "complexity": { "time": "O(attempt)", "space": "O(1)" },
+  "params": [
+    {
+      "name": "baseMs",
+      "type": "number",
+      "default": 100,
+      "description": "The first delay, doubled on each subsequent attempt."
+    },
+    {
+      "name": "capMs",
+      "type": "number",
+      "default": 10000,
+      "description": "No delay exceeds this, however many attempts have failed."
+    },
+    {
+      "name": "maxAttempts",
+      "type": "number",
+      "default": 8,
+      "description": "Give up after this many attempts."
+    }
+  ],
+  "tags": ["textbook", "no-jitter", "thundering-herd", "reproducible"],
+  "recommended": false,
+  "ports": ["ts", "python", "c"],
+  "notes": "Backing off exponentially converts a continuous herd into a periodic one. It does not disperse it. Ship exponential-full-jitter instead unless you need a delay sequence reproducible without a random source.",
+  "status": "stable"
+}

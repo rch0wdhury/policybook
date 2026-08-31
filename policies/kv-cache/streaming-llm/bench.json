@@ -1,0 +1,37 @@
+{
+  "policy": "kv-cache/streaming-llm",
+  "generatedAt": "2026-01-01T00:00:00Z",
+  "coreVersion": "0.1.0",
+  "traces": {
+    "decode-4096@256": {
+      "metrics": {
+        "retainedAttentionMass": 0.736691,
+        "heavyHitterRecall": 0.859419,
+        "evictionCalls": 3840
+      },
+      "perf": {
+        "opsPerSec": 101000
+      }
+    },
+    "decode-4096@512": {
+      "metrics": {
+        "retainedAttentionMass": 0.786153,
+        "heavyHitterRecall": 0.88348,
+        "evictionCalls": 3584
+      },
+      "perf": {
+        "opsPerSec": 101000
+      }
+    },
+    "decode-4096@1024": {
+      "metrics": {
+        "retainedAttentionMass": 0.866203,
+        "heavyHitterRecall": 0.927572,
+        "evictionCalls": 3072
+      },
+      "perf": {
+        "opsPerSec": 95000
+      }
+    }
+  }
+}

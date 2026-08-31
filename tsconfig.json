@@ -1,0 +1,20 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@policybook/core": ["packages/core/src/index.ts"],
+      "@policybook/core/*": ["packages/core/src/*"],
+      "@policybook/vectors": ["packages/vectors/src/index.ts"],
+      "@policybook/vectors/*": ["packages/vectors/src/*"]
+    }
+  },
+  "include": [
+    "packages/*/src/**/*.ts",
+    "packages/*/scripts/**/*.ts",
+    "policies/**/*.ts",
+    "scripts/**/*.ts",
+    "vitest.config.ts"
+  ],
+  "exclude": ["**/node_modules", "**/dist"]
+}

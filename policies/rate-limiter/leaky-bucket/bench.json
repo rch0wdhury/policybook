@@ -1,0 +1,48 @@
+{
+  "policy": "rate-limiter/leaky-bucket",
+  "generatedAt": "2026-01-01T00:00:00Z",
+  "coreVersion": "0.1.0",
+  "traces": {
+    "steady": {
+      "metrics": {
+        "acceptRate": 1,
+        "maxBurst100ms": 22,
+        "entriesTracked": 1
+      },
+      "perf": {
+        "opsPerSec": 49100000
+      }
+    },
+    "bursty": {
+      "metrics": {
+        "acceptRate": 1,
+        "maxBurst100ms": 62,
+        "entriesTracked": 1
+      },
+      "perf": {
+        "opsPerSec": 59000000
+      }
+    },
+    "many-keys": {
+      "metrics": {
+        "acceptRate": 1,
+        "maxBurst100ms": 69,
+        "jainFairness": 0.007899,
+        "entriesTracked": 7278
+      },
+      "perf": {
+        "opsPerSec": 26400000
+      }
+    },
+    "overload": {
+      "metrics": {
+        "acceptRate": 0.342929,
+        "maxBurst100ms": 36,
+        "entriesTracked": 1
+      },
+      "perf": {
+        "opsPerSec": 48700000
+      }
+    }
+  }
+}

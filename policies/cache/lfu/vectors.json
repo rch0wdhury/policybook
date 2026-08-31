@@ -1,0 +1,406 @@
+{
+  "policy": "cache/lfu",
+  "version": 1,
+  "cases": [
+    {
+      "name": "smoke: the least used key leaves first",
+      "params": {
+        "capacity": 3
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onAccess",
+          "args": [
+            "a",
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "b",
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "c",
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "a",
+            true
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "a",
+            true
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "b",
+            true
+          ]
+        },
+        {
+          "call": "frequencyOf",
+          "args": [
+            "a"
+          ],
+          "expect": 3
+        },
+        {
+          "call": "frequencyOf",
+          "args": [
+            "c"
+          ],
+          "expect": 1
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "d",
+            false
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": "c"
+        }
+      ]
+    },
+    {
+      "name": "boundary: a capacity of one holds only the newest key",
+      "params": {
+        "capacity": 1
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onAccess",
+          "args": [
+            "a",
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "b",
+            false
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": "a"
+        },
+        {
+          "call": "size",
+          "expect": 1
+        }
+      ]
+    },
+    {
+      "name": "distinguishing: a frequently used key survives going cold, unlike LRU",
+      "params": {
+        "capacity": 3
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onAccess",
+          "args": [
+            "a",
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "a",
+            true
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "a",
+            true
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "a",
+            true
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "b",
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "c",
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "d",
+            false
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": "b"
+        }
+      ]
+    },
+    {
+      "name": "tiebreak: among equal counts, the one that reached it first goes",
+      "params": {
+        "capacity": 4
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onAccess",
+          "args": [
+            "a",
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "b",
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "c",
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "c",
+            true
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "a",
+            true
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "d",
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "e",
+            false
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": "b"
+        },
+        {
+          "call": "evict",
+          "expect": "d"
+        },
+        {
+          "call": "evict",
+          "expect": "e"
+        },
+        {
+          "call": "evict",
+          "expect": "c"
+        },
+        {
+          "call": "evict",
+          "expect": "a"
+        }
+      ]
+    },
+    {
+      "name": "a scan does not displace the working set",
+      "params": {
+        "capacity": 3
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onAccess",
+          "args": [
+            "hot",
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "hot",
+            true
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "hot",
+            true
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "s1",
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "s2",
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "s3",
+            false
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": "s1"
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "s4",
+            false
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": "s2"
+        },
+        {
+          "call": "frequencyOf",
+          "args": [
+            "hot"
+          ],
+          "expect": 3
+        }
+      ]
+    },
+    {
+      "name": "frequency classes are reused rather than leaked",
+      "params": {
+        "capacity": 2
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onAccess",
+          "args": [
+            "a",
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "a",
+            true
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "a",
+            true
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "a",
+            true
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "a",
+            true
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "a",
+            true
+          ]
+        },
+        {
+          "call": "frequencyOf",
+          "args": [
+            "a"
+          ],
+          "expect": 6
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "b",
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "c",
+            false
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": "b"
+        },
+        {
+          "call": "size",
+          "expect": 2
+        }
+      ]
+    }
+  ]
+}

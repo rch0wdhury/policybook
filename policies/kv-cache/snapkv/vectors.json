@@ -1,0 +1,556 @@
+{
+  "policy": "kv-cache/snapkv",
+  "version": 1,
+  "cases": [
+    {
+      "name": "smoke: with a window longer than the run and no pooling, it sums",
+      "params": {
+        "budget": 3,
+        "recentWindow": 1,
+        "obsWindow": 8,
+        "poolKernel": 1
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onDecodeStep",
+          "args": [
+            1,
+            [
+              1
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            2,
+            [
+              0.25,
+              0.75
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            3,
+            [
+              0.5,
+              0.25,
+              0.25
+            ]
+          ]
+        },
+        {
+          "call": "windowScoreOf",
+          "args": [
+            0
+          ],
+          "expect": 1.75
+        },
+        {
+          "call": "windowScoreOf",
+          "args": [
+            1
+          ],
+          "expect": 1
+        },
+        {
+          "call": "windowScoreOf",
+          "args": [
+            2
+          ],
+          "expect": 0.25
+        },
+        {
+          "call": "evict",
+          "args": [
+            3
+          ],
+          "expect": [
+            2
+          ]
+        },
+        {
+          "call": "keptCount",
+          "args": [],
+          "expect": 3
+        }
+      ]
+    },
+    {
+      "name": "distinguishing: attention ages out of the observation window",
+      "params": {
+        "budget": 3,
+        "recentWindow": 1,
+        "obsWindow": 2,
+        "poolKernel": 1
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onDecodeStep",
+          "args": [
+            1,
+            [
+              1
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            2,
+            [
+              0.875,
+              0.125
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            3,
+            [
+              0.0625,
+              0.4375,
+              0.5
+            ]
+          ]
+        },
+        {
+          "call": "windowScoreOf",
+          "args": [
+            0
+          ],
+          "expect": 0.9375
+        },
+        {
+          "call": "evict",
+          "args": [
+            3
+          ],
+          "expect": [
+            2
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            4,
+            [
+              0.0625,
+              0.4375,
+              0.5
+            ]
+          ]
+        },
+        {
+          "call": "windowScoreOf",
+          "args": [
+            0
+          ],
+          "expect": 0.125
+        },
+        {
+          "call": "windowScoreOf",
+          "args": [
+            1
+          ],
+          "expect": 0.875
+        },
+        {
+          "call": "windowScoreOf",
+          "args": [
+            3
+          ],
+          "expect": 0.5
+        },
+        {
+          "call": "evict",
+          "args": [
+            3
+          ],
+          "expect": [
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "the max-pool changes the victim: without it, position 3 goes",
+      "params": {
+        "budget": 4,
+        "recentWindow": 1,
+        "obsWindow": 8,
+        "poolKernel": 1
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onDecodeStep",
+          "args": [
+            1,
+            [
+              1
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            2,
+            [
+              0.5,
+              0.5
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            3,
+            [
+              0.0625,
+              0.0625,
+              0.875
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            4,
+            [
+              0.0625,
+              0.0625,
+              0.8125,
+              0.0625
+            ]
+          ]
+        },
+        {
+          "call": "windowScoreOf",
+          "args": [
+            0
+          ],
+          "expect": 1.625
+        },
+        {
+          "call": "windowScoreOf",
+          "args": [
+            1
+          ],
+          "expect": 0.625
+        },
+        {
+          "call": "windowScoreOf",
+          "args": [
+            2
+          ],
+          "expect": 1.6875
+        },
+        {
+          "call": "windowScoreOf",
+          "args": [
+            3
+          ],
+          "expect": 0.0625
+        },
+        {
+          "call": "evict",
+          "args": [
+            4
+          ],
+          "expect": [
+            3
+          ]
+        }
+      ]
+    },
+    {
+      "name": "the max-pool changes the victim: with it, position 0 goes",
+      "params": {
+        "budget": 4,
+        "recentWindow": 1,
+        "obsWindow": 8,
+        "poolKernel": 3
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onDecodeStep",
+          "args": [
+            1,
+            [
+              1
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            2,
+            [
+              0.5,
+              0.5
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            3,
+            [
+              0.0625,
+              0.0625,
+              0.875
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            4,
+            [
+              0.0625,
+              0.0625,
+              0.8125,
+              0.0625
+            ]
+          ]
+        },
+        {
+          "call": "windowScoreOf",
+          "args": [
+            3
+          ],
+          "expect": 0.0625
+        },
+        {
+          "call": "evict",
+          "args": [
+            4
+          ],
+          "expect": [
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "boundary: the recent window outranks the pooled score",
+      "params": {
+        "budget": 3,
+        "recentWindow": 2,
+        "obsWindow": 8,
+        "poolKernel": 1
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onDecodeStep",
+          "args": [
+            1,
+            [
+              1
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            2,
+            [
+              0.9375,
+              0.0625
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            3,
+            [
+              0.5,
+              0.25,
+              0.25
+            ]
+          ]
+        },
+        {
+          "call": "windowScoreOf",
+          "args": [
+            1
+          ],
+          "expect": 0.3125
+        },
+        {
+          "call": "windowScoreOf",
+          "args": [
+            2
+          ],
+          "expect": 0.25
+        },
+        {
+          "call": "evict",
+          "args": [
+            3
+          ],
+          "expect": [
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "name": "tiebreak: equal pooled scores evict the lower position",
+      "params": {
+        "budget": 3,
+        "recentWindow": 1,
+        "obsWindow": 8,
+        "poolKernel": 1
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onDecodeStep",
+          "args": [
+            1,
+            [
+              1
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            2,
+            [
+              0.875,
+              0.125
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            3,
+            [
+              0.625,
+              0.125,
+              0.25
+            ]
+          ]
+        },
+        {
+          "call": "windowScoreOf",
+          "args": [
+            1
+          ],
+          "expect": 0.25
+        },
+        {
+          "call": "windowScoreOf",
+          "args": [
+            2
+          ],
+          "expect": 0.25
+        },
+        {
+          "call": "evict",
+          "args": [
+            3
+          ],
+          "expect": [
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "name": "a null step is inert, and the eviction shows it",
+      "params": {
+        "budget": 3,
+        "recentWindow": 1,
+        "obsWindow": 2,
+        "poolKernel": 1
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onDecodeStep",
+          "args": [
+            1,
+            [
+              1
+            ]
+          ]
+        },
+        {
+          "call": "windowScoreOf",
+          "args": [
+            0
+          ],
+          "expect": 1
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            2,
+            null
+          ]
+        },
+        {
+          "call": "windowScoreOf",
+          "args": [
+            0
+          ],
+          "expect": 1
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            3,
+            [
+              0.125,
+              0.5,
+              0.375
+            ]
+          ]
+        },
+        {
+          "call": "windowScoreOf",
+          "args": [
+            0
+          ],
+          "expect": 1.125
+        },
+        {
+          "call": "windowScoreOf",
+          "args": [
+            1
+          ],
+          "expect": 0.5
+        },
+        {
+          "call": "windowScoreOf",
+          "args": [
+            2
+          ],
+          "expect": 0.375
+        },
+        {
+          "call": "evict",
+          "args": [
+            3
+          ],
+          "expect": [
+            2
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "id": "retry/retry-after-aware",
+  "name": "Retry-After aware",
+  "domain": "retry",
+  "summary": "Honour the server's Retry-After when it sends one, clamped, and fall back to full jitter when it does not. Far the highest success rate, and the worst herd.",
+  "source": {
+    "title": "RFC 9110: HTTP Semantics, §10.2.3 Retry-After",
+    "authors": ["Roy T. Fielding", "Mark Nottingham", "Julian Reschke"],
+    "venue": "IETF RFC 9110",
+    "year": 2022,
+    "url": "https://www.rfc-editor.org/rfc/rfc9110#field.retry-after"
+  },
+  "complexity": { "time": "O(attempt)", "space": "O(1)" },
+  "params": [
+    {
+      "name": "baseMs",
+      "type": "number",
+      "default": 100,
+      "description": "The first fallback ceiling, doubled on each subsequent attempt."
+    },
+    {
+      "name": "capMs",
+      "type": "number",
+      "default": 10000,
+      "description": "The longest wait this client will accept, from any source."
+    },
+    {
+      "name": "maxAttempts",
+      "type": "number",
+      "default": 8,
+      "description": "Give up after this many attempts."
+    }
+  ],
+  "tags": ["server-guided", "http", "clamped", "resynchronising"],
+  "recommended": false,
+  "ports": ["ts", "python", "c"],
+  "notes": "An absent hint and a hint of zero are different statements, so the check is for undefined rather than for falsiness. A zero means come back now and is honoured. No random draw is consumed on the hinted path. This policy re-synchronises clients by construction: a thousand told to wait five seconds all return in five seconds. The benchmark understates the risk because each episode has its own outage.",
+  "status": "stable"
+}

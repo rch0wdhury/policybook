@@ -1,0 +1,360 @@
+{
+  "policy": "rate-limiter/sliding-counter",
+  "version": 1,
+  "cases": [
+    {
+      "name": "smoke: the previous window's count decays instead of vanishing",
+      "params": {
+        "limit": 5,
+        "windowMs": 1000
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            0
+          ],
+          "expect": true
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            10
+          ],
+          "expect": true
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            20
+          ],
+          "expect": true
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            30
+          ],
+          "expect": true
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            40
+          ],
+          "expect": true
+        },
+        {
+          "call": "estimateOf",
+          "args": [
+            1,
+            40
+          ],
+          "expect": 5
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            50
+          ],
+          "expect": false
+        },
+        {
+          "call": "retryAfter",
+          "args": [
+            1,
+            50
+          ],
+          "expect": 951
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            1000
+          ],
+          "expect": false
+        },
+        {
+          "call": "estimateOf",
+          "args": [
+            1,
+            1000
+          ],
+          "expect": 5
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            1001
+          ],
+          "expect": true
+        }
+      ]
+    },
+    {
+      "name": "boundary: a gap of two windows clears both counts",
+      "params": {
+        "limit": 5,
+        "windowMs": 1000
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "allow",
+          "args": [
+            7,
+            5,
+            900
+          ],
+          "expect": true
+        },
+        {
+          "call": "allow",
+          "args": [
+            7,
+            1,
+            1000
+          ],
+          "expect": false
+        },
+        {
+          "call": "estimateOf",
+          "args": [
+            7,
+            1500
+          ],
+          "expect": 2
+        },
+        {
+          "call": "allow",
+          "args": [
+            7,
+            1,
+            1500
+          ],
+          "expect": true
+        },
+        {
+          "call": "estimateOf",
+          "args": [
+            7,
+            4000
+          ],
+          "expect": 0
+        },
+        {
+          "call": "allow",
+          "args": [
+            7,
+            5,
+            4000
+          ],
+          "expect": true
+        }
+      ]
+    },
+    {
+      "name": "distinguishing: a boundary burst is refused, then released gradually",
+      "params": {
+        "limit": 5,
+        "windowMs": 1000
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "allow",
+          "args": [
+            3,
+            5,
+            999
+          ],
+          "expect": true
+        },
+        {
+          "call": "allow",
+          "args": [
+            3,
+            5,
+            1000
+          ],
+          "expect": false
+        },
+        {
+          "call": "allow",
+          "args": [
+            3,
+            1,
+            1000
+          ],
+          "expect": false
+        },
+        {
+          "call": "estimateOf",
+          "args": [
+            3,
+            1500
+          ],
+          "expect": 2
+        },
+        {
+          "call": "allow",
+          "args": [
+            3,
+            3,
+            1500
+          ],
+          "expect": true
+        },
+        {
+          "call": "allow",
+          "args": [
+            3,
+            1,
+            1500
+          ],
+          "expect": false
+        }
+      ]
+    },
+    {
+      "name": "tiebreak: the weighting floors, and the floor decides the request",
+      "params": {
+        "limit": 5,
+        "windowMs": 1000
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "allow",
+          "args": [
+            2,
+            5,
+            0
+          ],
+          "expect": true
+        },
+        {
+          "call": "estimateOf",
+          "args": [
+            2,
+            1001
+          ],
+          "expect": 4
+        },
+        {
+          "call": "allow",
+          "args": [
+            2,
+            1,
+            1001
+          ],
+          "expect": true
+        },
+        {
+          "call": "estimateOf",
+          "args": [
+            2,
+            1001
+          ],
+          "expect": 5
+        },
+        {
+          "call": "allow",
+          "args": [
+            2,
+            1,
+            1001
+          ],
+          "expect": false
+        },
+        {
+          "call": "retryAfter",
+          "args": [
+            2,
+            1001
+          ],
+          "expect": 200
+        },
+        {
+          "call": "allow",
+          "args": [
+            2,
+            1,
+            1201
+          ],
+          "expect": true
+        }
+      ]
+    },
+    {
+      "name": "keys are independent, and each is remembered",
+      "params": {
+        "limit": 5,
+        "windowMs": 1000
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "allow",
+          "args": [
+            1,
+            5,
+            0
+          ],
+          "expect": true
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            0
+          ],
+          "expect": false
+        },
+        {
+          "call": "allow",
+          "args": [
+            2,
+            5,
+            0
+          ],
+          "expect": true
+        },
+        {
+          "call": "stateSize",
+          "expect": 2
+        },
+        {
+          "call": "retryAfter",
+          "args": [
+            99,
+            0
+          ],
+          "expect": 0
+        },
+        {
+          "call": "stateSize",
+          "expect": 2
+        }
+      ]
+    }
+  ]
+}

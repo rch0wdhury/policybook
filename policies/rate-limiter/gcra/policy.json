@@ -1,0 +1,33 @@
+{
+  "id": "rate-limiter/gcra",
+  "name": "GCRA",
+  "domain": "rate-limiter",
+  "summary": "The token bucket kept as a single theoretical arrival time. Identical decisions, one integer per key instead of three, which is why network gear and Redis modules use it.",
+  "source": {
+    "title": "The ATM Forum Traffic Management Specification, version 4.0 (generic cell rate algorithm)",
+    "authors": ["The ATM Forum Technical Committee"],
+    "venue": "ATM Forum af-tm-0056.000",
+    "year": 1996,
+    "url": null
+  },
+  "complexity": { "time": "O(1)", "space": "O(k) for k keys, one integer each" },
+  "params": [
+    {
+      "name": "ratePerSec",
+      "type": "number",
+      "default": 100,
+      "description": "Permits per second, sustained."
+    },
+    {
+      "name": "burst",
+      "type": "number",
+      "default": 100,
+      "description": "How many permits may be spent at once after an idle period."
+    }
+  ],
+  "tags": ["recommended", "memory-light", "no-window", "exact-retry", "equivalent-to-token-bucket"],
+  "recommended": false,
+  "ports": ["ts", "python", "c"],
+  "notes": "Admits and refuses exactly what the token bucket does, including the fractional carry, with retryAfter agreeing to the millisecond. A vector mirrors the token bucket case for case and a cross-policy test checks it over a random trace. The arithmetic is scaled by ratePerSec so the emission interval never needs to be a fraction.",
+  "status": "stable"
+}

@@ -1,0 +1,37 @@
+{
+  "policy": "kv-cache/tova",
+  "generatedAt": "2026-01-01T00:00:00Z",
+  "coreVersion": "0.1.0",
+  "traces": {
+    "decode-4096@256": {
+      "metrics": {
+        "retainedAttentionMass": 0.778128,
+        "heavyHitterRecall": 0.882339,
+        "evictionCalls": 3840
+      },
+      "perf": {
+        "opsPerSec": 93100
+      }
+    },
+    "decode-4096@512": {
+      "metrics": {
+        "retainedAttentionMass": 0.824012,
+        "heavyHitterRecall": 0.909793,
+        "evictionCalls": 3584
+      },
+      "perf": {
+        "opsPerSec": 87300
+      }
+    },
+    "decode-4096@1024": {
+      "metrics": {
+        "retainedAttentionMass": 0.885888,
+        "heavyHitterRecall": 0.937247,
+        "evictionCalls": 3072
+      },
+      "perf": {
+        "opsPerSec": 76400
+      }
+    }
+  }
+}

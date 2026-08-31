@@ -1,0 +1,27 @@
+{
+  "id": "retry/constant",
+  "name": "Constant",
+  "domain": "retry",
+  "summary": "Wait the same amount every time. Fastest to notice a short outage, and the purest form of the thundering herd: every client comes back at the same instant, forever.",
+  "source": { "type": "folklore" },
+  "complexity": { "time": "O(1)", "space": "O(1)" },
+  "params": [
+    {
+      "name": "baseMs",
+      "type": "number",
+      "default": 100,
+      "description": "The delay before every retry, in milliseconds."
+    },
+    {
+      "name": "maxAttempts",
+      "type": "number",
+      "default": 8,
+      "description": "Give up after this many attempts."
+    }
+  ],
+  "tags": ["baseline", "simple", "no-jitter", "thundering-herd"],
+  "recommended": false,
+  "ports": ["ts", "python", "c"],
+  "notes": "The policy you get by accident when nobody thought about it: sleep(100) in a loop.",
+  "status": "stable"
+}

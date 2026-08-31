@@ -1,0 +1,357 @@
+---
+/**
+ * A policy's page.
+ *
+ * The README, rendered — not summarised, not rewritten. The effort that went
+ * into a "when not to use it" section is the most useful thing on the page, and
+ * it is already written; this puts it in front of a reader instead of leaving
+ * it in a directory (concept.md §13.6).
+ *
+ * Around it: the parameters and complexity from `policy.json`, the committed
+ * vectors, and the one command that gets the policy into someone's project.
+ */
+import PolicyRunner from "../../../../islands/PolicyRunner";
+import Base from "../../../../layouts/Base.astro";
+import { allPolicies, neighboursOf } from "../../../../lib/catalog";
+import { dropFirstTableUnder, dropSections, renderMarkdown, rewriteLinks } from "../../../../lib/markdown";
+import { RUNNABLE_DOMAINS } from "../../../../lib/simulation";
+import { treeUrl } from "../../../../lib/repo";
+import { TRACES_BY_DOMAIN } from "../../../../lib/traces";
+
+export function getStaticPaths() {
+  return allPolicies().map((policy) => ({
+    params: { domain: policy.domain, policy: policy.slug },
+    props: { policy },
+  }));
+}
+
+const { policy } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const meta = policy.meta;
+
+// The README's own H1 is the policy's name, which the page header already
+// says; rendering both would be a stutter.
+//
+// The Benchmark section goes entirely — it is generated between markers and
+// the page rebuilds it from `bench.json`. From Parameters only the table goes,
+// because the page renders a typed one from `policy.json` while the prose
+// around it is often the most valuable thing on the page: H2O's `recentWindow`
+// sweep is a subsection there and is that policy's whole argument.
+const body = dropFirstTableUnder(
+  dropSections(policy.readme.replace(/^#[^\n]*\n+/, ""), [/^##\s+Benchmarks?\s*$/i]),
+  /^##\s+Parameters\s*$/i,
+);
+const readmeHtml = await renderMarkdown(rewriteLinks(body, policy.domain, base));
+
+/**
+ * An offline bound is a reference line: it needs the whole future to decide,
+ * so nobody can run it in production and offering a copy command would be an
+ * invitation to try.
+ */
+const offline = meta.status === "offline-bound";
+
+const snippets = [
+  { language: "TypeScript", command: `npx policybook add ${meta.id}` },
+  { language: "Python", command: `npx policybook add ${meta.id} --lang python` },
+  { language: "C", command: `npx policybook add ${meta.id} --lang c` },
+];
+
+const repoUrl = treeUrl(`policies/${policy.domain}/${policy.slug}`);
+
+/** A value as it would be written in a vectors file. */
+function show(value: unknown): string {
+  if (value === null) return "null";
+  if (typeof value === "string") return `"${value}"`;
+  return JSON.stringify(value);
+}
+
+const source = meta.source;
+const authors = source?.authors?.join(", ") ?? "";
+
+/**
+ * The runner, where the domain has one.
+ *
+ * An offline bound has nothing to run — it needs the whole future — and retry
+ * is measured over independent episodes rather than one stream of events, so
+ * there is no sequence to step through.
+ */
+const runnable = !offline && (RUNNABLE_DOMAINS as readonly string[]).includes(policy.domain);
+
+/** The policies this one is most worth being compared against. */
+const neighbours = runnable ? neighboursOf(policy) : [];
+
+/** The comparison as a link: the same fragment the runner writes for itself. */
+const compareHref =
+  neighbours.length > 0
+    ? `${base}compare/${policy.domain}/#d=${policy.domain}&p=${[policy.slug, ...neighbours].join(",")}`
+    : `${base}compare/${policy.domain}/`;
+
+const RUNNER_METRICS: Record<string, { key: string; label: string }[]> = {
+  cache: [
+    { key: "hitRate", label: "Hit rate" },
+    { key: "evictions", label: "Evictions" },
+  ],
+  "rate-limiter": [
+    { key: "acceptRate", label: "Accept rate" },
+    { key: "maxBurst100ms", label: "Peak / 100 ms" },
+  ],
+  "kv-cache": [
+    { key: "retainedAttentionMass", label: "Retained mass" },
+    { key: "heavyHitterRecall", label: "Heavy-hitter recall" },
+  ],
+};
+
+const EXPLAINERS: Record<string, string> = {
+  cache:
+    "Each step is one request. The grid is the cache in the policy's own order, and a filled cell is an entry the policy has marked to defend. Below it, the running hit rate against a dashed line for the best anyone could do knowing the whole future.",
+  "rate-limiter":
+    "Each step is one arrival, and the policy answers yes or no on the spot. The line is whatever budget it keeps (tokens, a level, a count), and each mark below is one arrival: tick admitted, cross refused.",
+  "kv-cache":
+    "Each step is one decoded token. The policy sees where the new token's attention went, then drops positions once it's over budget. Retained mass is the share of attention that survived.",
+};
+
+const runnerMetrics = RUNNER_METRICS[policy.domain] ?? [];
+const explainer = EXPLAINERS[policy.domain] ?? "";
+const traces = runnable ? (TRACES_BY_DOMAIN[policy.domain] ?? []) : [];
+---
+
+<Base title={`${meta.name} · policybook`} description={meta.summary}>
+  <div class="wrap">
+    <p class="crumb">
+      <a href={base}>policybook</a> /
+      <a href={`${base}d/${policy.domain}/`}>{policy.domain}</a> /
+      <span>{policy.slug}</span>
+    </p>
+
+    <header class="head">
+      <h1>{meta.name}</h1>
+      <p class="summary">{meta.summary}</p>
+    </header>
+
+    <div class="columns">
+      <article class="prose readme" set:html={readmeHtml} />
+
+      <aside>
+        <section class="card">
+          <h2>Use it in your project</h2>
+          {
+            offline ? (
+              <p class="muted">
+                <strong>Offline bound.</strong> It needs the whole future to
+                decide, so you can't run it. It's here as the ceiling the{" "}
+                <a href={`${base}d/${policy.domain}/`}>{policy.domain}</a>{" "}
+                numbers are measured against.
+              </p>
+            ) : (
+              <>
+                {snippets.map((snippet) => (
+                  <p class="snippet">
+                    <span class="lang">{snippet.language}</span>
+                    <code>{snippet.command}</code>
+                  </p>
+                ))}
+              </>
+            )
+          }
+        </section>
+
+        <section class="card">
+          <h2>At a glance</h2>
+          <dl>
+            <dt>Languages</dt>
+            <dd>{meta.ports.map((port) => (port === "ts" ? "TypeScript" : port === "c" ? "C" : "Python")).join(", ")}</dd>
+            <dt>Time</dt>
+            <dd><code>{meta.complexity.time}</code></dd>
+            <dt>Space</dt>
+            <dd><code>{meta.complexity.space}</code></dd>
+            <dt>Status</dt>
+            <dd>{meta.status}</dd>
+          </dl>
+          <p class="muted note">
+            <a href={repoUrl} rel="noopener noreferrer">Source, vectors and tests on GitHub →</a>
+          </p>
+        </section>
+
+        <section class="card runner-slot">
+          <h2>Run it</h2>
+          {
+            runnable ? (
+              <>
+              <PolicyRunner
+                client:visible
+                domain={policy.domain}
+                policies={[policy.slug]}
+                traces={traces}
+                names={{ [policy.slug]: meta.name }}
+                metrics={runnerMetrics}
+                explainer={explainer}
+              />
+              <p class="muted note">
+                <a href={compareHref}>
+                  {neighbours.length > 0
+                    ? `Compare with its neighbours in the ranking →`
+                    : `Compare it with the others →`}
+                </a>
+              </p>
+              </>
+            ) : (
+              <p class="muted">
+                {policy.domain === "retry"
+                  ? "Retry policies run as a thousand independent episodes, so there is no stream to step through. The benchmark below is the whole story."
+                  : "No runner for this domain yet."}
+              </p>
+            )
+          }
+        </section>
+      </aside>
+    </div>
+
+    {
+      meta.params.length > 0 && (
+        <section>
+          <h2>Parameters</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th class="num">Default</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              {meta.params.map((param) => (
+                <tr>
+                  <td><code>{param.name}</code></td>
+                  <td class="muted">{param.type}</td>
+                  <td class="num">
+                    {param.default === undefined ? "-" : <code>{show(param.default)}</code>}
+                  </td>
+                  <td>{param.description}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </section>
+      )
+    }
+
+    {
+      source?.title && (
+        <section class="prose">
+          <h2>Source</h2>
+          <p>
+            <strong>{source.title}</strong>
+            {authors && <> by {authors}.</>}
+            {source.venue && <> {source.venue}</>}
+            {source.year && <> {source.year}.</>}
+          </p>
+          {source.url && (
+            <p>
+              <a href={source.url} rel="noopener noreferrer">{source.url}</a>
+            </p>
+          )}
+        </section>
+      )
+    }
+  </div>
+</Base>
+
+<style>
+  .crumb {
+    font-size: var(--text-sm);
+    color: var(--muted);
+    font-family: var(--font-mono);
+  }
+
+  .head {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: var(--space-6);
+    margin-bottom: var(--space-8);
+  }
+
+  .summary {
+    font-size: var(--text-lg);
+    color: var(--muted);
+    max-width: var(--prose-width);
+  }
+
+  .columns {
+    display: grid;
+    gap: var(--space-8);
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+  }
+
+  @media (min-width: 60rem) {
+    .columns {
+      grid-template-columns: minmax(0, 1fr) 22rem;
+    }
+
+    aside {
+      position: sticky;
+      top: 4.5rem;
+    }
+  }
+
+  aside section + section {
+    margin-top: var(--space-4);
+  }
+
+  aside h2 {
+    font-size: var(--text-base);
+    margin-top: 0;
+  }
+
+  .snippet {
+    margin-bottom: var(--space-3);
+  }
+
+  .lang {
+    display: block;
+    font-size: var(--text-xs);
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--space-1);
+  }
+
+  .snippet code {
+    display: block;
+    font-size: var(--text-xs);
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .note {
+    font-size: var(--text-sm);
+  }
+
+  dl {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-2) var(--space-4);
+    margin: 0 0 var(--space-4);
+    font-size: var(--text-sm);
+  }
+
+  dt {
+    color: var(--muted);
+  }
+
+  dd {
+    margin: 0;
+  }
+
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  section {
+    margin-top: var(--space-12);
+  }
+
+  .readme :global(h2) {
+    scroll-margin-top: 5rem;
+  }
+</style>

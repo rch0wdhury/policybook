@@ -1,0 +1,57 @@
+# node
+node_modules/
+dist/
+.tsbuildinfo
+*.tsbuildinfo
+
+# ...except the amalgamated C header, which is a committed artefact rather than
+# a build output: the whole point of it is that someone can take one file out of
+# the repository without building anything (T36).
+!packages/c/dist/
+!packages/c/dist/policybook.h
+
+# astro / vite
+.astro/
+.vite/
+
+# python
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# c — builds live on ext4 (~/.cache/policybook), never in the repo,
+# but ignore these anyway in case someone builds in-tree.
+build*/
+cmake-build-*/
+CMakeCache.txt
+CMakeFiles/
+
+# A fuzzer run from the repository root drops its artefacts in the working
+# directory; two of them were committed by accident before this rule existed.
+# Real crashers belong in packages/c/fuzz/corpus/<domain>/, where the corpus
+# rules below keep them and CI replays them.
+/crash-*
+/leak-*
+/timeout-*
+/oom-*
+
+# libFuzzer's coverage corpus is a local artefact; only crashers are committed
+# (see packages/c/fuzz/README.md)
+packages/c/fuzz/corpus/**
+!packages/c/fuzz/corpus/**/crash-*
+!packages/c/fuzz/corpus/**/leak-*
+!packages/c/fuzz/corpus/**/timeout-*
+
+# claude code runtime state (project settings/skills under .claude are tracked)
+.claude/*.lock
+.claude/settings.local.json
+
+# misc
+coverage/
+.DS_Store
+Thumbs.db
+.cache/

@@ -1,0 +1,21 @@
+{
+  "id": "cache/lru",
+  "name": "LRU",
+  "domain": "cache",
+  "summary": "Evict the key used longest ago. The default baseline, and what most people mean when they say \"cache\".",
+  "source": { "type": "folklore" },
+  "complexity": { "time": "O(1)", "space": "O(n)" },
+  "params": [
+    {
+      "name": "capacity",
+      "type": "number",
+      "default": 1000,
+      "description": "Maximum number of entries held."
+    }
+  ],
+  "tags": ["baseline", "recency", "default"],
+  "recommended": false,
+  "ports": ["ts", "python", "c"],
+  "notes": null,
+  "status": "stable"
+}

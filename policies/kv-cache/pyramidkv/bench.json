@@ -1,0 +1,37 @@
+{
+  "policy": "kv-cache/pyramidkv",
+  "generatedAt": "2026-01-01T00:00:00Z",
+  "coreVersion": "0.1.0",
+  "traces": {
+    "decode-4096@256": {
+      "metrics": {
+        "retainedAttentionMass": 0.783378,
+        "heavyHitterRecall": 0.890183,
+        "evictionCalls": 3840
+      },
+      "perf": {
+        "opsPerSec": 65900
+      }
+    },
+    "decode-4096@512": {
+      "metrics": {
+        "retainedAttentionMass": 0.82119,
+        "heavyHitterRecall": 0.901949,
+        "evictionCalls": 3584
+      },
+      "perf": {
+        "opsPerSec": 51900
+      }
+    },
+    "decode-4096@1024": {
+      "metrics": {
+        "retainedAttentionMass": 0.888049,
+        "heavyHitterRecall": 0.941169,
+        "evictionCalls": 3072
+      },
+      "perf": {
+        "opsPerSec": 37500
+      }
+    }
+  }
+}

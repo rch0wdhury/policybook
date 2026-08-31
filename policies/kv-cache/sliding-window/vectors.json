@@ -1,0 +1,342 @@
+{
+  "policy": "kv-cache/sliding-window",
+  "version": 1,
+  "cases": [
+    {
+      "name": "smoke: the oldest position goes first",
+      "params": {
+        "budget": 4
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onDecodeStep",
+          "args": [
+            1,
+            null
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            2,
+            null
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            3,
+            null
+          ]
+        },
+        {
+          "call": "keptCount",
+          "args": [],
+          "expect": 4
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            4,
+            null
+          ]
+        },
+        {
+          "call": "evict",
+          "args": [
+            4
+          ],
+          "expect": [
+            0
+          ]
+        },
+        {
+          "call": "keptCount",
+          "args": [],
+          "expect": 4
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            5,
+            null
+          ]
+        },
+        {
+          "call": "evict",
+          "args": [
+            4
+          ],
+          "expect": [
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "name": "boundary: a budget of one keeps only the newest token",
+      "params": {
+        "budget": 1
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onDecodeStep",
+          "args": [
+            1,
+            null
+          ]
+        },
+        {
+          "call": "evict",
+          "args": [
+            1
+          ],
+          "expect": [
+            0
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            2,
+            null
+          ]
+        },
+        {
+          "call": "evict",
+          "args": [
+            1
+          ],
+          "expect": [
+            1
+          ]
+        },
+        {
+          "call": "keptCount",
+          "args": [],
+          "expect": 1
+        }
+      ]
+    },
+    {
+      "name": "distinguishing: the attention sinks are dropped first, not last",
+      "params": {
+        "budget": 6
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onDecodeStep",
+          "args": [
+            1,
+            null
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            2,
+            null
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            3,
+            null
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            4,
+            null
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            5,
+            null
+          ]
+        },
+        {
+          "call": "keptCount",
+          "args": [],
+          "expect": 6
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            6,
+            null
+          ]
+        },
+        {
+          "call": "evict",
+          "args": [
+            6
+          ],
+          "expect": [
+            0
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            7,
+            null
+          ]
+        },
+        {
+          "call": "evict",
+          "args": [
+            6
+          ],
+          "expect": [
+            1
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            8,
+            null
+          ]
+        },
+        {
+          "call": "evict",
+          "args": [
+            6
+          ],
+          "expect": [
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "name": "tiebreak: eviction order is arrival order, oldest first",
+      "params": {
+        "budget": 5
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onDecodeStep",
+          "args": [
+            1,
+            null
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            2,
+            null
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            3,
+            null
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            4,
+            null
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            5,
+            null
+          ]
+        },
+        {
+          "call": "evict",
+          "args": [
+            2
+          ],
+          "expect": [
+            0,
+            1,
+            2,
+            3
+          ]
+        },
+        {
+          "call": "keptCount",
+          "args": [],
+          "expect": 2
+        }
+      ]
+    },
+    {
+      "name": "the attention is ignored, and passing it changes nothing",
+      "params": {
+        "budget": 4
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onDecodeStep",
+          "args": [
+            1,
+            [
+              1
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            2,
+            [
+              0.75,
+              0.25
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            3,
+            [
+              0.5,
+              0.25,
+              0.25
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            4,
+            [
+              0.5,
+              0.25,
+              0.125,
+              0.125
+            ]
+          ]
+        },
+        {
+          "call": "evict",
+          "args": [
+            4
+          ],
+          "expect": [
+            0
+          ]
+        }
+      ]
+    }
+  ]
+}

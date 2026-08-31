@@ -1,0 +1,23 @@
+{
+  "name": "web",
+  "version": "0.1.0",
+  "private": true,
+  "description": "The Policybook site: every policy's page, its numbers, and a runner that replays the same harness the benchmarks use.",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^4.2.6",
+    "@astrojs/preact": "^4.0.11",
+    "astro": "^5.7.13",
+    "preact": "^10.26.6"
+  },
+  "devDependencies": {
+    "@policybook/core": "workspace:*",
+    "@policybook/vectors": "workspace:*"
+  }
+}

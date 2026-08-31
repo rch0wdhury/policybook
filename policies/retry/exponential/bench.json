@@ -1,0 +1,19 @@
+{
+  "policy": "retry/exponential",
+  "generatedAt": "2026-01-01T00:00:00Z",
+  "coreVersion": "0.1.0",
+  "traces": {
+    "outage-30s": {
+      "metrics": {
+        "successRate": 0.4,
+        "meanTimeToSuccessMs": 8597,
+        "meanAttempts": 7.63,
+        "p99Attempts": 8,
+        "peakRetryShare": 0.15083
+      },
+      "perf": {
+        "opsPerSec": 12400000
+      }
+    }
+  }
+}

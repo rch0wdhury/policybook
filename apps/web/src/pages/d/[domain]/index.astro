@@ -1,0 +1,228 @@
+---
+/**
+ * A domain's page: the problem, how to choose, and the numbers.
+ *
+ * Everything on it comes from the domain's own README and the committed
+ * bench.json. Nothing is written twice, so the page cannot recommend something
+ * the repository does not (concept.md §13.6).
+ *
+ * Static: no islands at all here.
+ */
+import Base from "../../../layouts/Base.astro";
+import { DOMAIN_HEADLINE, domainBlurb, headlineMetric, loadCatalog } from "../../../lib/catalog";
+import { renderMarkdown, rewriteLinks, tableUnderHeading } from "../../../lib/markdown";
+import { RUNNABLE_DOMAINS } from "../../../lib/simulation";
+
+export function getStaticPaths() {
+  return loadCatalog().map((domain) => ({
+    params: { domain: domain.id },
+    props: { domain },
+  }));
+}
+
+const { domain } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const headline = DOMAIN_HEADLINE[domain.id];
+const readme = domain.readme ?? "";
+
+// retry has no runner, so there is nothing to compare side by side and no page
+// to link to. Its benchmark table below is the whole story.
+const comparable = (RUNNABLE_DOMAINS as readonly string[]).includes(domain.id);
+
+// The decision table is written once, in the README, where it is reviewed
+// beside the policies it describes.
+const decision = tableUnderHeading(readme, /choos|which|use/i);
+const decisionHtml = decision
+  ? await Promise.all(
+      decision.rows.map((row) =>
+        Promise.all(row.map((cell) => renderMarkdown(rewriteLinks(cell, domain.id, base)))),
+      ),
+    )
+  : null;
+
+/** Every trace any policy in this domain was benched over, in a stable order. */
+const traces = [
+  ...new Set(domain.policies.flatMap((p) => Object.keys(p.bench?.traces ?? {}))),
+];
+
+// Best first on the headline metric. An offline bound is a reference line and
+// sorts to the end regardless of its score, because it is not a competitor.
+const ranked = [...domain.policies].sort((a, b) => {
+  const offlineA = a.meta.status === "offline-bound";
+  const offlineB = b.meta.status === "offline-bound";
+  if (offlineA !== offlineB) return offlineA ? 1 : -1;
+
+  const left = headlineMetric(a);
+  const right = headlineMetric(b);
+  if (left === null && right === null) return a.meta.name.localeCompare(b.meta.name);
+  if (left === null) return 1;
+  if (right === null) return -1;
+  return right - left;
+});
+
+function metricFor(policy: (typeof domain.policies)[number], trace: string): string {
+  const value = policy.bench?.traces[trace]?.metrics[headline?.metric ?? ""];
+  return value === undefined ? "-" : value.toFixed(4);
+}
+---
+
+<Base
+  title={`${domain.id} · policybook`}
+  description={`${domain.id} policies: one-page explainers, shared test vectors and reproducible benchmark numbers.`}
+>
+  <div class="wrap">
+    <p class="crumb"><a href={base}>policybook</a> / <span>{domain.id}</span></p>
+    <h1>{domain.id}</h1>
+
+    <p class="lede">{domainBlurb(domain)}</p>
+
+    {
+      comparable && (
+        <p class="compare-cta">
+          <a class="cta" href={`${base}compare/${domain.id}/`}>
+            Run these side by side →
+          </a>
+          <span class="muted">
+            Same trace, same seed, stepped in lockstep.
+          </span>
+        </p>
+      )
+    }
+
+    {
+      decision && decisionHtml && (
+        <section>
+          <h2>Choosing one</h2>
+          <table class="decision">
+            <thead>
+              <tr>{decision.headers.map((header) => <th>{header}</th>)}</tr>
+            </thead>
+            <tbody>
+              {decisionHtml.map((row) => (
+                <tr>
+                  {row.map((cell) => (
+                    <td set:html={cell} />
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </section>
+      )
+    }
+
+    {
+      traces.length > 0 && headline && (
+        <section>
+          <h2>Benchmarks</h2>
+          <p class="muted note">
+            {headline.label} on each trace, measured by this repository's
+            benchmarks.
+          </p>
+          <table>
+            <thead>
+              <tr>
+                <th>Policy</th>
+                {traces.map((trace) => (
+                  <th class="num">
+                    <code>{trace}</code>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {ranked
+                .filter((policy) => policy.bench !== null)
+                .map((policy) => (
+                  <tr class={policy.meta.status === "offline-bound" ? "reference" : undefined}>
+                    <td>
+                      <a href={`${base}p/${policy.domain}/${policy.slug}/`}>{policy.meta.name}</a>
+                      {policy.meta.status === "offline-bound" && (
+                        <span class="badge">reference</span>
+                      )}
+                    </td>
+                    {traces.map((trace) => (
+                      <td class="num">{metricFor(policy, trace)}</td>
+                    ))}
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        </section>
+      )
+    }
+
+    <section>
+      <h2>Every policy</h2>
+      <div class="grid">
+        {
+          ranked.map((policy) => (
+            <a class="card" href={`${base}p/${policy.domain}/${policy.slug}/`}>
+              <h3>
+                {policy.meta.name}
+                {policy.meta.recommended && (
+                  <span class="badge badge-accent">recommended</span>
+                )}
+              </h3>
+              <p class="muted summary">{policy.meta.summary}</p>
+            </a>
+          ))
+        }
+      </div>
+    </section>
+  </div>
+</Base>
+
+<style>
+  .crumb {
+    font-size: var(--text-sm);
+    color: var(--muted);
+    font-family: var(--font-mono);
+  }
+
+  h1 {
+    font-family: var(--font-mono);
+    font-size: var(--text-3xl);
+  }
+
+  .lede {
+    font-size: var(--text-lg);
+    color: var(--muted);
+    max-width: var(--prose-width);
+  }
+
+  section {
+    margin-top: var(--space-12);
+  }
+
+  .note {
+    font-size: var(--text-sm);
+    max-width: var(--prose-width);
+  }
+
+  .decision td:first-child {
+    white-space: nowrap;
+  }
+
+  .decision :global(p) {
+    margin: 0;
+  }
+
+  tr.reference td {
+    color: var(--muted);
+  }
+
+  .card h3 {
+    margin-top: 0;
+    font-size: var(--text-base);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+  }
+
+  .summary {
+    font-size: var(--text-sm);
+  }
+
+</style>

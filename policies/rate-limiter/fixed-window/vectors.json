@@ -1,0 +1,343 @@
+{
+  "policy": "rate-limiter/fixed-window",
+  "version": 1,
+  "cases": [
+    {
+      "name": "smoke: the first `limit` requests pass and the next is refused",
+      "params": {
+        "limit": 5,
+        "windowMs": 1000
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            0
+          ],
+          "expect": true
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            10
+          ],
+          "expect": true
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            20
+          ],
+          "expect": true
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            30
+          ],
+          "expect": true
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            40
+          ],
+          "expect": true
+        },
+        {
+          "call": "countOf",
+          "args": [
+            1,
+            40
+          ],
+          "expect": 5
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            50
+          ],
+          "expect": false
+        },
+        {
+          "call": "retryAfter",
+          "args": [
+            1,
+            50
+          ],
+          "expect": 950
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            1000
+          ],
+          "expect": true
+        }
+      ]
+    },
+    {
+      "name": "boundary: windows are aligned to the epoch, not to the first request",
+      "params": {
+        "limit": 5,
+        "windowMs": 1000
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "allow",
+          "args": [
+            7,
+            1,
+            900
+          ],
+          "expect": true
+        },
+        {
+          "call": "countOf",
+          "args": [
+            7,
+            900
+          ],
+          "expect": 1
+        },
+        {
+          "call": "countOf",
+          "args": [
+            7,
+            1000
+          ],
+          "expect": 0
+        },
+        {
+          "call": "allow",
+          "args": [
+            7,
+            4,
+            950
+          ],
+          "expect": true
+        },
+        {
+          "call": "allow",
+          "args": [
+            7,
+            1,
+            960
+          ],
+          "expect": false
+        },
+        {
+          "call": "retryAfter",
+          "args": [
+            7,
+            960
+          ],
+          "expect": 40
+        },
+        {
+          "call": "allow",
+          "args": [
+            7,
+            5,
+            1000
+          ],
+          "expect": true
+        }
+      ]
+    },
+    {
+      "name": "distinguishing: twice the limit passes across a window boundary",
+      "params": {
+        "limit": 5,
+        "windowMs": 1000
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "allow",
+          "args": [
+            3,
+            5,
+            999
+          ],
+          "expect": true
+        },
+        {
+          "call": "allow",
+          "args": [
+            3,
+            1,
+            999
+          ],
+          "expect": false
+        },
+        {
+          "call": "allow",
+          "args": [
+            3,
+            5,
+            1000
+          ],
+          "expect": true
+        },
+        {
+          "call": "countOf",
+          "args": [
+            3,
+            1000
+          ],
+          "expect": 5
+        },
+        {
+          "call": "allow",
+          "args": [
+            3,
+            1,
+            1000
+          ],
+          "expect": false
+        }
+      ]
+    },
+    {
+      "name": "tiebreak: a request costing exactly the remaining budget is admitted",
+      "params": {
+        "limit": 5,
+        "windowMs": 1000
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "allow",
+          "args": [
+            2,
+            3,
+            0
+          ],
+          "expect": true
+        },
+        {
+          "call": "allow",
+          "args": [
+            2,
+            3,
+            100
+          ],
+          "expect": false
+        },
+        {
+          "call": "allow",
+          "args": [
+            2,
+            2,
+            100
+          ],
+          "expect": true
+        },
+        {
+          "call": "countOf",
+          "args": [
+            2,
+            100
+          ],
+          "expect": 5
+        },
+        {
+          "call": "allow",
+          "args": [
+            2,
+            1,
+            100
+          ],
+          "expect": false
+        },
+        {
+          "call": "allow",
+          "args": [
+            9,
+            6,
+            0
+          ],
+          "expect": false
+        },
+        {
+          "call": "countOf",
+          "args": [
+            9,
+            0
+          ],
+          "expect": 0
+        }
+      ]
+    },
+    {
+      "name": "keys are independent, and each is remembered",
+      "params": {
+        "limit": 5,
+        "windowMs": 1000
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "allow",
+          "args": [
+            1,
+            5,
+            0
+          ],
+          "expect": true
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            0
+          ],
+          "expect": false
+        },
+        {
+          "call": "allow",
+          "args": [
+            2,
+            5,
+            0
+          ],
+          "expect": true
+        },
+        {
+          "call": "stateSize",
+          "expect": 2
+        },
+        {
+          "call": "retryAfter",
+          "args": [
+            99,
+            0
+          ],
+          "expect": 0
+        },
+        {
+          "call": "stateSize",
+          "expect": 2
+        }
+      ]
+    }
+  ]
+}

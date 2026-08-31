@@ -1,0 +1,537 @@
+{
+  "policy": "cache/arc",
+  "version": 1,
+  "cases": [
+    {
+      "name": "smoke: new keys land in the recent list",
+      "params": {
+        "capacity": 4
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onAccess",
+          "args": [
+            "a",
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "b",
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "c",
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "d",
+            false
+          ]
+        },
+        {
+          "call": "listOfKey",
+          "args": [
+            "a"
+          ],
+          "expect": "t1"
+        },
+        {
+          "call": "targetT1",
+          "expect": 0
+        },
+        {
+          "call": "size",
+          "expect": 4
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "a",
+            true
+          ]
+        },
+        {
+          "call": "listOfKey",
+          "args": [
+            "a"
+          ],
+          "expect": "t2"
+        }
+      ]
+    },
+    {
+      "name": "boundary: a capacity of one still tracks both lists",
+      "params": {
+        "capacity": 1
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onAccess",
+          "args": [
+            "a",
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "b",
+            false
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": "a"
+        },
+        {
+          "call": "listOfKey",
+          "args": [
+            "a"
+          ],
+          "expect": "absent"
+        },
+        {
+          "call": "size",
+          "expect": 1
+        }
+      ]
+    },
+    {
+      "name": "distinguishing: a ghost hit retunes the cache, which LRU and 2Q cannot",
+      "params": {
+        "capacity": 4
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onAccess",
+          "args": [
+            "a",
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "b",
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "c",
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "d",
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "a",
+            true
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "b",
+            true
+          ]
+        },
+        {
+          "call": "listOfKey",
+          "args": [
+            "c"
+          ],
+          "expect": "t1"
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "e",
+            false
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": "c"
+        },
+        {
+          "call": "listOfKey",
+          "args": [
+            "c"
+          ],
+          "expect": "b1"
+        },
+        {
+          "call": "targetT1",
+          "expect": 0
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "c",
+            false
+          ]
+        },
+        {
+          "call": "targetT1",
+          "expect": 1
+        },
+        {
+          "call": "listOfKey",
+          "args": [
+            "c"
+          ],
+          "expect": "t2"
+        },
+        {
+          "call": "evict",
+          "expect": "d"
+        }
+      ]
+    },
+    {
+      "name": "tiebreak: replacement takes the oldest of the chosen list",
+      "params": {
+        "capacity": 4
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onAccess",
+          "args": [
+            "a",
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "b",
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "c",
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "d",
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "a",
+            true
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "b",
+            true
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "e",
+            false
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": "c"
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "f",
+            false
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": "d"
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "e",
+            true
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "f",
+            true
+          ]
+        },
+        {
+          "call": "listOfKey",
+          "args": [
+            "e"
+          ],
+          "expect": "t2"
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "g",
+            false
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": "a"
+        },
+        {
+          "call": "listOfKey",
+          "args": [
+            "a"
+          ],
+          "expect": "b2"
+        }
+      ]
+    },
+    {
+      "name": "a hit in B2 moves the target the other way",
+      "params": {
+        "capacity": 4
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onAccess",
+          "args": [
+            "a",
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "b",
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "c",
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "d",
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "a",
+            true
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "b",
+            true
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "e",
+            false
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": "c"
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "c",
+            false
+          ]
+        },
+        {
+          "call": "targetT1",
+          "expect": 1
+        },
+        {
+          "call": "evict",
+          "expect": "d"
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "f",
+            false
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": "a"
+        },
+        {
+          "call": "listOfKey",
+          "args": [
+            "a"
+          ],
+          "expect": "b2"
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "g",
+            false
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": "e"
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "a",
+            false
+          ]
+        },
+        {
+          "call": "targetT1",
+          "expect": 0
+        },
+        {
+          "call": "listOfKey",
+          "args": [
+            "a"
+          ],
+          "expect": "t2"
+        }
+      ]
+    },
+    {
+      "name": "the target never leaves [0, capacity]",
+      "params": {
+        "capacity": 2
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onAccess",
+          "args": [
+            "a",
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "b",
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "c",
+            false
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": "a"
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "d",
+            false
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": "b"
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "e",
+            false
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": "c"
+        },
+        {
+          "call": "targetT1",
+          "expect": 0
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "d",
+            true
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "f",
+            false
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": "e"
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "e",
+            false
+          ]
+        },
+        {
+          "call": "targetT1",
+          "expect": 1
+        }
+      ]
+    }
+  ]
+}

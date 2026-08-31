@@ -1,0 +1,33 @@
+{
+  "id": "cache/s3-fifo",
+  "name": "S3-FIFO",
+  "domain": "cache",
+  "summary": "Three FIFO queues and two bits per entry. One-hit wonders die in a small admission queue. Proven keys graduate to the main one.",
+  "source": {
+    "title": "FIFO queues are all you need for cache eviction",
+    "authors": ["Juncheng Yang", "Yazhuo Zhang", "Ziyue Qiu", "Yao Yue", "Rashmi Vinayak"],
+    "venue": "SOSP",
+    "year": 2023,
+    "url": null
+  },
+  "complexity": { "time": "O(1) amortised", "space": "O(n)" },
+  "params": [
+    {
+      "name": "capacity",
+      "type": "number",
+      "default": 1000,
+      "description": "Maximum number of entries held."
+    },
+    {
+      "name": "smallFraction",
+      "type": "number",
+      "default": 0.1,
+      "description": "Fraction of capacity given to the small admission queue."
+    }
+  ],
+  "tags": ["scan-resistant", "no-locks-on-hit", "ghost-queue", "simple", "admission"],
+  "recommended": false,
+  "ports": ["ts", "python", "c"],
+  "notes": null,
+  "status": "stable"
+}

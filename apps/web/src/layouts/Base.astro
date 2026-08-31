@@ -1,0 +1,253 @@
+---
+/**
+ * The frame every page sits in.
+ *
+ * Header, footer, tokens, and the theme script. No analytics, no fonts fetched
+ * from anywhere, no third-party embeds (concept.md §13.5).
+ *
+ * There is exactly one exception, and it is worth naming rather than letting a
+ * reader discover it in devtools: the star button asks `api.github.com` for the
+ * repository's star count, anonymously, at most once an hour per browser. It is
+ * a plain link with a number on it — nothing is loaded *from* GitHub, and if
+ * the request fails the link still works.
+ */
+import "../styles/tokens.css";
+import StarButton from "../islands/StarButton";
+import { loadCatalog } from "../lib/catalog";
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const domains = loadCatalog();
+const here = Astro.url.pathname;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml" />
+
+    <!--
+      Applied before first paint, so a reader who chose a theme never sees the
+      other one flash. Inline and blocking on purpose: it is four lines, and
+      deferring it would defeat the point. Wrapped in try/catch because
+      localStorage throws outright in some privacy modes rather than returning
+      null — an exception here would leave the page unstyled.
+    -->
+    <script is:inline>
+      try {
+        const saved = localStorage.getItem("policybook-theme");
+        if (saved === "light" || saved === "dark") {
+          document.documentElement.dataset.theme = saved;
+        }
+      } catch {
+        /* no stored preference available; the system setting decides */
+      }
+    </script>
+  </head>
+
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+
+    <header class="site-header">
+      <div class="wrap header-inner">
+        <a class="wordmark" href={base}>policybook</a>
+
+        <nav aria-label="Domains">
+          {
+            domains.map((domain) => (
+              <a
+                href={`${base}d/${domain.id}/`}
+                aria-current={here.includes(`/d/${domain.id}/`) ? "page" : undefined}
+              >
+                {domain.id}
+              </a>
+            ))
+          }
+          <a
+            class="nav-tutorial"
+            href={`${base}tutorial/`}
+            aria-current={here.includes("/tutorial/") ? "page" : undefined}
+          >
+            tutorial
+          </a>
+        </nav>
+
+        <div class="header-actions">
+          <button id="theme-toggle" type="button" aria-label="Switch theme">
+            <span aria-hidden="true" class="theme-icon-light">☀</span>
+            <span aria-hidden="true" class="theme-icon-dark">☾</span>
+          </button>
+          <StarButton client:idle compact />
+        </div>
+      </div>
+    </header>
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <p class="muted">
+          MIT · every number here comes from the repository's own benchmarks ·
+          no analytics, no cookies.
+        </p>
+      </div>
+    </footer>
+
+    <script is:inline>
+      // The toggle cycles light -> dark -> system, so a reader can get back to
+      // "whatever my machine says" rather than being stuck with a choice.
+      (function () {
+        const button = document.getElementById("theme-toggle");
+        if (!button) return;
+
+        button.addEventListener("click", function () {
+          const current = document.documentElement.dataset.theme;
+          const next =
+            current === "light" ? "dark" : current === "dark" ? "" : "light";
+
+          if (next) {
+            document.documentElement.dataset.theme = next;
+          } else {
+            delete document.documentElement.dataset.theme;
+          }
+
+          try {
+            if (next) {
+              localStorage.setItem("policybook-theme", next);
+            } else {
+              localStorage.removeItem("policybook-theme");
+            }
+          } catch {
+            /* the choice still applies to this page; it just will not persist */
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>
+
+<style>
+  .skip {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    background: var(--bg);
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    z-index: 10;
+  }
+
+  .skip:focus {
+    left: var(--space-4);
+    top: var(--space-4);
+  }
+
+  .site-header {
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+    position: sticky;
+    top: 0;
+    z-index: 5;
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+    min-height: 3.5rem;
+    flex-wrap: wrap;
+  }
+
+  .wordmark {
+    font-weight: 680;
+    letter-spacing: -0.03em;
+    color: var(--text);
+    text-decoration: none;
+    font-size: var(--text-lg);
+  }
+
+  nav {
+    display: flex;
+    gap: var(--space-4);
+    font-size: var(--text-sm);
+    flex-wrap: wrap;
+  }
+
+  nav a {
+    color: var(--muted);
+    text-decoration: none;
+    font-family: var(--font-mono);
+  }
+
+  nav a:hover,
+  nav a[aria-current="page"] {
+    color: var(--text);
+  }
+
+  .header-actions {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    font-size: var(--text-sm);
+  }
+
+  .gh {
+    color: var(--muted);
+    text-decoration: none;
+  }
+
+  .gh:hover {
+    color: var(--text);
+  }
+
+  #theme-toggle {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--muted);
+    cursor: pointer;
+    font-size: var(--text-base);
+    line-height: 1;
+    padding: var(--space-1) var(--space-2);
+  }
+
+  #theme-toggle:hover {
+    color: var(--text);
+    border-color: var(--accent);
+  }
+
+  /* Show the icon for the theme you would switch *to*, which is the one that
+   * makes the button's effect obvious before you press it. */
+  .theme-icon-dark { display: none; }
+  :global(:root[data-theme="dark"]) .theme-icon-dark { display: inline; }
+  :global(:root[data-theme="dark"]) .theme-icon-light { display: none; }
+
+  main {
+    min-height: 60vh;
+    padding: var(--space-12) 0 var(--space-16);
+  }
+
+  .site-footer {
+    border-top: 1px solid var(--border);
+    padding: var(--space-8) 0;
+    font-size: var(--text-sm);
+  }
+
+  .site-footer p {
+    margin-bottom: 0;
+  }
+</style>

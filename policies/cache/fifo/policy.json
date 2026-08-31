@@ -1,0 +1,21 @@
+{
+  "id": "cache/fifo",
+  "name": "FIFO",
+  "domain": "cache",
+  "summary": "Evict the key that arrived first, ignoring how often it has been used. The baseline every other cache policy is measured against.",
+  "source": { "type": "folklore" },
+  "complexity": { "time": "O(1)", "space": "O(n)" },
+  "params": [
+    {
+      "name": "capacity",
+      "type": "number",
+      "default": 1000,
+      "description": "Maximum number of entries held."
+    }
+  ],
+  "tags": ["baseline", "simple", "no-locks-on-hit", "predictable"],
+  "recommended": false,
+  "ports": ["ts", "python", "c"],
+  "notes": null,
+  "status": "stable"
+}

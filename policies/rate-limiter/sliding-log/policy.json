@@ -1,0 +1,30 @@
+{
+  "id": "rate-limiter/sliding-log",
+  "name": "Sliding log",
+  "domain": "rate-limiter",
+  "summary": "Keep every admitted request's timestamp and count the ones still inside the window. Exact, with no boundary effect, at a cost of one timestamp per permit per key.",
+  "source": { "type": "folklore" },
+  "complexity": {
+    "time": "O(1) amortised per request",
+    "space": "O(limit) per key: each timestamp is written once and dropped once"
+  },
+  "params": [
+    {
+      "name": "limit",
+      "type": "number",
+      "default": 100,
+      "description": "Requests allowed in any window of windowMs."
+    },
+    {
+      "name": "windowMs",
+      "type": "number",
+      "default": 1000,
+      "description": "Window length, in milliseconds."
+    }
+  ],
+  "tags": ["exact", "no-boundary-burst", "memory-heavy"],
+  "recommended": false,
+  "ports": ["ts", "python", "c"],
+  "notes": "The only limiter in this domain that enforces its limit exactly over every interval, and the most expensive.",
+  "status": "stable"
+}

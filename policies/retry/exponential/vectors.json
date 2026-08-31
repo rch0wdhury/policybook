@@ -1,0 +1,281 @@
+{
+  "policy": "retry/exponential",
+  "version": 1,
+  "cases": [
+    {
+      "name": "smoke: the delay doubles after every failure",
+      "params": {
+        "baseMs": 100,
+        "capMs": 10000,
+        "maxAttempts": 12
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "nextDelay",
+          "args": [
+            1,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 100
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            2,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 200
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            3,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 400
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            4,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 800
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            5,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 1600
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            6,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 3200
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            7,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 6400
+        }
+      ]
+    },
+    {
+      "name": "boundary: the cap holds, and holds forever after",
+      "params": {
+        "baseMs": 100,
+        "capMs": 10000,
+        "maxAttempts": 12
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "nextDelay",
+          "args": [
+            8,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 10000
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            9,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 10000
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            11,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 10000
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            1000000,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": null
+        }
+      ]
+    },
+    {
+      "name": "distinguishing: the sequence is a pure function of the attempt number",
+      "params": {
+        "baseMs": 100,
+        "capMs": 10000,
+        "maxAttempts": 12
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "nextDelay",
+          "args": [
+            3,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 400
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            3,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 400
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            3,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 400
+        }
+      ]
+    },
+    {
+      "name": "tiebreak: give-up at maxAttempts, and on a permanent failure",
+      "params": {
+        "baseMs": 100,
+        "capMs": 10000,
+        "maxAttempts": 3
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "nextDelay",
+          "args": [
+            1,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 100
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            2,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 200
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            3,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": null
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            1,
+            {
+              "status": 400,
+              "retryable": false
+            }
+          ],
+          "expect": null
+        }
+      ]
+    },
+    {
+      "name": "a cap below the base clamps the very first delay",
+      "params": {
+        "baseMs": 5000,
+        "capMs": 1000,
+        "maxAttempts": 4
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "nextDelay",
+          "args": [
+            1,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 1000
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            2,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 1000
+        }
+      ]
+    }
+  ]
+}

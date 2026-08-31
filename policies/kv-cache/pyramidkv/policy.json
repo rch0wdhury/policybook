@@ -1,0 +1,75 @@
+{
+  "id": "kv-cache/pyramidkv",
+  "name": "PyramidKV",
+  "domain": "kv-cache",
+  "summary": "Spend more cache on early layers than late ones. Attention widens near the input and narrows with depth, so a uniform per-layer budget overfeeds the layers that need it least.",
+  "source": {
+    "title": "PyramidKV: Dynamic KV Cache Compression based on Pyramidal Information Funneling",
+    "authors": [
+      "Zefan Cai",
+      "Yichi Zhang",
+      "Bofei Gao",
+      "Yuliang Liu",
+      "Tianyu Liu",
+      "Keming Lu",
+      "Wayne Xiong",
+      "Yue Dong",
+      "Baobao Chang",
+      "Junjie Hu",
+      "Wen Xiao"
+    ],
+    "venue": "arXiv",
+    "year": 2024,
+    "url": "https://arxiv.org/abs/2406.02069"
+  },
+  "complexity": { "time": "O(budget * obsWindow)", "space": "O(budget * obsWindow)" },
+  "params": [
+    {
+      "name": "budget",
+      "type": "number",
+      "default": 512,
+      "description": "Average token positions kept per layer. The pyramid redistributes this across layers."
+    },
+    {
+      "name": "layer",
+      "type": "number",
+      "default": 0,
+      "description": "Which layer this instance serves, counting from the input."
+    },
+    {
+      "name": "numLayers",
+      "type": "number",
+      "default": 1,
+      "description": "Layers the budget is shared across. One means no redistribution."
+    },
+    {
+      "name": "pyramidRatio",
+      "type": "number",
+      "default": 4,
+      "description": "How many times more cache the first layer gets than the last."
+    },
+    {
+      "name": "recentWindow",
+      "type": "number",
+      "default": 32,
+      "description": "The most recent positions, never evicted whatever their score."
+    },
+    {
+      "name": "obsWindow",
+      "type": "number",
+      "default": 16,
+      "description": "How many recent decode steps the score is summed over."
+    },
+    {
+      "name": "poolKernel",
+      "type": "number",
+      "default": 7,
+      "description": "Width of the max-pool across neighbouring kept positions. Must be odd."
+    }
+  ],
+  "tags": ["attention-aware", "per-layer-budget", "observation-window", "max-pooling"],
+  "recommended": false,
+  "ports": ["ts", "python", "c"],
+  "notes": "On a single-layer trace the pyramid allocation is inert and this behaves exactly as SnapKV. See README.",
+  "status": "stable"
+}

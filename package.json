@@ -1,0 +1,40 @@
+{
+  "name": "policybook-root",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.34.5",
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT",
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "check": "tsx scripts/check-catalog.ts && pnpm run eol",
+    "eol": "tsx scripts/check-eol.ts",
+    "gen:vectors": "tsx scripts/gen-vectors.ts",
+    "gen:c-vectors": "tsx scripts/gen-c-vectors.ts",
+    "bench": "tsx scripts/bench.ts",
+    "render": "tsx scripts/render-tables.ts",
+    "perfguard": "tsx scripts/perfguard.ts",
+    "assemble": "tsx scripts/assemble-python.ts && tsx scripts/assemble-c.ts",
+    "web:dev": "pnpm --filter web dev",
+    "web:build": "pnpm --filter web build",
+    "web:check": "tsx apps/web/scripts/check-contrast.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "js-yaml": "^4.1.0",
+    "playwright": "^1.62.1",
+    "tsup": "^8.3.5",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vitest": "^3.0.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
+  }
+}

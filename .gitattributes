@@ -1,0 +1,26 @@
+# Every text file is LF in the repository and in the working tree.
+# See implement.md §2.4 — a CRLF shell script or vectors file is a bug.
+* text=auto eol=lf
+
+# Binary assets: never touch.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.pdf binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary
+*.zip binary
+*.gz binary
+*.xz binary
+*.tar binary
+*.wasm binary
+*.whl binary
+
+# Generated artifacts are still reviewed as text; keep diffs readable.
+*.json text eol=lf
+*.md text eol=lf

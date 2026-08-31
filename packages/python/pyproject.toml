@@ -1,0 +1,66 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "policybook"
+version = "0.1.0a1"
+description = "Runnable decision policies for systems and AI infrastructure: cache eviction, rate limiting, retries, KV-cache eviction."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+authors = [{ name = "Policybook contributors" }]
+keywords = ["cache", "eviction", "rate-limiter", "kv-cache", "algorithms", "policies"]
+# Deliberately empty, and checked by a test rather than left to good intentions:
+# a policy you copy into your own project must not drag a dependency in with it.
+dependencies = []
+
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+  "Topic :: System :: Distributed Computing",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+  "Typing :: Typed",
+]
+
+[project.urls]
+Homepage = "https://github.com/policybook/policybook"
+Documentation = "https://github.com/policybook/policybook#readme"
+Repository = "https://github.com/policybook/policybook"
+Issues = "https://github.com/policybook/policybook/issues"
+Changelog = "https://github.com/policybook/policybook/blob/main/PROGRESS.md"
+
+[tool.hatch.build.targets.wheel]
+packages = ["policybook"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+warn_unreachable = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP", "B", "SIM", "RUF", "ANN", "BLE", "C4", "PIE", "PT"]
+ignore = [
+  # The vector runner deliberately catches broad exceptions to report them.
+  "BLE001",
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Tests may use assert freely and need no return annotations on test functions.
+"tests/*" = ["ANN201", "S101"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

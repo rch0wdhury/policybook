@@ -1,0 +1,11 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+libdir=${prefix}/@CMAKE_INSTALL_LIBDIR@
+includedir=${prefix}/@CMAKE_INSTALL_INCLUDEDIR@
+
+Name: policybook
+Description: @CMAKE_PROJECT_DESCRIPTION@
+URL: https://github.com/policybook/policybook
+Version: @PROJECT_VERSION@
+Libs: -L${libdir} -lpolicybook -lm
+Cflags: -I${includedir} -ffp-contract=off

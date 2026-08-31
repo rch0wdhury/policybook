@@ -1,0 +1,39 @@
+{
+  "id": "cache/2q",
+  "name": "2Q",
+  "domain": "cache",
+  "summary": "Admit to the main cache only on a second access. A ghost queue remembers evicted keys, so scans never reach the working set.",
+  "source": {
+    "title": "2Q: A Low Overhead High Performance Buffer Management Replacement Algorithm",
+    "authors": ["Theodore Johnson", "Dennis Shasha"],
+    "venue": "VLDB",
+    "year": 1994,
+    "url": null
+  },
+  "complexity": { "time": "O(1)", "space": "O(n)" },
+  "params": [
+    {
+      "name": "capacity",
+      "type": "number",
+      "default": 1000,
+      "description": "Maximum number of entries held."
+    },
+    {
+      "name": "kin",
+      "type": "number",
+      "default": 0.25,
+      "description": "Fraction of capacity given to the A1in admission queue."
+    },
+    {
+      "name": "kout",
+      "type": "number",
+      "default": 0.5,
+      "description": "Fraction of capacity worth of keys remembered in the A1out ghost queue."
+    }
+  ],
+  "tags": ["scan-resistant", "admission", "ghost-queue"],
+  "recommended": false,
+  "ports": ["ts", "python", "c"],
+  "notes": null,
+  "status": "stable"
+}

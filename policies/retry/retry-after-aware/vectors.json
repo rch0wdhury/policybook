@@ -1,0 +1,273 @@
+{
+  "policy": "retry/retry-after-aware",
+  "version": 1,
+  "cases": [
+    {
+      "name": "smoke: the server's own estimate is used verbatim",
+      "params": {
+        "baseMs": 100,
+        "capMs": 10000,
+        "maxAttempts": 12
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "nextDelay",
+          "args": [
+            1,
+            {
+              "status": 503,
+              "retryable": true,
+              "retryAfterMs": 250
+            }
+          ],
+          "expect": 250
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            2,
+            {
+              "status": 503,
+              "retryable": true,
+              "retryAfterMs": 1500
+            }
+          ],
+          "expect": 1500
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            7,
+            {
+              "status": 503,
+              "retryable": true,
+              "retryAfterMs": 300
+            }
+          ],
+          "expect": 300
+        }
+      ]
+    },
+    {
+      "name": "boundary: the hint is clamped, and zero means come back now",
+      "params": {
+        "baseMs": 100,
+        "capMs": 5000,
+        "maxAttempts": 12
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "nextDelay",
+          "args": [
+            1,
+            {
+              "status": 503,
+              "retryable": true,
+              "retryAfterMs": 5000
+            }
+          ],
+          "expect": 5000
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            1,
+            {
+              "status": 503,
+              "retryable": true,
+              "retryAfterMs": 5001
+            }
+          ],
+          "expect": 5000
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            1,
+            {
+              "status": 503,
+              "retryable": true,
+              "retryAfterMs": 600000
+            }
+          ],
+          "expect": 5000
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            1,
+            {
+              "status": 503,
+              "retryable": true,
+              "retryAfterMs": 0
+            }
+          ],
+          "expect": 0
+        }
+      ]
+    },
+    {
+      "name": "distinguishing: falls back to full jitter only when nothing was said",
+      "params": {
+        "baseMs": 100,
+        "capMs": 10000,
+        "maxAttempts": 12
+      },
+      "seed": 5,
+      "steps": [
+        {
+          "call": "nextDelay",
+          "args": [
+            3,
+            {
+              "status": 503,
+              "retryable": true,
+              "retryAfterMs": 777
+            }
+          ],
+          "expect": 777
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            3,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 375
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            3,
+            {
+              "status": 503,
+              "retryable": true,
+              "retryAfterMs": 777
+            }
+          ],
+          "expect": 777
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            3,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 9
+        }
+      ]
+    },
+    {
+      "name": "tiebreak: the hinted path consumes no randomness",
+      "params": {
+        "baseMs": 100,
+        "capMs": 10000,
+        "maxAttempts": 12
+      },
+      "seed": 5,
+      "steps": [
+        {
+          "call": "nextDelay",
+          "args": [
+            1,
+            {
+              "status": 503,
+              "retryable": true,
+              "retryAfterMs": 10
+            }
+          ],
+          "expect": 10
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            2,
+            {
+              "status": 503,
+              "retryable": true,
+              "retryAfterMs": 20
+            }
+          ],
+          "expect": 20
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            3,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 375
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            4,
+            {
+              "status": 503,
+              "retryable": true,
+              "retryAfterMs": 30
+            }
+          ],
+          "expect": 30
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            3,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 9
+        }
+      ]
+    },
+    {
+      "name": "giving up ignores the hint entirely",
+      "params": {
+        "baseMs": 100,
+        "capMs": 10000,
+        "maxAttempts": 3
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "nextDelay",
+          "args": [
+            3,
+            {
+              "status": 503,
+              "retryable": true,
+              "retryAfterMs": 100
+            }
+          ],
+          "expect": null
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            1,
+            {
+              "status": 400,
+              "retryable": false,
+              "retryAfterMs": 50
+            }
+          ],
+          "expect": null
+        }
+      ]
+    }
+  ]
+}

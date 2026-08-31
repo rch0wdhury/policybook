@@ -1,0 +1,326 @@
+{
+  "policy": "cache/sieve",
+  "version": 1,
+  "cases": [
+    {
+      "name": "smoke: one-hit wonders are evicted first",
+      "params": {
+        "capacity": 3
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onAccess",
+          "args": [
+            "a",
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "b",
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "c",
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "a",
+            true
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "d",
+            false
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": "b"
+        }
+      ]
+    },
+    {
+      "name": "boundary: a capacity of one still gives a second chance",
+      "params": {
+        "capacity": 1
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onAccess",
+          "args": [
+            "a",
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "a",
+            true
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "b",
+            false
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": "b"
+        },
+        {
+          "call": "size",
+          "expect": 1
+        }
+      ]
+    },
+    {
+      "name": "distinguishing: a survivor stays put, unlike CLOCK",
+      "params": {
+        "capacity": 2
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onAccess",
+          "args": [
+            "a",
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "b",
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "a",
+            true
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "c",
+            false
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": "b"
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "c",
+            true
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "d",
+            false
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": "d"
+        }
+      ]
+    },
+    {
+      "name": "tiebreak: among unvisited entries, the oldest goes first",
+      "params": {
+        "capacity": 4
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onAccess",
+          "args": [
+            "a",
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "b",
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "c",
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "d",
+            false
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": "a"
+        },
+        {
+          "call": "evict",
+          "expect": "b"
+        },
+        {
+          "call": "evict",
+          "expect": "c"
+        },
+        {
+          "call": "evict",
+          "expect": "d"
+        }
+      ]
+    },
+    {
+      "name": "the hand is retained across evictions",
+      "params": {
+        "capacity": 4
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onAccess",
+          "args": [
+            "a",
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "b",
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "c",
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "d",
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "a",
+            true
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": "b"
+        },
+        {
+          "call": "evict",
+          "expect": "c"
+        },
+        {
+          "call": "evict",
+          "expect": "d"
+        },
+        {
+          "call": "evict",
+          "expect": "a"
+        }
+      ]
+    },
+    {
+      "name": "a visited bit buys one pass, not two",
+      "params": {
+        "capacity": 3
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onAccess",
+          "args": [
+            "a",
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "b",
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "c",
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "a",
+            true
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            "a",
+            true
+          ]
+        },
+        {
+          "call": "isVisited",
+          "args": [
+            "a"
+          ],
+          "expect": true
+        },
+        {
+          "call": "evict",
+          "expect": "b"
+        },
+        {
+          "call": "isVisited",
+          "args": [
+            "a"
+          ],
+          "expect": false
+        }
+      ]
+    }
+  ]
+}

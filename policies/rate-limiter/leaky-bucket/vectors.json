@@ -1,0 +1,518 @@
+{
+  "policy": "rate-limiter/leaky-bucket",
+  "version": 1,
+  "cases": [
+    {
+      "name": "smoke: fill the bucket, then one unit of room every 10 ms",
+      "params": {
+        "ratePerSec": 100,
+        "capacity": 5
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "levelOf",
+          "args": [
+            1,
+            0
+          ],
+          "expect": 0
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            0
+          ],
+          "expect": true
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            0
+          ],
+          "expect": true
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            0
+          ],
+          "expect": true
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            0
+          ],
+          "expect": true
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            0
+          ],
+          "expect": true
+        },
+        {
+          "call": "levelOf",
+          "args": [
+            1,
+            0
+          ],
+          "expect": 5
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            0
+          ],
+          "expect": false
+        },
+        {
+          "call": "retryAfter",
+          "args": [
+            1,
+            0
+          ],
+          "expect": 10
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            9
+          ],
+          "expect": false
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            10
+          ],
+          "expect": true
+        },
+        {
+          "call": "levelOf",
+          "args": [
+            1,
+            10
+          ],
+          "expect": 5
+        }
+      ]
+    },
+    {
+      "name": "boundary: the bucket empties and stays empty, however long it idles",
+      "params": {
+        "ratePerSec": 100,
+        "capacity": 5
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "allow",
+          "args": [
+            1,
+            5,
+            0
+          ],
+          "expect": true
+        },
+        {
+          "call": "levelOf",
+          "args": [
+            1,
+            0
+          ],
+          "expect": 5
+        },
+        {
+          "call": "levelOf",
+          "args": [
+            1,
+            50
+          ],
+          "expect": 0
+        },
+        {
+          "call": "levelOf",
+          "args": [
+            1,
+            2592000000
+          ],
+          "expect": 0
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            5,
+            2592000000
+          ],
+          "expect": true
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            2592000000
+          ],
+          "expect": false
+        }
+      ]
+    },
+    {
+      "name": "distinguishing: at its default capacity it smooths to exact spacing",
+      "params": {
+        "ratePerSec": 100,
+        "capacity": 1
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            0
+          ],
+          "expect": true
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            0
+          ],
+          "expect": false
+        },
+        {
+          "call": "retryAfter",
+          "args": [
+            1,
+            0
+          ],
+          "expect": 10
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            9
+          ],
+          "expect": false
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            10
+          ],
+          "expect": true
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            10
+          ],
+          "expect": false
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            19
+          ],
+          "expect": false
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            20
+          ],
+          "expect": true
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            2,
+            10000
+          ],
+          "expect": false
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            10000
+          ],
+          "expect": true
+        }
+      ]
+    },
+    {
+      "name": "tiebreak: a request filling exactly the remaining room is admitted",
+      "params": {
+        "ratePerSec": 100,
+        "capacity": 5
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "allow",
+          "args": [
+            3,
+            3,
+            0
+          ],
+          "expect": true
+        },
+        {
+          "call": "levelOf",
+          "args": [
+            3,
+            0
+          ],
+          "expect": 3
+        },
+        {
+          "call": "allow",
+          "args": [
+            3,
+            3,
+            0
+          ],
+          "expect": false
+        },
+        {
+          "call": "allow",
+          "args": [
+            3,
+            2,
+            0
+          ],
+          "expect": true
+        },
+        {
+          "call": "allow",
+          "args": [
+            3,
+            1,
+            0
+          ],
+          "expect": false
+        },
+        {
+          "call": "allow",
+          "args": [
+            4,
+            6,
+            0
+          ],
+          "expect": false
+        },
+        {
+          "call": "levelOf",
+          "args": [
+            4,
+            0
+          ],
+          "expect": 0
+        }
+      ]
+    },
+    {
+      "name": "the fractional carry survives between drains",
+      "params": {
+        "ratePerSec": 3,
+        "capacity": 2
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "allow",
+          "args": [
+            1,
+            2,
+            0
+          ],
+          "expect": true
+        },
+        {
+          "call": "levelOf",
+          "args": [
+            1,
+            0
+          ],
+          "expect": 2
+        },
+        {
+          "call": "levelOf",
+          "args": [
+            1,
+            333
+          ],
+          "expect": 2
+        },
+        {
+          "call": "levelOf",
+          "args": [
+            1,
+            334
+          ],
+          "expect": 1
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            334
+          ],
+          "expect": true
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            334
+          ],
+          "expect": false
+        },
+        {
+          "call": "retryAfter",
+          "args": [
+            1,
+            334
+          ],
+          "expect": 333
+        }
+      ]
+    },
+    {
+      "name": "equivalence: the mirror of the token bucket's own case",
+      "params": {
+        "ratePerSec": 100,
+        "capacity": 5
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "levelOf",
+          "args": [
+            7,
+            0
+          ],
+          "expect": 0
+        },
+        {
+          "call": "allow",
+          "args": [
+            7,
+            2,
+            0
+          ],
+          "expect": true
+        },
+        {
+          "call": "levelOf",
+          "args": [
+            7,
+            0
+          ],
+          "expect": 2
+        },
+        {
+          "call": "allow",
+          "args": [
+            7,
+            3,
+            0
+          ],
+          "expect": true
+        },
+        {
+          "call": "levelOf",
+          "args": [
+            7,
+            0
+          ],
+          "expect": 5
+        },
+        {
+          "call": "allow",
+          "args": [
+            7,
+            1,
+            0
+          ],
+          "expect": false
+        },
+        {
+          "call": "retryAfter",
+          "args": [
+            7,
+            0
+          ],
+          "expect": 10
+        },
+        {
+          "call": "levelOf",
+          "args": [
+            7,
+            30
+          ],
+          "expect": 2
+        },
+        {
+          "call": "allow",
+          "args": [
+            7,
+            3,
+            30
+          ],
+          "expect": true
+        },
+        {
+          "call": "levelOf",
+          "args": [
+            7,
+            30
+          ],
+          "expect": 5
+        },
+        {
+          "call": "stateSize",
+          "expect": 1
+        }
+      ]
+    }
+  ]
+}

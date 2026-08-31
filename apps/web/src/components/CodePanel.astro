@@ -1,0 +1,85 @@
+---
+/**
+ * A code sample, shown from the file it actually lives in.
+ *
+ * Every sample on the tutorial is imported with Vite's `?raw` and passed
+ * through here, never pasted (concept.md §13.6). That is the whole mechanism:
+ * a sample cannot drift from the code it claims to show, because it *is* the
+ * code it claims to show.
+ *
+ * Excerpts are anchored to text rather than line numbers — see `lib/excerpt.ts`
+ * for why that distinction is the difference between a guarantee and the
+ * appearance of one.
+ *
+ * The panel names its source file and links to it, so a reader can check the
+ * claim rather than take it.
+ */
+import { Code } from "astro:components";
+import { dedent, excerpt, type Anchor } from "../lib/excerpt";
+import { blobUrl } from "../lib/repo";
+
+interface Props {
+  /** The file's contents, from a `?raw` import. */
+  code: string;
+  /** Repository-relative path, shown as the panel's title. */
+  file: string;
+  lang?: "ts" | "json" | "c" | "python" | "bash";
+  /** Show only the part of the file between these anchors. */
+  anchor?: Anchor;
+  /** Not a repository file — a command to run. Shown without a link. */
+  command?: boolean;
+}
+
+const { code, file, lang = "ts", anchor, command = false } = Astro.props;
+
+
+
+// Throws at build time if an anchor has gone, which is the point.
+const shown = anchor ? dedent(excerpt(code, anchor)) : code.trimEnd();
+---
+
+<figure class="code-panel">
+  <figcaption>
+    {
+      command ? (
+        <span class="muted"><code>{file}</code></span>
+      ) : (
+        <a href={blobUrl(file)} rel="noopener noreferrer"><code>{file}</code></a>
+      )
+    }
+  </figcaption>
+  <Code code={shown} lang={lang} theme="css-variables" />
+</figure>
+
+<style>
+  .code-panel {
+    margin: var(--space-4) 0;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .code-panel figcaption {
+    font-size: var(--text-xs);
+    padding: var(--space-2) var(--space-3);
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  .code-panel figcaption a {
+    color: var(--muted);
+    text-decoration: none;
+  }
+
+  .code-panel figcaption a:hover {
+    color: var(--accent);
+  }
+
+  .code-panel :global(pre) {
+    margin: 0;
+    padding: var(--space-3);
+    overflow-x: auto;
+    font-size: var(--text-sm);
+    line-height: var(--leading-normal);
+  }
+</style>

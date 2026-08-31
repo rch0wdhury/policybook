@@ -1,0 +1,169 @@
+---
+/**
+ * Compare policies in a domain, side by side, on the same workload.
+ *
+ * The page every other page is trying to get someone to: a table of final
+ * numbers can tell you who won, but only a run can tell you *when* one policy
+ * pulled ahead, or that two are indistinguishable until the workload shifts.
+ * Those are the facts that change what a reader picks.
+ *
+ * It runs the same policies through the same worker as every policy page. A
+ * comparison whose numbers disagreed with the individual pages would be worse
+ * than no comparison at all.
+ */
+import CompareRunner from "../../../islands/CompareRunner";
+import Base from "../../../layouts/Base.astro";
+import { domainBlurb, loadCatalog } from "../../../lib/catalog";
+import { RUNNABLE_DOMAINS } from "../../../lib/simulation";
+import { TRACES_BY_DOMAIN } from "../../../lib/traces";
+
+export function getStaticPaths() {
+  // retry is measured over independent episodes rather than a stream of
+  // events, so there is nothing to step through and nothing to overlay. Its
+  // domain page carries the benchmark table instead.
+  return loadCatalog()
+    .filter((domain) => (RUNNABLE_DOMAINS as readonly string[]).includes(domain.id))
+    .map((domain) => ({ params: { domain: domain.id }, props: { domain } }));
+}
+
+const { domain } = Astro.props;
+const base = import.meta.env.BASE_URL;
+
+/**
+ * Offline bounds are excluded from the picker.
+ *
+ * OPT needs the whole future to decide, so putting it in a comparison would
+ * invite a reader to treat it as a candidate rather than as the ceiling it is.
+ * Where a domain has such a bound, the runner already draws it as a reference.
+ */
+const choices = domain.policies
+  .filter((policy) => policy.meta.status !== "offline-bound")
+  .map((policy) => ({ slug: policy.slug, name: policy.meta.name }))
+  .sort((a, b) => a.name.localeCompare(b.name));
+
+const names = Object.fromEntries(choices.map((choice) => [choice.slug, choice.name]));
+
+/**
+ * What the page opens on, so it arrives already making an argument.
+ *
+ * Chosen to show a difference in *kind*, not just a gap in a number:
+ *
+ * - cache: SIEVE against LRU, the modern answer against the default one.
+ * - rate-limiter: a token bucket against a leaky bucket on the bursty trace,
+ *   where one admits everything and the other admits a fifth of it.
+ * - kv-cache: TOVA, H2O and StreamingLLM — three different theories of what a
+ *   model needs to remember, whose strips look nothing alike, over a dashed
+ *   sliding window. The sliding window is deliberately *not* a fourth solid
+ *   line, since it is already drawn as the baseline.
+ */
+const OPENING: Record<string, string[]> = {
+  cache: ["sieve", "lru"],
+  "rate-limiter": ["token-bucket", "leaky-bucket"],
+  "kv-cache": ["tova", "h2o", "streaming-llm"],
+};
+const opening = (OPENING[domain.id] ?? [])
+  .filter((slug) => slug in names)
+  .slice(0, 4);
+const initial = opening.length >= 2 ? opening : choices.slice(0, 2).map((c) => c.slug);
+
+const METRICS: Record<string, { key: string; label: string }[]> = {
+  cache: [
+    { key: "hitRate", label: "Hit rate" },
+    { key: "evictions", label: "Evictions" },
+  ],
+  "rate-limiter": [
+    { key: "acceptRate", label: "Accept rate" },
+    { key: "maxBurst100ms", label: "Peak / 100 ms" },
+  ],
+  "kv-cache": [
+    { key: "retainedAttentionMass", label: "Retained mass" },
+    { key: "heavyHitterRecall", label: "Heavy-hitter recall" },
+  ],
+};
+
+const SERIES_LABEL: Record<string, string> = {
+  cache: "hit rate so far",
+  "rate-limiter": "accept rate so far",
+  "kv-cache": "retained attention mass so far",
+};
+
+/** The dashed line, where the domain has one worth drawing. */
+const REFERENCE_LABEL: Record<string, string | undefined> = {
+  cache: "offline optimum",
+  "rate-limiter": undefined,
+  "kv-cache": "sliding window",
+};
+
+const EXPLAINERS: Record<string, string> = {
+  cache:
+    "Every policy sees the same requests in the same order, and each decides for itself what to drop when the cache is full. The chart is the running hit rate, and the dashed line is the best any policy could have managed knowing the whole future.",
+  "rate-limiter":
+    "Every policy sees the same arrivals at the same milliseconds, and each answers yes or no. The chart is the running accept rate. Read the peak-per-100 ms figure beside it too, because two limiters admitting the same fraction can deliver it in very different shapes.",
+  "kv-cache":
+    "Every policy sees the same decoded tokens and the same attention weights, and each chooses what to forget once it is over budget. The chart is the share of the model's attention that survived, and the dashed line is a plain sliding window, which is what you get for free.",
+};
+
+const HEADINGS: Record<string, string> = {
+  cache: "Which cache eviction policy?",
+  "rate-limiter": "Which rate limiter?",
+  "kv-cache": "Which KV-cache eviction policy?",
+};
+
+const title = HEADINGS[domain.id] ?? `Compare ${domain.name}`;
+const traces = TRACES_BY_DOMAIN[domain.id] ?? [];
+---
+
+<Base
+  title={`${title} · policybook`}
+  description={`Run ${domain.name} policies side by side on the same workload, and watch where they differ.`}
+>
+  <div class="wrap">
+  <article class="prose">
+    <nav class="crumbs muted">
+      <a href={`${base}d/${domain.id}/`}>{domain.name}</a> → Compare
+    </nav>
+
+    <h1>{title}</h1>
+    <p class="lede">{domainBlurb(domain)}</p>
+
+    <p>
+      Pick up to four and run them on the same trace. Any difference you see
+      is the policies. The URL holds the whole setup, so you can share a
+      comparison as a link.
+    </p>
+
+    <CompareRunner
+      client:load
+      domain={domain.id}
+      policies={initial}
+      choices={choices}
+      maxPolicies={4}
+      traces={traces}
+      names={names}
+      metrics={METRICS[domain.id] ?? []}
+      explainer={EXPLAINERS[domain.id] ?? ""}
+      seriesLabel={SERIES_LABEL[domain.id] ?? "metric so far"}
+      referenceLabel={REFERENCE_LABEL[domain.id]}
+    />
+
+    <p class="muted">
+      The runner uses the same code as the benchmark tables on{" "}
+      <a href={`${base}d/${domain.id}/`}>the {domain.name} page</a>. It replays
+      a shorter prefix of each trace, so use the tables for the final numbers.
+    </p>
+  </article>
+  </div>
+</Base>
+
+<style>
+  .crumbs {
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-2);
+  }
+
+  .lede {
+    font-size: var(--text-lg);
+    color: var(--muted);
+    line-height: var(--leading-normal);
+  }
+</style>

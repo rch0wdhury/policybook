@@ -1,0 +1,43 @@
+{
+  "policy": "cache/lru",
+  "generatedAt": "2026-01-01T00:00:00Z",
+  "coreVersion": "0.1.0",
+  "traces": {
+    "zipf-1.0-100k": {
+      "metrics": {
+        "hitRate": 0.67464,
+        "evictions": 31536
+      },
+      "perf": {
+        "opsPerSec": 29100000
+      }
+    },
+    "zipf-0.75-1m": {
+      "metrics": {
+        "hitRate": 0.40227,
+        "evictions": 587730
+      },
+      "perf": {
+        "opsPerSec": 17700000
+      }
+    },
+    "scan-heavy": {
+      "metrics": {
+        "hitRate": 0.61388,
+        "evictions": 40701
+      },
+      "perf": {
+        "opsPerSec": 29100000
+      }
+    },
+    "shifting-popularity": {
+      "metrics": {
+        "hitRate": 0.66655,
+        "evictions": 32345
+      },
+      "perf": {
+        "opsPerSec": 29900000
+      }
+    }
+  }
+}

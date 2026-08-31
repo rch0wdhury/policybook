@@ -1,0 +1,48 @@
+{
+  "policy": "rate-limiter/gcra",
+  "generatedAt": "2026-01-01T00:00:00Z",
+  "coreVersion": "0.1.0",
+  "traces": {
+    "steady": {
+      "metrics": {
+        "acceptRate": 1,
+        "maxBurst100ms": 22,
+        "entriesTracked": 1
+      },
+      "perf": {
+        "opsPerSec": 55700000
+      }
+    },
+    "bursty": {
+      "metrics": {
+        "acceptRate": 1,
+        "maxBurst100ms": 62,
+        "entriesTracked": 1
+      },
+      "perf": {
+        "opsPerSec": 65700000
+      }
+    },
+    "many-keys": {
+      "metrics": {
+        "acceptRate": 1,
+        "maxBurst100ms": 69,
+        "jainFairness": 0.007899,
+        "entriesTracked": 7278
+      },
+      "perf": {
+        "opsPerSec": 31000000
+      }
+    },
+    "overload": {
+      "metrics": {
+        "acceptRate": 0.342929,
+        "maxBurst100ms": 36,
+        "entriesTracked": 1
+      },
+      "perf": {
+        "opsPerSec": 73000000
+      }
+    }
+  }
+}

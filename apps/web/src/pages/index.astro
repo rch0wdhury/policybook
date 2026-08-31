@@ -1,0 +1,109 @@
+---
+import Base from "../layouts/Base.astro";
+import { domainBlurb, loadCatalog } from "../lib/catalog";
+
+const domains = loadCatalog();
+const base = import.meta.env.BASE_URL;
+---
+
+<Base
+  title="policybook · runnable decision policies"
+  description="Cache eviction, rate limiting, retries and KV-cache eviction: every policy with a one-page explainer, shared test vectors, and benchmark numbers you can reproduce."
+>
+  <div class="wrap home">
+    <h1>policybook</h1>
+    <p class="lede">
+      Runnable decision policies for caching, rate limiting, retries and
+      KV-cache eviction: explained, benchmarked, and ready to copy, in
+      TypeScript, Python and C.
+    </p>
+
+    <section>
+      <h2>Domains</h2>
+      <ul class="domains">
+        {
+          domains.map((domain) => (
+            <li>
+              <a href={`${base}d/${domain.id}/`}>{domain.id}</a>
+              <span class="blurb">{domainBlurb(domain)}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section>
+      <h2>Use it in your repo</h2>
+      <ol>
+        <li><code>npx policybook list</code> shows what there is</li>
+        <li>
+          <code>npx policybook add cache/sieve --out src/cache</code> copies the
+          one you want (<code>--lang python</code> or <code>--lang c</code> for
+          the other ports)
+        </li>
+        <li>
+          <code>import Sieve from "./cache/sieve"</code>, like any other file
+          in your project.
+        </li>
+      </ol>
+      <p class="muted">
+        Prefer a dependency? <code>pip install policybook</code> gives you every
+        policy in Python (<code>from policybook.cache import Sieve</code>). C is
+        a single header on the releases page. The npm package has the CLI and
+        all the source.
+      </p>
+      <p class="muted">
+        New here? Check out <a href={`${base}tutorial/`}>the tutorial</a>.
+      </p>
+    </section>
+  </div>
+</Base>
+
+<style>
+  .home {
+    max-width: 46rem;
+  }
+
+  h1 {
+    font-size: var(--text-3xl);
+  }
+
+  .lede {
+    font-size: var(--text-lg);
+    color: var(--muted);
+  }
+
+  section {
+    margin-top: var(--space-12);
+  }
+
+  .domains {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .domains li {
+    margin-bottom: var(--space-4);
+  }
+
+  .domains a {
+    font-family: var(--font-mono);
+  }
+
+  .blurb {
+    display: block;
+    color: var(--muted);
+    font-size: var(--text-sm);
+    max-width: var(--prose-width);
+  }
+
+  ol {
+    padding-left: var(--space-6);
+    max-width: var(--prose-width);
+  }
+
+  ol li {
+    margin-bottom: var(--space-3);
+  }
+</style>

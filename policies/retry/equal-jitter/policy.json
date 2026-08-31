@@ -1,0 +1,39 @@
+{
+  "id": "retry/equal-jitter",
+  "name": "Equal jitter",
+  "domain": "retry",
+  "summary": "Half the exponential delay fixed, half of it random. Guarantees a floor that grows with the attempt, where full jitter can return zero every time.",
+  "source": {
+    "title": "Exponential Backoff And Jitter",
+    "authors": ["Marc Brooker"],
+    "venue": "AWS Architecture Blog",
+    "year": 2015,
+    "url": "https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/"
+  },
+  "complexity": { "time": "O(attempt)", "space": "O(1)" },
+  "params": [
+    {
+      "name": "baseMs",
+      "type": "number",
+      "default": 100,
+      "description": "The first ceiling, doubled on each subsequent attempt."
+    },
+    {
+      "name": "capMs",
+      "type": "number",
+      "default": 10000,
+      "description": "No ceiling exceeds this, however many attempts have failed."
+    },
+    {
+      "name": "maxAttempts",
+      "type": "number",
+      "default": 8,
+      "description": "Give up after this many attempts."
+    }
+  ],
+  "tags": ["jittered", "herd-safe", "guaranteed-floor", "aws-2015"],
+  "recommended": false,
+  "ports": ["ts", "python", "c"],
+  "notes": "A delay always falls in [half, 2 x half], averaging about three quarters of the un-jittered ceiling against full jitter's one half. Choose it when the backoff must actually back off.",
+  "status": "stable"
+}

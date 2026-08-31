@@ -1,0 +1,46 @@
+{
+  "id": "kv-cache/h2o",
+  "name": "H2O",
+  "domain": "kv-cache",
+  "summary": "Keep the tokens that have received the most attention so far, plus a recent window. The first policy here that reads attention, and so the first that finds important old tokens, not merely early ones.",
+  "source": {
+    "title": "H2O: Heavy-Hitter Oracle for Efficient Generative Inference of Large Language Models",
+    "authors": [
+      "Zhenyu Zhang",
+      "Ying Sheng",
+      "Tianyi Zhou",
+      "Tianlong Chen",
+      "Lianmin Zheng",
+      "Ruisi Cai",
+      "Zhao Song",
+      "Yuandong Tian",
+      "Christopher Re",
+      "Clark Barrett",
+      "Zhangyang Wang",
+      "Beidi Chen"
+    ],
+    "venue": "NeurIPS",
+    "year": 2023,
+    "url": "https://arxiv.org/abs/2306.14048"
+  },
+  "complexity": { "time": "O(budget)", "space": "O(budget)" },
+  "params": [
+    {
+      "name": "budget",
+      "type": "number",
+      "default": 512,
+      "description": "Maximum token positions kept in the cache."
+    },
+    {
+      "name": "recentWindow",
+      "type": "number",
+      "default": 32,
+      "description": "The most recent positions, never evicted whatever their score."
+    }
+  ],
+  "tags": ["attention-aware", "heavy-hitters", "cumulative-score", "recency"],
+  "recommended": true,
+  "ports": ["ts", "python", "c"],
+  "notes": null,
+  "status": "stable"
+}

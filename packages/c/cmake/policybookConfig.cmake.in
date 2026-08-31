@@ -1,0 +1,22 @@
+@PACKAGE_INIT@
+
+# policybook — runnable decision policies for systems and AI infrastructure.
+#
+#     find_package(policybook REQUIRED)
+#     target_link_libraries(myapp PRIVATE policybook::policybook)
+#
+# The imported target carries the include directory and `-ffp-contract=off`,
+# which is not a style preference: with contraction on, a compiler may fuse a
+# multiply and an add into one rounding, and a policy's decisions would then
+# differ from the TypeScript and Python implementations on the same input.
+
+include(CMakeFindDependencyMacro)
+
+# The trace generators call sqrt. The policies themselves do not.
+if(NOT WIN32)
+    find_library(POLICYBOOK_M_LIBRARY m)
+endif()
+
+include("${CMAKE_CURRENT_LIST_DIR}/policybookTargets.cmake")
+
+check_required_components(policybook)

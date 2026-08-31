@@ -1,0 +1,27 @@
+{
+  "id": "rate-limiter/fixed-window",
+  "name": "Fixed window",
+  "domain": "rate-limiter",
+  "summary": "Count requests inside a clock-aligned window and reset at the edge. Two integers per key, and a client can push twice the limit through across a boundary.",
+  "source": { "type": "folklore" },
+  "complexity": { "time": "O(1)", "space": "O(k) for k keys, two integers each" },
+  "params": [
+    {
+      "name": "limit",
+      "type": "number",
+      "default": 100,
+      "description": "Requests allowed per window."
+    },
+    {
+      "name": "windowMs",
+      "type": "number",
+      "default": 1000,
+      "description": "Window length, in milliseconds."
+    }
+  ],
+  "tags": ["baseline", "simple", "distributable", "boundary-burst"],
+  "recommended": false,
+  "ports": ["ts", "python", "c"],
+  "notes": "Windows are aligned to the epoch rather than to a key's first request, which is what lets separate processes agree on the current window without coordinating.",
+  "status": "stable"
+}

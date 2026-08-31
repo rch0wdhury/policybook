@@ -1,0 +1,37 @@
+{
+  "policy": "kv-cache/scissorhands",
+  "generatedAt": "2026-01-01T00:00:00Z",
+  "coreVersion": "0.1.0",
+  "traces": {
+    "decode-4096@256": {
+      "metrics": {
+        "retainedAttentionMass": 0.641318,
+        "heavyHitterRecall": 0.882339,
+        "evictionCalls": 3840
+      },
+      "perf": {
+        "opsPerSec": 91100
+      }
+    },
+    "decode-4096@512": {
+      "metrics": {
+        "retainedAttentionMass": 0.711377,
+        "heavyHitterRecall": 0.906047,
+        "evictionCalls": 3584
+      },
+      "perf": {
+        "opsPerSec": 84100
+      }
+    },
+    "decode-4096@1024": {
+      "metrics": {
+        "retainedAttentionMass": 0.784746,
+        "heavyHitterRecall": 0.945091,
+        "evictionCalls": 3072
+      },
+      "perf": {
+        "opsPerSec": 75800
+      }
+    }
+  }
+}

@@ -1,0 +1,785 @@
+{
+  "policy": "cache/w-tinylfu",
+  "version": 1,
+  "cases": [
+    {
+      "name": "smoke: new keys land in the window and drain into probation",
+      "params": {
+        "capacity": 4
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onAccess",
+          "args": [
+            1,
+            false
+          ]
+        },
+        {
+          "call": "segmentOf",
+          "args": [
+            1
+          ],
+          "expect": "window"
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            2,
+            false
+          ]
+        },
+        {
+          "call": "segmentOf",
+          "args": [
+            1
+          ],
+          "expect": "probation"
+        },
+        {
+          "call": "segmentOf",
+          "args": [
+            2
+          ],
+          "expect": "window"
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            3,
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            4,
+            false
+          ]
+        },
+        {
+          "call": "size",
+          "expect": 4
+        },
+        {
+          "call": "segmentOf",
+          "args": [
+            4
+          ],
+          "expect": "window"
+        }
+      ]
+    },
+    {
+      "name": "boundary: a capacity of two still separates window from main",
+      "params": {
+        "capacity": 2
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onAccess",
+          "args": [
+            1,
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            2,
+            false
+          ]
+        },
+        {
+          "call": "segmentOf",
+          "args": [
+            1
+          ],
+          "expect": "probation"
+        },
+        {
+          "call": "segmentOf",
+          "args": [
+            2
+          ],
+          "expect": "window"
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            3,
+            false
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": 2
+        },
+        {
+          "call": "size",
+          "expect": 2
+        }
+      ]
+    },
+    {
+      "name": "distinguishing: an unpopular newcomer is refused admission, unlike LRU",
+      "params": {
+        "capacity": 4
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onAccess",
+          "args": [
+            1,
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            2,
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            3,
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            4,
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            5,
+            false
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": 4
+        },
+        {
+          "call": "segmentOf",
+          "args": [
+            1
+          ],
+          "expect": "probation"
+        },
+        {
+          "call": "segmentOf",
+          "args": [
+            4
+          ],
+          "expect": "absent"
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            4,
+            false
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": 5
+        },
+        {
+          "call": "frequencyOf",
+          "args": [
+            4
+          ],
+          "expect": 2
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            6,
+            false
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": 1
+        },
+        {
+          "call": "segmentOf",
+          "args": [
+            4
+          ],
+          "expect": "probation"
+        }
+      ]
+    },
+    {
+      "name": "tiebreak: on equal frequency the incumbent keeps its place",
+      "params": {
+        "capacity": 4
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onAccess",
+          "args": [
+            1,
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            2,
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            3,
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            4,
+            false
+          ]
+        },
+        {
+          "call": "frequencyOf",
+          "args": [
+            1
+          ],
+          "expect": 1
+        },
+        {
+          "call": "frequencyOf",
+          "args": [
+            4
+          ],
+          "expect": 1
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            5,
+            false
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": 4
+        }
+      ]
+    },
+    {
+      "name": "the doorkeeper absorbs a key's first appearance",
+      "params": {
+        "capacity": 4
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "frequencyOf",
+          "args": [
+            7
+          ],
+          "expect": 0
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            7,
+            false
+          ]
+        },
+        {
+          "call": "frequencyOf",
+          "args": [
+            7
+          ],
+          "expect": 1
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            7,
+            true
+          ]
+        },
+        {
+          "call": "frequencyOf",
+          "args": [
+            7
+          ],
+          "expect": 2
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            7,
+            true
+          ]
+        },
+        {
+          "call": "frequencyOf",
+          "args": [
+            7
+          ],
+          "expect": 3
+        },
+        {
+          "call": "frequencyOf",
+          "args": [
+            999
+          ],
+          "expect": 0
+        }
+      ]
+    },
+    {
+      "name": "sketch collisions: readings and admissions both follow the hash",
+      "params": {
+        "capacity": 4
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onAccess",
+          "args": [
+            10,
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            11,
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            12,
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            13,
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            14,
+            false
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": 13
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            15,
+            false
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": 14
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            16,
+            false
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": 15
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            17,
+            false
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": 16
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            18,
+            false
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": 17
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            19,
+            false
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": 10
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            20,
+            false
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": 19
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            21,
+            false
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": 11
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            10,
+            false
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": 21
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            11,
+            false
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": 12
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            12,
+            false
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": 11
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            13,
+            false
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": 12
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            14,
+            false
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": 13
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            15,
+            false
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": 14
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            16,
+            false
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": 15
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            17,
+            false
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": 16
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            18,
+            true
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            19,
+            false
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": 17
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            20,
+            true
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            21,
+            false
+          ]
+        },
+        {
+          "call": "evict",
+          "expect": 19
+        },
+        {
+          "call": "frequencyOf",
+          "args": [
+            10
+          ],
+          "expect": 2
+        },
+        {
+          "call": "frequencyOf",
+          "args": [
+            17
+          ],
+          "expect": 2
+        },
+        {
+          "call": "frequencyOf",
+          "args": [
+            18
+          ],
+          "expect": 3
+        },
+        {
+          "call": "frequencyOf",
+          "args": [
+            20
+          ],
+          "expect": 3
+        },
+        {
+          "call": "frequencyOf",
+          "args": [
+            21
+          ],
+          "expect": 2
+        },
+        {
+          "call": "frequencyOf",
+          "args": [
+            1000
+          ],
+          "expect": 0
+        },
+        {
+          "call": "frequencyOf",
+          "args": [
+            1010
+          ],
+          "expect": 0
+        },
+        {
+          "call": "frequencyOf",
+          "args": [
+            1021
+          ],
+          "expect": 1
+        },
+        {
+          "call": "frequencyOf",
+          "args": [
+            1037
+          ],
+          "expect": 2
+        },
+        {
+          "call": "frequencyOf",
+          "args": [
+            1046
+          ],
+          "expect": 1
+        },
+        {
+          "call": "frequencyOf",
+          "args": [
+            1069
+          ],
+          "expect": 1
+        },
+        {
+          "call": "frequencyOf",
+          "args": [
+            1082
+          ],
+          "expect": 1
+        },
+        {
+          "call": "frequencyOf",
+          "args": [
+            1104
+          ],
+          "expect": 1
+        }
+      ]
+    },
+    {
+      "name": "a second hit in the main cache promotes to protected",
+      "params": {
+        "capacity": 4
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onAccess",
+          "args": [
+            1,
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            2,
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            3,
+            false
+          ]
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            4,
+            false
+          ]
+        },
+        {
+          "call": "segmentOf",
+          "args": [
+            1
+          ],
+          "expect": "probation"
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            1,
+            true
+          ]
+        },
+        {
+          "call": "segmentOf",
+          "args": [
+            1
+          ],
+          "expect": "protected"
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            2,
+            true
+          ]
+        },
+        {
+          "call": "segmentOf",
+          "args": [
+            2
+          ],
+          "expect": "protected"
+        },
+        {
+          "call": "onAccess",
+          "args": [
+            3,
+            true
+          ]
+        },
+        {
+          "call": "segmentOf",
+          "args": [
+            3
+          ],
+          "expect": "protected"
+        },
+        {
+          "call": "segmentOf",
+          "args": [
+            1
+          ],
+          "expect": "probation"
+        }
+      ]
+    }
+  ]
+}

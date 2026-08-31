@@ -1,0 +1,33 @@
+{
+  "id": "kv-cache/tova",
+  "name": "TOVA",
+  "domain": "kv-cache",
+  "summary": "Drop whichever token the model just stopped looking at. Only the latest step's attention counts, so nothing a position did earlier defends it: the most forgetful policy here, and the most responsive.",
+  "source": {
+    "title": "Transformers are Multi-State RNNs",
+    "authors": [
+      "Matanel Oren",
+      "Michael Hassid",
+      "Nir Yarden",
+      "Yossi Adi",
+      "Roy Schwartz"
+    ],
+    "venue": "EMNLP",
+    "year": 2024,
+    "url": "https://arxiv.org/abs/2401.06104"
+  },
+  "complexity": { "time": "O(budget)", "space": "O(budget)" },
+  "params": [
+    {
+      "name": "budget",
+      "type": "number",
+      "default": 512,
+      "description": "Maximum token positions kept in the cache."
+    }
+  ],
+  "tags": ["attention-aware", "last-step", "no-accumulation", "adaptive"],
+  "recommended": false,
+  "ports": ["ts", "python", "c"],
+  "notes": null,
+  "status": "stable"
+}

@@ -1,0 +1,247 @@
+{
+  "policy": "retry/decorrelated-jitter",
+  "version": 1,
+  "cases": [
+    {
+      "name": "smoke: the walk starts at base and climbs from its own last step",
+      "params": {
+        "baseMs": 100,
+        "capMs": 10000,
+        "maxAttempts": 12
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "previousDelay",
+          "expect": 100
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            1,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 191
+        },
+        {
+          "call": "previousDelay",
+          "expect": 191
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            2,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 203
+        },
+        {
+          "call": "previousDelay",
+          "expect": 203
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            3,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 501
+        },
+        {
+          "call": "previousDelay",
+          "expect": 501
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            4,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 346
+        },
+        {
+          "call": "previousDelay",
+          "expect": 346
+        }
+      ]
+    },
+    {
+      "name": "boundary: the walk stops at the cap and stays there",
+      "params": {
+        "baseMs": 100,
+        "capMs": 120,
+        "maxAttempts": 10
+      },
+      "seed": 5,
+      "steps": [
+        {
+          "call": "nextDelay",
+          "args": [
+            1,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 120
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            2,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 120
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            3,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 120
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            4,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 120
+        },
+        {
+          "call": "previousDelay",
+          "expect": 120
+        }
+      ]
+    },
+    {
+      "name": "distinguishing: the attempt number does not determine the delay",
+      "params": {
+        "baseMs": 100,
+        "capMs": 10000,
+        "maxAttempts": 12
+      },
+      "seed": 7,
+      "steps": [
+        {
+          "call": "nextDelay",
+          "args": [
+            3,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 267
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            3,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 410
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            3,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 417
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            3,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 390
+        },
+        {
+          "call": "previousDelay",
+          "expect": 390
+        }
+      ]
+    },
+    {
+      "name": "tiebreak: give-up beats the draw, and leaves the walk untouched",
+      "params": {
+        "baseMs": 100,
+        "capMs": 10000,
+        "maxAttempts": 3
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "nextDelay",
+          "args": [
+            3,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": null
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            1,
+            {
+              "status": 400,
+              "retryable": false
+            }
+          ],
+          "expect": null
+        },
+        {
+          "call": "previousDelay",
+          "expect": 100
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            1,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 191
+        }
+      ]
+    }
+  ]
+}

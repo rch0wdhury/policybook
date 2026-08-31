@@ -1,0 +1,27 @@
+{
+  "id": "rate-limiter/token-bucket",
+  "name": "Token bucket",
+  "domain": "rate-limiter",
+  "summary": "Spend from a balance that refills at a steady rate and stops at a burst. Continuous refill, no window seam, and an exact retry hint: the default rate limiter.",
+  "source": { "type": "folklore" },
+  "complexity": { "time": "O(1)", "space": "O(k) for k keys, three integers each" },
+  "params": [
+    {
+      "name": "ratePerSec",
+      "type": "number",
+      "default": 100,
+      "description": "Tokens added per second."
+    },
+    {
+      "name": "burst",
+      "type": "number",
+      "default": 100,
+      "description": "Maximum tokens a key can hold, and so the largest burst it can spend."
+    }
+  ],
+  "tags": ["recommended", "bursty-friendly", "no-window", "memory-light", "exact-retry"],
+  "recommended": true,
+  "ports": ["ts", "python", "c"],
+  "notes": "At equal parameters this is the leaky bucket exactly, under the substitution tokens = capacity - level. A vector in each policy pins the equivalence. The ledger is integer arithmetic with a thousandths-of-a-token carry, so the three ports decide identically.",
+  "status": "stable"
+}

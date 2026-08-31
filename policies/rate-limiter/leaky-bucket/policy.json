@@ -1,0 +1,27 @@
+{
+  "id": "rate-limiter/leaky-bucket",
+  "name": "Leaky bucket",
+  "domain": "rate-limiter",
+  "summary": "A level that rises with each request and drains at a steady rate. The same algorithm as the token bucket, stated as smoothing rather than as a budget.",
+  "source": { "type": "folklore" },
+  "complexity": { "time": "O(1)", "space": "O(k) for k keys, three integers each" },
+  "params": [
+    {
+      "name": "ratePerSec",
+      "type": "number",
+      "default": 100,
+      "description": "Units drained per second."
+    },
+    {
+      "name": "capacity",
+      "type": "number",
+      "default": 1,
+      "description": "Maximum level, and so the largest burst that fits at once."
+    }
+  ],
+  "tags": ["smoothing", "no-window", "memory-light", "exact-retry"],
+  "recommended": false,
+  "ports": ["ts", "python", "c"],
+  "notes": "At equal parameters this is the token bucket exactly, under the substitution tokens = capacity - level. A vector in each policy pins the equivalence and a cross-policy test checks it over a random trace. The default capacity is 1 rather than the domain's reference burst of 100, because a caller who wants a burst allowance is describing a token bucket.",
+  "status": "stable"
+}

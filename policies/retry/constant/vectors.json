@@ -1,0 +1,199 @@
+{
+  "policy": "retry/constant",
+  "version": 1,
+  "cases": [
+    {
+      "name": "smoke: the same delay every time, then give up",
+      "params": {
+        "baseMs": 100,
+        "maxAttempts": 4
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "nextDelay",
+          "args": [
+            1,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 100
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            2,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 100
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            3,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 100
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            4,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": null
+        }
+      ]
+    },
+    {
+      "name": "boundary: give-up is at maxAttempts, not one either side of it",
+      "params": {
+        "baseMs": 250,
+        "maxAttempts": 1
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "nextDelay",
+          "args": [
+            1,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": null
+        }
+      ]
+    },
+    {
+      "name": "distinguishing: the delay never changes, however long the outage runs",
+      "params": {
+        "baseMs": 100,
+        "maxAttempts": 10
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "nextDelay",
+          "args": [
+            1,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 100
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            5,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 100
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            9,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 100
+        }
+      ]
+    },
+    {
+      "name": "tiebreak: a non-retryable failure gives up whatever the attempt number",
+      "params": {
+        "baseMs": 100,
+        "maxAttempts": 4
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "nextDelay",
+          "args": [
+            1,
+            {
+              "status": 400,
+              "retryable": false
+            }
+          ],
+          "expect": null
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            1,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 100
+        }
+      ]
+    },
+    {
+      "name": "a zero delay is a legitimate configuration",
+      "params": {
+        "baseMs": 0,
+        "maxAttempts": 3
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "nextDelay",
+          "args": [
+            1,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 0
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            2,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 0
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            3,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": null
+        }
+      ]
+    }
+  ]
+}

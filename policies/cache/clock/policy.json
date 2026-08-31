@@ -1,0 +1,27 @@
+{
+  "id": "cache/clock",
+  "name": "CLOCK",
+  "domain": "cache",
+  "summary": "Approximate LRU with one reference bit per entry. A hit sets a bit and writes nothing shared, so reads need no lock.",
+  "source": {
+    "title": "A paging experiment with the Multics system",
+    "authors": ["Fernando J. Corbató"],
+    "venue": "MIT Project MAC",
+    "year": 1968,
+    "url": null
+  },
+  "complexity": { "time": "O(1) amortised", "space": "O(n)" },
+  "params": [
+    {
+      "name": "capacity",
+      "type": "number",
+      "default": 1000,
+      "description": "Maximum number of entries held."
+    }
+  ],
+  "tags": ["recency", "no-locks-on-hit", "simple", "recommended"],
+  "recommended": true,
+  "ports": ["ts", "python", "c"],
+  "notes": null,
+  "status": "stable"
+}

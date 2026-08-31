@@ -1,0 +1,39 @@
+{
+  "id": "retry/decorrelated-jitter",
+  "name": "Decorrelated jitter",
+  "domain": "retry",
+  "summary": "A random walk that grows from the last delay rather than the attempt number. The only stateful policy here, and the one that disperses a fleet most thoroughly.",
+  "source": {
+    "title": "Exponential Backoff And Jitter",
+    "authors": ["Marc Brooker"],
+    "venue": "AWS Architecture Blog",
+    "year": 2015,
+    "url": "https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/"
+  },
+  "complexity": { "time": "O(1)", "space": "O(1): one integer of state" },
+  "params": [
+    {
+      "name": "baseMs",
+      "type": "number",
+      "default": 100,
+      "description": "The floor of every delay, and where the walk starts."
+    },
+    {
+      "name": "capMs",
+      "type": "number",
+      "default": 10000,
+      "description": "No delay exceeds this, however far the walk has climbed."
+    },
+    {
+      "name": "maxAttempts",
+      "type": "number",
+      "default": 8,
+      "description": "Give up after this many attempts."
+    }
+  ],
+  "tags": ["jittered", "herd-safe", "stateful", "aws-2015"],
+  "recommended": false,
+  "ports": ["ts", "python", "c"],
+  "notes": "The only policy in this domain that remembers anything between calls, and the only one that ignores the attempt number entirely except for the give-up check. Because whole schedules diverge rather than individual attempts, it disperses a fleet more thoroughly than any per-call draw.",
+  "status": "stable"
+}

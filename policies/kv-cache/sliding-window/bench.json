@@ -1,0 +1,37 @@
+{
+  "policy": "kv-cache/sliding-window",
+  "generatedAt": "2026-01-01T00:00:00Z",
+  "coreVersion": "0.1.0",
+  "traces": {
+    "decode-4096@256": {
+      "metrics": {
+        "retainedAttentionMass": 0.596637,
+        "heavyHitterRecall": 0.742171,
+        "evictionCalls": 3840
+      },
+      "perf": {
+        "opsPerSec": 97200
+      }
+    },
+    "decode-4096@512": {
+      "metrics": {
+        "retainedAttentionMass": 0.655518,
+        "heavyHitterRecall": 0.774107,
+        "evictionCalls": 3584
+      },
+      "perf": {
+        "opsPerSec": 96100
+      }
+    },
+    "decode-4096@1024": {
+      "metrics": {
+        "retainedAttentionMass": 0.754149,
+        "heavyHitterRecall": 0.833734,
+        "evictionCalls": 3072
+      },
+      "perf": {
+        "opsPerSec": 91100
+      }
+    }
+  }
+}

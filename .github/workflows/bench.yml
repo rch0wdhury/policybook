@@ -1,0 +1,82 @@
+name: Bench
+
+# Regenerates the benchmark numbers and the tables built from them, and commits
+# the result.
+#
+# The tables in every README are generated from measurements rather than written
+# by hand (concept.md §8.4), so they have to be regenerated when a policy or a
+# trace changes. Doing it here rather than asking a contributor to remember
+# means the committed numbers always came from the same machine shape, which is
+# the only way the throughput column means anything at all.
+#
+# `metrics` are deterministic and are asserted by tests; `perf` is
+# machine-dependent and is never asserted.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# One at a time. Two of these racing would each commit a full set of numbers
+# and the second would conflict on every bench.json in the repository.
+concurrency:
+  group: bench
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+env:
+  NODE_VERSION: "22"
+  PNPM_VERSION: "10"
+
+jobs:
+  bench:
+    name: Benchmark and render
+    runs-on: ubuntu-latest
+    # This job pushes a commit, and that commit must not start another run of
+    # this job. The push below carries `[skip ci]`, and this is the second half
+    # of that guard: even if the marker were ever dropped, a run triggered by
+    # our own committer would stop here.
+    if: github.actor != 'github-actions[bot]' && !contains(github.event.head_commit.message, '[skip ci]')
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Benchmark every domain
+        run: pnpm bench --all
+
+      - name: Render the tables
+        run: pnpm render
+
+      # Throughput varies with whatever else the runner is doing, so a
+      # regression here is reported and not enforced. The guard exists to catch
+      # a policy that became ten times slower, not one that became ten percent
+      # slower.
+      - name: Perf guard (informational)
+        continue-on-error: true
+        run: pnpm perfguard --all
+
+      - name: Commit if anything moved
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          if git diff --quiet; then
+            echo "benchmarks unchanged."
+            exit 0
+          fi
+
+          git add -A
+          git commit -m "bench: refresh measurements and tables [skip ci]"
+          git push

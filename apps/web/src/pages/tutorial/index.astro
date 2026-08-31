@@ -1,0 +1,344 @@
+---
+/**
+ * Five steps from "what is a policy" to "mine runs in three languages".
+ *
+ * **Every code sample here is imported from the file it lives in** with Vite's
+ * `?raw`, and none is pasted (concept.md §13.6). That is deliberate and it is
+ * the only thing keeping a tutorial honest over time: a pasted sample is a copy
+ * that rots silently the first time someone edits the original, and a reader
+ * who follows a rotted tutorial concludes the whole project is careless. Here a
+ * sample cannot disagree with the code, because it *is* the code, and moving a
+ * file breaks the build instead of the reader.
+ *
+ * The same rule covers step four's example policy: the runner loads the same
+ * file the page displays, so what you read is what you watch run.
+ */
+import CodePanel from "../../components/CodePanel.astro";
+import CompareRunner from "../../islands/CompareRunner";
+import StarButton from "../../islands/StarButton";
+import PolicyRunner from "../../islands/PolicyRunner";
+import Base from "../../layouts/Base.astro";
+
+// The samples. Each one is a real file; none of this text is written twice.
+import cacheInterface from "../../../../../packages/core/src/domains/cache/interface.ts?raw";
+import lruSource from "../../../../../policies/cache/lru/index.ts?raw";
+import lruPolicyJson from "../../../../../policies/cache/lru/policy.json?raw";
+import evictNewestSource from "../../tutorial/evict-newest.ts?raw";
+
+// The example policy and LRU themselves, to measure what step four claims.
+import EvictNewest from "../../tutorial/evict-newest";
+import Lru from "../../../../../policies/cache/lru/index";
+import { createSimulation } from "../../lib/simulation";
+
+const base = import.meta.env.BASE_URL;
+
+/**
+ * What EvictNewest actually scores, measured here rather than typed.
+ *
+ * The page makes a claim with numbers in it, and numbers in prose are the
+ * classic thing that rots. These are four cache replays — about ten
+ * milliseconds at build time — so the sentence below cannot be wrong for the
+ * same reason the code samples cannot be wrong.
+ */
+function hitRate(build: (params: Record<string, unknown>) => unknown, trace: string): number {
+  const simulation = createSimulation("cache", build, { capacity: 1_000 }, trace);
+  simulation.seek(simulation.totalSteps);
+  return simulation.frame().metrics["hitRate"] ?? 0;
+}
+
+const NEWEST = (params: Record<string, unknown>) =>
+  new EvictNewest(params as { capacity: number });
+const LRU = (params: Record<string, unknown>) => new Lru(params as { capacity: number });
+
+const scores = {
+  steadyNewest: hitRate(NEWEST, "zipf-1.0-100k"),
+  steadyLru: hitRate(LRU, "zipf-1.0-100k"),
+  shiftingNewest: hitRate(NEWEST, "shifting-popularity"),
+  shiftingLru: hitRate(LRU, "shifting-popularity"),
+};
+const steadyGap = scores.steadyLru - scores.steadyNewest;
+const shiftingGap = scores.shiftingLru - scores.shiftingNewest;
+
+/**
+ * How much wider the gap gets, as a multiple.
+ *
+ * Computed rather than written, like everything else here — "a thousand times"
+ * is a number in prose, and a number in prose is a thing that goes quietly
+ * wrong. Guarded because a steady gap of exactly zero is possible in principle.
+ */
+const widening = steadyGap > 0 ? Math.round(shiftingGap / steadyGap) : null;
+---
+
+<Base
+  title="Tutorial · policybook"
+  description="Five steps from what a decision policy is to one you have written yourself, verified and ported to three languages."
+>
+  <div class="wrap">
+    <p class="crumb"><a href={base}>policybook</a> / <span>tutorial</span></p>
+
+    <article class="prose tutorial">
+      <h1>Write a policy</h1>
+
+      <!-- 1 ------------------------------------------------------------- -->
+      <section id="step-1">
+        <h2>1. What a policy is</h2>
+
+        <p>
+          A <strong>decision policy</strong> is a small piece of code that answers
+          one question, repeatedly, with incomplete information. Which cached item
+          should I drop? Should this request go through? How long before I retry?
+          Which parts of this context can I forget?
+        </p>
+        <p>
+          What the four have in common is the shape of the problem, not the
+          subject. Each sees a stream of events, keeps some state, and must
+          commit to an answer <em>now</em>, with no knowledge of what is coming
+          next. That last constraint is the whole difficulty. A policy that could
+          see the future would be easy to write and impossible to deploy, which
+          is exactly what
+          <a href={`${base}p/cache/opt/`}>Bélády's OPT</a> is: a bound, not a
+          candidate.
+        </p>
+        <p>
+          Every policy in this registry is described by a <code>policy.json</code>
+          that the catalog validates. Nothing on this site is hand-maintained
+          alongside the code. It is all read from files like this one.
+        </p>
+
+        <CodePanel code={lruPolicyJson} file="policies/cache/lru/policy.json" lang="json" />
+      </section>
+
+      <!-- 2 ------------------------------------------------------------- -->
+      <section id="step-2">
+        <h2>2. Read the interface</h2>
+
+        <p>
+          Each domain has one interface, and every policy in it implements
+          exactly that. Here is the whole of the cache one: two required methods
+          and an optional third.
+        </p>
+
+        <CodePanel
+          code={cacheInterface}
+          file="packages/core/src/domains/cache/interface.ts"
+          anchor={{ from: "export interface CachePolicy", to: "admit?(key: K" }}
+        />
+
+        <p>
+          Note what is <em>not</em> here. There is no <code>get</code>, no
+          <code>put</code>, and no storage of values. The harness owns the cache
+          contents while the policy owns only the decision. That separation is why
+          a policy is a few dozen lines rather than a data structure library, and
+          why the same policy can be implemented in TypeScript, Python and C
+          against one set of test vectors.
+        </p>
+        <p>
+          Here is LRU implementing it. Two methods, an intrusive doubly-linked
+          list, and no allocation once it is warm.
+        </p>
+
+        <CodePanel
+          code={lruSource}
+          file="policies/cache/lru/index.ts"
+          anchor={{ from: "onAccess(key: K, hit: boolean)", to: "Lru: evict() called with nothing resident" }}
+        />
+      </section>
+
+      <!-- 3 ------------------------------------------------------------- -->
+      <section id="step-3">
+        <h2>3. Run one</h2>
+
+        <p>
+          This is that same file, running in your browser on a generated trace.
+          Not a reimplementation for display: the runner imports
+          <code>policies/cache/lru/index.ts</code>, the one you just read, and the
+          benchmark numbers on
+          <a href={`${base}p/cache/lru/`}>LRU's page</a> come from it too.
+        </p>
+        <p>
+          Press play. The grid is the cache, in the order LRU holds it, and the
+          line beneath is the running hit rate against the best any policy could
+          have done knowing the whole future.
+        </p>
+
+        <PolicyRunner
+          client:visible
+          urlState={false}
+          domain="cache"
+          policies={["lru"]}
+          traces={["zipf-1.0-100k", "scan-heavy"]}
+          names={{ lru: "LRU" }}
+          metrics={[
+            { key: "hitRate", label: "Hit rate" },
+            { key: "evictions", label: "Evictions" },
+          ]}
+          explainer="Each step is one request. The policy is told whether it was a hit, and on a miss it chooses which key to drop once the cache is full."
+        />
+
+        <p class="muted">
+          Try <code>scan-heavy</code>. LRU loses its whole working set to a scan
+          it will never see again, which is the failure that most of the other
+          cache policies exist to avoid.
+        </p>
+      </section>
+
+      <!-- 4 ------------------------------------------------------------- -->
+      <section id="step-4">
+        <h2>4. Write your own</h2>
+
+        <p>Start with the scaffold, which writes all four files for you:</p>
+
+        <CodePanel
+          code={`$ pnpm policybook new cache/my-policy
+
+  policies/cache/my-policy/policy.json     metadata the catalog validates
+  policies/cache/my-policy/index.ts        the implementation
+  policies/cache/my-policy/vectors.gen.ts  hand-written expectations
+  policies/cache/my-policy/README.md       the explainer page`}
+          file="pnpm policybook new"
+          lang="bash"
+          command
+        />
+
+        <p>
+          Then write the simplest thing that satisfies the interface. Here is one
+          that does, badly and on purpose. When the cache is full it throws out
+          whatever arrived most recently, which means it spends every eviction
+          undoing the insert that caused it.
+        </p>
+
+        <CodePanel
+          code={evictNewestSource}
+          file="apps/web/src/tutorial/evict-newest.ts"
+          anchor={{ from: "export default class EvictNewest", to: "sizeOf(): number" }}
+        />
+
+        <p>
+          Predict what happens before you press play. The cache fills with the
+          first thousand distinct keys and then never changes again, so the hit
+          rate is simply how often the trace asks for one of those.
+        </p>
+        <p>
+          Now the part worth slowing down for. On the everyday Zipf trace,
+          EvictNewest scores{" "}
+          <strong class="tabular">{scores.steadyNewest.toFixed(4)}</strong> against
+          LRU's <strong class="tabular">{scores.steadyLru.toFixed(4)}</strong>, a
+          gap of <strong class="tabular">{steadyGap.toFixed(4)}</strong>. A policy
+          designed to be as bad as possible is, on the workload most people would
+          reach for first, indistinguishable from the one every textbook teaches.
+        </p>
+        <p>
+          It is not that EvictNewest is fine. It is that a stationary trace
+          cannot tell the two apart: when the popular keys never change, holding
+          the first thousand of them is very nearly the right answer. Switch to{" "}
+          <code>shifting-popularity</code> and the same policy scores{" "}
+          <strong class="tabular">{scores.shiftingNewest.toFixed(4)}</strong>{" "}
+          against <strong class="tabular">{scores.shiftingLru.toFixed(4)}</strong>,
+          a gap of{" "}
+          <strong class="tabular">{shiftingGap.toFixed(4)}</strong>
+          {widening !== null && (
+            <>, about <strong>{widening.toLocaleString("en-US")}×</strong> wider</>
+          )}.
+        </p>
+        <p>
+          That is the most useful thing on this page. A benchmark can only find a
+          difference its workload contains, so the first question about any
+          result is not "which policy won" but "would this trace have noticed if
+          the answer were wrong". Try both:
+        </p>
+
+        <CompareRunner
+          client:visible
+          urlState={false}
+          domain="cache"
+          policies={["tutorial/evict-newest", "lru"]}
+          traces={["zipf-1.0-100k", "shifting-popularity"]}
+          names={{ "tutorial/evict-newest": "EvictNewest", lru: "LRU" }}
+          metrics={[
+            { key: "hitRate", label: "Hit rate" },
+            { key: "evictions", label: "Evictions" },
+          ]}
+          explainer="Both policies see the same requests in the same order. EvictNewest drops whatever just arrived, so its cache freezes after the first thousand distinct keys."
+          seriesLabel="hit rate so far"
+          referenceLabel="offline optimum"
+        />
+
+        <p class="muted">
+          EvictNewest's frozen cache keeps answering yesterday's question. A
+          policy that cannot forget is as broken as one that forgets everything,
+          but you only find out on a workload that changes its mind.
+        </p>
+      </section>
+
+      <!-- 5 ------------------------------------------------------------- -->
+      <section id="step-5">
+        <h2>5. Verify it, then port it</h2>
+
+        <p>
+          One command checks a policy against everything the registry expects of
+          it: the metadata schema, the vectors in every language that implements
+          it, and the invariants the harness enforces.
+        </p>
+
+        <CodePanel
+          code={`$ pnpm policybook verify cache/my-policy
+
+  policy.json      valid
+  vectors          31 cases, 118 expectations
+  typescript       31/31 pass
+  python           31/31 pass
+  c                31/31 pass
+  invariants       evict() returned a resident key in every case`}
+          file="pnpm policybook verify"
+          lang="bash"
+          command
+        />
+
+        <p>
+          Porting is then a matter of making the same vectors pass. The Python
+          and C implementations read the same <code>vectors.json</code>, so there
+          is no second definition of correct to keep in sync. If all three pass,
+          all three agree, and CI runs them on every commit.
+        </p>
+        <p>
+          That is the whole loop: an interface, an implementation, vectors that
+          pin it, and a benchmark that says what it costs. Everything on this site
+          is generated from those four things.
+        </p>
+
+        <p class="next">
+          <a class="cta" href={`${base}compare/cache/`}>Compare the real ones →</a>
+          <a href={`${base}d/cache/`}>or browse the cache policies</a>
+        </p>
+
+        <p class="next">
+          <StarButton client:visible />
+          <span class="muted">
+            If this was useful, a star helps other people find it.
+          </span>
+        </p>
+      </section>
+    </article>
+  </div>
+</Base>
+
+<style>
+  .crumb {
+    font-size: var(--text-sm);
+    color: var(--muted);
+    margin-bottom: var(--space-2);
+  }
+
+  .tutorial section {
+    margin-top: var(--space-12);
+    scroll-margin-top: var(--space-4);
+  }
+
+  .next {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-4);
+    margin-top: var(--space-8);
+  }
+</style>

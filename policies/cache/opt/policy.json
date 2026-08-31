@@ -1,0 +1,33 @@
+{
+  "id": "cache/opt",
+  "name": "Bélády OPT",
+  "domain": "cache",
+  "summary": "Evict whatever is needed furthest in the future. Not deployable, since it needs the whole trace, but it is the bound every other policy is read against.",
+  "source": {
+    "title": "A study of replacement algorithms for a virtual-storage computer",
+    "authors": ["László A. Bélády"],
+    "venue": "IBM Systems Journal",
+    "year": 1966,
+    "url": null
+  },
+  "complexity": { "time": "O(log n)", "space": "O(n + m)" },
+  "params": [
+    {
+      "name": "capacity",
+      "type": "number",
+      "default": 1000,
+      "description": "Maximum number of entries held."
+    },
+    {
+      "name": "future",
+      "type": "array",
+      "default": [],
+      "description": "The complete access sequence, in order. Supplied by the harness."
+    }
+  ],
+  "tags": ["offline", "optimal", "reference", "harness-only"],
+  "recommended": false,
+  "ports": ["ts", "python"],
+  "notes": "Offline: requires the entire future access sequence, so it cannot be deployed. No C port: it exists only as a benchmark reference line, and the future array has no natural expression in the C params struct.",
+  "status": "offline-bound"
+}

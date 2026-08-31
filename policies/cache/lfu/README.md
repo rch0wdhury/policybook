@@ -1,0 +1,131 @@
+# LFU
+
+LFU evicts the key that has been used least often. Where LRU bets on recency,
+LFU bets on popularity: a key accessed a hundred times is kept over one accessed
+twice, no matter how long ago the hundred happened.
+
+On a stable, skewed workload that is the better bet, and LFU beats LRU. The
+trouble is the word *stable*. LFU has no way to forget, so when popularity
+shifts it keeps yesterday's winners: a key that was hot for an hour and is now
+dead still outranks everything that arrived since.
+
+## When to use it
+
+- When popularity is genuinely stable over the cache's lifetime: reference data,
+  static assets, a lookup table with a fixed hot set.
+- When the working set is much larger than the cache and only a small core is
+  reused. LFU protects that core. LRU keeps flushing it with one-off traffic.
+- When scans or bulk jobs pass through. A scan touches each key once, so those
+  keys never accumulate enough frequency to displace the working set. LFU is
+  scan-resistant almost by accident, and this is its most practical advantage
+  over LRU.
+
+## When not to use it
+
+- When popularity shifts. This is the big one: an entry that was hot yesterday
+  keeps its count forever and cannot be displaced by anything merely popular
+  today. The `shifting-popularity` benchmark trace exists to show this failure.
+- When a burst can poison the cache. A key hammered a thousand times in one
+  minute is pinned indefinitely, even if it is never touched again. Any policy
+  with aging avoids this: [W-TinyLFU](../w-tinylfu/), for one, halves its
+  counters periodically.
+- On short-lived caches. Frequency counts need time to become meaningful. Early
+  on, every entry has a count of 1 or 2 and LFU is effectively arbitrary.
+- When you want frequency without the memory. LFU keeps an exact count and a
+  class membership per entry. [W-TinyLFU](../w-tinylfu/) approximates the same
+  information in a few bits per entry and adds aging.
+- If you need one of LRU's guarantees about recent data being present. LFU can
+  evict a key inserted moments ago while keeping one untouched for hours.
+
+## How it works
+
+The naive implementation stores a counter per entry and scans for the minimum,
+which is O(n) per eviction. This is the O(1) design of Shah, Mitra and Matani.
+
+Entries are grouped into **frequency classes**, one per distinct access count,
+each holding every entry with that count, and the classes form a linked list in
+ascending order. Nothing ever scans:
+
+```
+onAccess(key, hit):
+    if hit:
+        c = class(key); f = frequency(c)
+        target = neighbour of c with frequency f+1, or a new class inserted there
+        move key from c to the tail of target
+        if c is now empty: unlink and free it
+    else:
+        target = first class if its frequency is 1, else a new class at the front
+        append key to target
+
+evict():
+    c = first class          # the lowest frequency in the cache
+    return the entry at its head
+```
+
+**Tie-breaking.** Within a frequency class, entries are ordered by when they
+reached that frequency, and the earliest is evicted first. So among keys of
+equal count, the one that has held that count longest goes. This rule is
+covered by the `tiebreak` vector, and every implementation must reproduce it.
+
+## Parameters
+
+| Name | Type | Default | Description |
+|---|---|---|---|
+| `capacity` | number | 1000 | Maximum number of entries held. |
+
+## Complexity
+
+O(1) time for access, insertion and eviction: genuinely, not amortised. A
+promotion moves an entry to a neighbouring class and an eviction reads the head
+of the first class. Neither walks a list of frequencies.
+
+O(n) space: a map entry, two entry links, a class index per entry, plus at most
+one class record per entry. The class pool is bounded because there cannot be
+more distinct frequencies than there are entries.
+
+**C memory: 74.8 bytes per entry** at capacity 1000, measured with
+`pb_cache_lfu.memory_bytes`: 8 for the key, 12 for the entry links and class
+index, 4 for the free stack, about 27 for the hash table, and 24 for the class
+pool. That is 9× [FIFO](../fifo/) and 1.6× [LRU](../lru/), and it is the price
+of exact frequency counts: the class pool has to be sized for the worst case
+where every entry sits at a different frequency.
+
+If that overhead is what stops you using LFU, [W-TinyLFU](../w-tinylfu/) keeps
+approximate frequencies in a few bits per entry instead, and ages them.
+
+## Benchmark
+
+<!-- bench:start -->
+| Trace | Hit rate | Evictions | Throughput |
+|---|---:|---:|---:|
+| `zipf-1.0-100k` | 0.7273 (−0.0067) | 26,273 | 24,800,000/s |
+| `zipf-0.75-1m` | 0.4768 (−0.0203) | 513,205 | 16,600,000/s |
+| `scan-heavy` | 0.6686 (−0.0060) | 34,795 | 24,900,000/s |
+| `shifting-popularity` | 0.3229 (−0.3658) | 66,712 | 18,500,000/s |
+
+Hit rate is the number that matters, and the bracketed figure is the gap to the best online policy in this domain on that trace. Throughput is machine-dependent and is never asserted.
+
+<sub>Generated by `pnpm bench && pnpm render` from core 0.1.0. Do not edit.</sub>
+<!-- bench:end -->
+
+## Source
+
+Shah, Mitra and Matani, *An O(1) algorithm for implementing the LFU cache
+eviction scheme* (2010), the frequency-class construction used here. LFU as a
+policy is older and has no single origin.
+
+Related: [LRU](../lru/) makes the opposite bet.
+[W-TinyLFU](../w-tinylfu/) is frequency-based with aging and a far smaller
+counter, and is what to reach for if this page's failure modes worry you.
+[ARC](../arc/) balances recency and frequency adaptively.
+
+## Notes
+
+No patents on the O(1) construction.
+
+"LFU" is ambiguous in the wild. Some systems mean *frequency with aging* (which
+behaves quite differently and avoids the cache-poisoning failure above), and
+some mean sampled approximations such as Redis's `allkeys-lfu`, which uses an
+8-bit logarithmic counter that decays. This entry is exact, un-aged LFU: the
+reference point, and deliberately the version whose weaknesses are easiest to
+see.

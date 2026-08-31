@@ -1,0 +1,479 @@
+{
+  "policy": "rate-limiter/token-bucket",
+  "version": 1,
+  "cases": [
+    {
+      "name": "smoke: spend the burst, then one token every 10 ms",
+      "params": {
+        "ratePerSec": 100,
+        "burst": 5
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "tokensOf",
+          "args": [
+            1,
+            0
+          ],
+          "expect": 5
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            0
+          ],
+          "expect": true
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            0
+          ],
+          "expect": true
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            0
+          ],
+          "expect": true
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            0
+          ],
+          "expect": true
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            0
+          ],
+          "expect": true
+        },
+        {
+          "call": "tokensOf",
+          "args": [
+            1,
+            0
+          ],
+          "expect": 0
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            0
+          ],
+          "expect": false
+        },
+        {
+          "call": "retryAfter",
+          "args": [
+            1,
+            0
+          ],
+          "expect": 10
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            9
+          ],
+          "expect": false
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            10
+          ],
+          "expect": true
+        },
+        {
+          "call": "tokensOf",
+          "args": [
+            1,
+            10
+          ],
+          "expect": 0
+        }
+      ]
+    },
+    {
+      "name": "boundary: the bucket saturates at burst, however long it idles",
+      "params": {
+        "ratePerSec": 100,
+        "burst": 5
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "allow",
+          "args": [
+            1,
+            5,
+            0
+          ],
+          "expect": true
+        },
+        {
+          "call": "tokensOf",
+          "args": [
+            1,
+            0
+          ],
+          "expect": 0
+        },
+        {
+          "call": "tokensOf",
+          "args": [
+            1,
+            50
+          ],
+          "expect": 5
+        },
+        {
+          "call": "tokensOf",
+          "args": [
+            1,
+            2592000000
+          ],
+          "expect": 5
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            5,
+            2592000000
+          ],
+          "expect": true
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            2592000000
+          ],
+          "expect": false
+        }
+      ]
+    },
+    {
+      "name": "distinguishing: the balance refills continuously, with no window edge",
+      "params": {
+        "ratePerSec": 100,
+        "burst": 5
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "allow",
+          "args": [
+            2,
+            5,
+            0
+          ],
+          "expect": true
+        },
+        {
+          "call": "allow",
+          "args": [
+            2,
+            1,
+            0
+          ],
+          "expect": false
+        },
+        {
+          "call": "tokensOf",
+          "args": [
+            2,
+            10
+          ],
+          "expect": 1
+        },
+        {
+          "call": "tokensOf",
+          "args": [
+            2,
+            25
+          ],
+          "expect": 2
+        },
+        {
+          "call": "retryAfter",
+          "args": [
+            2,
+            25
+          ],
+          "expect": 0
+        },
+        {
+          "call": "tokensOf",
+          "args": [
+            2,
+            50
+          ],
+          "expect": 5
+        }
+      ]
+    },
+    {
+      "name": "tiebreak: a request costing exactly the balance is admitted",
+      "params": {
+        "ratePerSec": 100,
+        "burst": 5
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "allow",
+          "args": [
+            3,
+            3,
+            0
+          ],
+          "expect": true
+        },
+        {
+          "call": "tokensOf",
+          "args": [
+            3,
+            0
+          ],
+          "expect": 2
+        },
+        {
+          "call": "allow",
+          "args": [
+            3,
+            3,
+            0
+          ],
+          "expect": false
+        },
+        {
+          "call": "allow",
+          "args": [
+            3,
+            2,
+            0
+          ],
+          "expect": true
+        },
+        {
+          "call": "allow",
+          "args": [
+            3,
+            1,
+            0
+          ],
+          "expect": false
+        },
+        {
+          "call": "allow",
+          "args": [
+            4,
+            6,
+            0
+          ],
+          "expect": false
+        },
+        {
+          "call": "tokensOf",
+          "args": [
+            4,
+            0
+          ],
+          "expect": 5
+        }
+      ]
+    },
+    {
+      "name": "the fractional carry survives between refills",
+      "params": {
+        "ratePerSec": 3,
+        "burst": 2
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "allow",
+          "args": [
+            1,
+            2,
+            0
+          ],
+          "expect": true
+        },
+        {
+          "call": "tokensOf",
+          "args": [
+            1,
+            0
+          ],
+          "expect": 0
+        },
+        {
+          "call": "tokensOf",
+          "args": [
+            1,
+            333
+          ],
+          "expect": 0
+        },
+        {
+          "call": "tokensOf",
+          "args": [
+            1,
+            334
+          ],
+          "expect": 1
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            334
+          ],
+          "expect": true
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            334
+          ],
+          "expect": false
+        },
+        {
+          "call": "retryAfter",
+          "args": [
+            1,
+            334
+          ],
+          "expect": 333
+        }
+      ]
+    },
+    {
+      "name": "equivalence: the mirror of the leaky bucket's own case",
+      "params": {
+        "ratePerSec": 100,
+        "burst": 5
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "tokensOf",
+          "args": [
+            7,
+            0
+          ],
+          "expect": 5
+        },
+        {
+          "call": "allow",
+          "args": [
+            7,
+            2,
+            0
+          ],
+          "expect": true
+        },
+        {
+          "call": "tokensOf",
+          "args": [
+            7,
+            0
+          ],
+          "expect": 3
+        },
+        {
+          "call": "allow",
+          "args": [
+            7,
+            3,
+            0
+          ],
+          "expect": true
+        },
+        {
+          "call": "tokensOf",
+          "args": [
+            7,
+            0
+          ],
+          "expect": 0
+        },
+        {
+          "call": "allow",
+          "args": [
+            7,
+            1,
+            0
+          ],
+          "expect": false
+        },
+        {
+          "call": "retryAfter",
+          "args": [
+            7,
+            0
+          ],
+          "expect": 10
+        },
+        {
+          "call": "tokensOf",
+          "args": [
+            7,
+            30
+          ],
+          "expect": 3
+        },
+        {
+          "call": "allow",
+          "args": [
+            7,
+            3,
+            30
+          ],
+          "expect": true
+        },
+        {
+          "call": "tokensOf",
+          "args": [
+            7,
+            30
+          ],
+          "expect": 0
+        },
+        {
+          "call": "stateSize",
+          "expect": 1
+        }
+      ]
+    }
+  ]
+}

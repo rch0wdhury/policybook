@@ -1,0 +1,248 @@
+{
+  "policy": "retry/equal-jitter",
+  "version": 1,
+  "cases": [
+    {
+      "name": "smoke: half the ceiling fixed, half drawn",
+      "params": {
+        "baseMs": 100,
+        "capMs": 10000,
+        "maxAttempts": 12
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "nextDelay",
+          "args": [
+            1,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 66
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            2,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 141
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            3,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 391
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            4,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 667
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            5,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 1247
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            6,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 2036
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            7,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 5553
+        }
+      ]
+    },
+    {
+      "name": "boundary: a ceiling of one halves to zero and the delay degenerates",
+      "params": {
+        "baseMs": 1,
+        "capMs": 1,
+        "maxAttempts": 6
+      },
+      "seed": 3,
+      "steps": [
+        {
+          "call": "nextDelay",
+          "args": [
+            1,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 0
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            2,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 0
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            3,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 0
+        }
+      ]
+    },
+    {
+      "name": "distinguishing: never below half the ceiling, where full jitter can be zero",
+      "params": {
+        "baseMs": 100,
+        "capMs": 10000,
+        "maxAttempts": 12
+      },
+      "seed": 11,
+      "steps": [
+        {
+          "call": "nextDelay",
+          "args": [
+            1,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 79
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            1,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 79
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            1,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 82
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            1,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 71
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            1,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": 94
+        }
+      ]
+    },
+    {
+      "name": "tiebreak: give-up beats the draw, at maxAttempts and on a permanent failure",
+      "params": {
+        "baseMs": 100,
+        "capMs": 10000,
+        "maxAttempts": 3
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "nextDelay",
+          "args": [
+            3,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": null
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            1,
+            {
+              "status": 400,
+              "retryable": false
+            }
+          ],
+          "expect": null
+        },
+        {
+          "call": "nextDelay",
+          "args": [
+            9,
+            {
+              "status": 503,
+              "retryable": true
+            }
+          ],
+          "expect": null
+        }
+      ]
+    }
+  ]
+}

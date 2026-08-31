@@ -1,0 +1,27 @@
+{
+  "id": "rate-limiter/sliding-counter",
+  "name": "Sliding counter",
+  "domain": "rate-limiter",
+  "summary": "Two adjacent window counts, weighted by how far into the new window you are. Removes the boundary burst for three integers per key instead of a hundred timestamps.",
+  "source": { "type": "folklore" },
+  "complexity": { "time": "O(1)", "space": "O(k) for k keys, three integers each" },
+  "params": [
+    {
+      "name": "limit",
+      "type": "number",
+      "default": 100,
+      "description": "Requests allowed per window."
+    },
+    {
+      "name": "windowMs",
+      "type": "number",
+      "default": 1000,
+      "description": "Window length, in milliseconds."
+    }
+  ],
+  "tags": ["approximate", "no-boundary-burst", "memory-light", "distributable"],
+  "recommended": false,
+  "ports": ["ts", "python", "c"],
+  "notes": "The estimate assumes the previous window's requests were spread evenly across it, so it errs low when they were front-loaded and high when they were back-loaded. The weighting is integer arithmetic with the remainder discarded, which keeps the three language ports deciding identically.",
+  "status": "stable"
+}

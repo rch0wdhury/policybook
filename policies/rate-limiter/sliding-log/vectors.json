@@ -1,0 +1,398 @@
+{
+  "policy": "rate-limiter/sliding-log",
+  "version": 1,
+  "cases": [
+    {
+      "name": "smoke: the window slides with the clock, not with a fixed edge",
+      "params": {
+        "limit": 5,
+        "windowMs": 1000
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            0
+          ],
+          "expect": true
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            10
+          ],
+          "expect": true
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            20
+          ],
+          "expect": true
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            30
+          ],
+          "expect": true
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            40
+          ],
+          "expect": true
+        },
+        {
+          "call": "countOf",
+          "args": [
+            1,
+            40
+          ],
+          "expect": 5
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            50
+          ],
+          "expect": false
+        },
+        {
+          "call": "retryAfter",
+          "args": [
+            1,
+            50
+          ],
+          "expect": 950
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            1000
+          ],
+          "expect": true
+        },
+        {
+          "call": "countOf",
+          "args": [
+            1,
+            1000
+          ],
+          "expect": 5
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            1005
+          ],
+          "expect": false
+        },
+        {
+          "call": "retryAfter",
+          "args": [
+            1,
+            1005
+          ],
+          "expect": 5
+        },
+        {
+          "call": "allow",
+          "args": [
+            1,
+            1,
+            1010
+          ],
+          "expect": true
+        }
+      ]
+    },
+    {
+      "name": "boundary: an entry leaves the window exactly windowMs after it arrived",
+      "params": {
+        "limit": 5,
+        "windowMs": 1000
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "allow",
+          "args": [
+            4,
+            1,
+            0
+          ],
+          "expect": true
+        },
+        {
+          "call": "countOf",
+          "args": [
+            4,
+            999
+          ],
+          "expect": 1
+        },
+        {
+          "call": "countOf",
+          "args": [
+            4,
+            1000
+          ],
+          "expect": 0
+        },
+        {
+          "call": "stateSize",
+          "expect": 1
+        }
+      ]
+    },
+    {
+      "name": "distinguishing: a boundary burst is refused, unlike a fixed window",
+      "params": {
+        "limit": 5,
+        "windowMs": 1000
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "allow",
+          "args": [
+            3,
+            5,
+            999
+          ],
+          "expect": true
+        },
+        {
+          "call": "allow",
+          "args": [
+            3,
+            1,
+            999
+          ],
+          "expect": false
+        },
+        {
+          "call": "allow",
+          "args": [
+            3,
+            5,
+            1000
+          ],
+          "expect": false
+        },
+        {
+          "call": "allow",
+          "args": [
+            3,
+            1,
+            1000
+          ],
+          "expect": false
+        },
+        {
+          "call": "countOf",
+          "args": [
+            3,
+            1000
+          ],
+          "expect": 5
+        },
+        {
+          "call": "retryAfter",
+          "args": [
+            3,
+            1000
+          ],
+          "expect": 999
+        },
+        {
+          "call": "allow",
+          "args": [
+            3,
+            5,
+            1999
+          ],
+          "expect": true
+        }
+      ]
+    },
+    {
+      "name": "tiebreak: a request costing exactly the free space is admitted",
+      "params": {
+        "limit": 5,
+        "windowMs": 1000
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "allow",
+          "args": [
+            2,
+            3,
+            0
+          ],
+          "expect": true
+        },
+        {
+          "call": "allow",
+          "args": [
+            2,
+            3,
+            100
+          ],
+          "expect": false
+        },
+        {
+          "call": "allow",
+          "args": [
+            2,
+            2,
+            100
+          ],
+          "expect": true
+        },
+        {
+          "call": "countOf",
+          "args": [
+            2,
+            100
+          ],
+          "expect": 5
+        },
+        {
+          "call": "allow",
+          "args": [
+            2,
+            1,
+            100
+          ],
+          "expect": false
+        },
+        {
+          "call": "countOf",
+          "args": [
+            2,
+            1000
+          ],
+          "expect": 2
+        },
+        {
+          "call": "allow",
+          "args": [
+            2,
+            3,
+            1000
+          ],
+          "expect": true
+        },
+        {
+          "call": "allow",
+          "args": [
+            2,
+            1,
+            1000
+          ],
+          "expect": false
+        }
+      ]
+    },
+    {
+      "name": "the ring wraps: entries reused after a full cycle stay in order",
+      "params": {
+        "limit": 5,
+        "windowMs": 1000
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "allow",
+          "args": [
+            8,
+            5,
+            0
+          ],
+          "expect": true
+        },
+        {
+          "call": "countOf",
+          "args": [
+            8,
+            1000
+          ],
+          "expect": 0
+        },
+        {
+          "call": "allow",
+          "args": [
+            8,
+            3,
+            1000
+          ],
+          "expect": true
+        },
+        {
+          "call": "allow",
+          "args": [
+            8,
+            2,
+            1500
+          ],
+          "expect": true
+        },
+        {
+          "call": "allow",
+          "args": [
+            8,
+            1,
+            1500
+          ],
+          "expect": false
+        },
+        {
+          "call": "retryAfter",
+          "args": [
+            8,
+            1500
+          ],
+          "expect": 500
+        },
+        {
+          "call": "countOf",
+          "args": [
+            8,
+            2000
+          ],
+          "expect": 2
+        },
+        {
+          "call": "allow",
+          "args": [
+            8,
+            3,
+            2000
+          ],
+          "expect": true
+        }
+      ]
+    }
+  ]
+}

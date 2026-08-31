@@ -1,0 +1,583 @@
+{
+  "policy": "kv-cache/scissorhands",
+  "version": 1,
+  "cases": [
+    {
+      "name": "smoke: the fewest votes goes",
+      "params": {
+        "budget": 3,
+        "recentWindow": 1
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onDecodeStep",
+          "args": [
+            1,
+            [
+              1
+            ]
+          ]
+        },
+        {
+          "call": "votesOf",
+          "args": [
+            0
+          ],
+          "expect": 0
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            2,
+            [
+              0.25,
+              0.75
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            3,
+            [
+              0.5,
+              0.25,
+              0.25
+            ]
+          ]
+        },
+        {
+          "call": "votesOf",
+          "args": [
+            0
+          ],
+          "expect": 1
+        },
+        {
+          "call": "votesOf",
+          "args": [
+            1
+          ],
+          "expect": 1
+        },
+        {
+          "call": "votesOf",
+          "args": [
+            2
+          ],
+          "expect": 0
+        },
+        {
+          "call": "evict",
+          "args": [
+            3
+          ],
+          "expect": [
+            2
+          ]
+        },
+        {
+          "call": "keptCount",
+          "args": [],
+          "expect": 3
+        }
+      ]
+    },
+    {
+      "name": "boundary: exactly matching the fair share earns nothing",
+      "params": {
+        "budget": 3,
+        "recentWindow": 1
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onDecodeStep",
+          "args": [
+            1,
+            [
+              1
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            2,
+            [
+              0.5,
+              0.5
+            ]
+          ]
+        },
+        {
+          "call": "votesOf",
+          "args": [
+            0
+          ],
+          "expect": 0
+        },
+        {
+          "call": "votesOf",
+          "args": [
+            1
+          ],
+          "expect": 0
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            3,
+            [
+              0.25,
+              0.25,
+              0.5
+            ]
+          ]
+        },
+        {
+          "call": "votesOf",
+          "args": [
+            2
+          ],
+          "expect": 1
+        },
+        {
+          "call": "evict",
+          "args": [
+            3
+          ],
+          "expect": [
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "boundary: the recent window outranks the votes",
+      "params": {
+        "budget": 3,
+        "recentWindow": 2
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onDecodeStep",
+          "args": [
+            1,
+            [
+              1
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            2,
+            [
+              0.9375,
+              0.0625
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            3,
+            [
+              0.5,
+              0.25,
+              0.25
+            ]
+          ]
+        },
+        {
+          "call": "votesOf",
+          "args": [
+            0
+          ],
+          "expect": 2
+        },
+        {
+          "call": "votesOf",
+          "args": [
+            1
+          ],
+          "expect": 0
+        },
+        {
+          "call": "votesOf",
+          "args": [
+            2
+          ],
+          "expect": 0
+        },
+        {
+          "call": "evict",
+          "args": [
+            3
+          ],
+          "expect": [
+            1
+          ]
+        },
+        {
+          "call": "votesOf",
+          "args": [
+            2
+          ],
+          "expect": 0
+        }
+      ]
+    },
+    {
+      "name": "distinguishing: an early spike buys one vote and no more",
+      "params": {
+        "budget": 5,
+        "recentWindow": 2
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onDecodeStep",
+          "args": [
+            1,
+            [
+              1
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            2,
+            [
+              0.875,
+              0.125
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            3,
+            [
+              0.0625,
+              0.5,
+              0.4375
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            4,
+            [
+              0.0625,
+              0.3125,
+              0.3125,
+              0.3125
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            5,
+            [
+              0.0625,
+              0.25,
+              0.25,
+              0.25,
+              0.1875
+            ]
+          ]
+        },
+        {
+          "call": "votesOf",
+          "args": [
+            0
+          ],
+          "expect": 1
+        },
+        {
+          "call": "votesOf",
+          "args": [
+            1
+          ],
+          "expect": 3
+        },
+        {
+          "call": "votesOf",
+          "args": [
+            2
+          ],
+          "expect": 3
+        },
+        {
+          "call": "votesOf",
+          "args": [
+            3
+          ],
+          "expect": 2
+        },
+        {
+          "call": "votesOf",
+          "args": [
+            4
+          ],
+          "expect": 0
+        },
+        {
+          "call": "evict",
+          "args": [
+            5
+          ],
+          "expect": [
+            0
+          ]
+        },
+        {
+          "call": "votesOf",
+          "args": [
+            0
+          ],
+          "expect": -1
+        }
+      ]
+    },
+    {
+      "name": "tiebreak: equal votes evict the lower position",
+      "params": {
+        "budget": 3,
+        "recentWindow": 1
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onDecodeStep",
+          "args": [
+            1,
+            [
+              1
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            2,
+            [
+              0.875,
+              0.125
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            3,
+            [
+              0.5,
+              0.25,
+              0.25
+            ]
+          ]
+        },
+        {
+          "call": "votesOf",
+          "args": [
+            0
+          ],
+          "expect": 2
+        },
+        {
+          "call": "votesOf",
+          "args": [
+            1
+          ],
+          "expect": 0
+        },
+        {
+          "call": "votesOf",
+          "args": [
+            2
+          ],
+          "expect": 0
+        },
+        {
+          "call": "evict",
+          "args": [
+            3
+          ],
+          "expect": [
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "name": "several victims come back in position order, not in the order chosen",
+      "params": {
+        "budget": 5,
+        "recentWindow": 1
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onDecodeStep",
+          "args": [
+            1,
+            [
+              1
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            2,
+            [
+              0.75,
+              0.25
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            3,
+            [
+              0.5,
+              0.25,
+              0.25
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            4,
+            [
+              0.5,
+              0.125,
+              0.25,
+              0.125
+            ]
+          ]
+        },
+        {
+          "call": "votesOf",
+          "args": [
+            0
+          ],
+          "expect": 3
+        },
+        {
+          "call": "votesOf",
+          "args": [
+            1
+          ],
+          "expect": 0
+        },
+        {
+          "call": "votesOf",
+          "args": [
+            2
+          ],
+          "expect": 0
+        },
+        {
+          "call": "votesOf",
+          "args": [
+            3
+          ],
+          "expect": 0
+        },
+        {
+          "call": "evict",
+          "args": [
+            2
+          ],
+          "expect": [
+            1,
+            2,
+            3
+          ]
+        },
+        {
+          "call": "keptCount",
+          "args": [],
+          "expect": 2
+        }
+      ]
+    },
+    {
+      "name": "a step with no attention leaves every vote untouched",
+      "params": {
+        "budget": 3,
+        "recentWindow": 1
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onDecodeStep",
+          "args": [
+            1,
+            [
+              1
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            2,
+            [
+              0.75,
+              0.25
+            ]
+          ]
+        },
+        {
+          "call": "votesOf",
+          "args": [
+            0
+          ],
+          "expect": 1
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            3,
+            null
+          ]
+        },
+        {
+          "call": "votesOf",
+          "args": [
+            0
+          ],
+          "expect": 1
+        },
+        {
+          "call": "votesOf",
+          "args": [
+            1
+          ],
+          "expect": 0
+        },
+        {
+          "call": "evict",
+          "args": [
+            3
+          ],
+          "expect": [
+            1
+          ]
+        }
+      ]
+    }
+  ]
+}

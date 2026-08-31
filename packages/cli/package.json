@@ -1,0 +1,43 @@
+{
+  "name": "policybook",
+  "version": "0.1.0",
+  "description": "Browse, copy, scaffold, verify and benchmark decision policies \u2014 cache eviction, rate limiting, KV-cache eviction and more.",
+  "type": "module",
+  "license": "MIT",
+  "bin": {
+    "policybook": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "policies",
+    "packages",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rch0wdhury/policybook.git",
+    "directory": "packages/cli"
+  },
+  "homepage": "https://rch0wdhury.github.io/policybook/",
+  "keywords": [
+    "cache",
+    "eviction",
+    "rate-limiter",
+    "scheduler",
+    "kv-cache",
+    "algorithms",
+    "policies"
+  ],
+  "scripts": {
+    "build": "tsup src/cli.ts --format esm --clean --target node20",
+    "prepack": "node scripts/prepack.mjs"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@policybook/core": "workspace:*",
+    "@policybook/vectors": "workspace:*"
+  }
+}

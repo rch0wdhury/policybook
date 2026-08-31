@@ -1,0 +1,630 @@
+{
+  "policy": "kv-cache/pyramidkv",
+  "version": 1,
+  "cases": [
+    {
+      "name": "smoke: one layer redistributes nothing",
+      "params": {
+        "budget": 6,
+        "layer": 0,
+        "numLayers": 1,
+        "recentWindow": 1,
+        "obsWindow": 8,
+        "poolKernel": 1
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onDecodeStep",
+          "args": [
+            1,
+            [
+              1
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            2,
+            [
+              0.5,
+              0.5
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            3,
+            [
+              0.25,
+              0.25,
+              0.5
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            4,
+            [
+              0.125,
+              0.125,
+              0.25,
+              0.5
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            5,
+            [
+              0.0625,
+              0.0625,
+              0.125,
+              0.25,
+              0.5
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            6,
+            [
+              0.0625,
+              0.0625,
+              0.0625,
+              0.125,
+              0.25,
+              0.4375
+            ]
+          ]
+        },
+        {
+          "call": "effectiveBudget",
+          "args": [],
+          "expect": 6
+        },
+        {
+          "call": "windowScoreOf",
+          "args": [
+            0
+          ],
+          "expect": 2
+        },
+        {
+          "call": "windowScoreOf",
+          "args": [
+            5
+          ],
+          "expect": 0.4375
+        },
+        {
+          "call": "evict",
+          "args": [
+            6
+          ],
+          "expect": [
+            5
+          ]
+        },
+        {
+          "call": "keptCount",
+          "args": [],
+          "expect": 6
+        }
+      ]
+    },
+    {
+      "name": "distinguishing: a deep layer's share binds tighter than the ask",
+      "params": {
+        "budget": 6,
+        "layer": 2,
+        "numLayers": 3,
+        "pyramidRatio": 2,
+        "recentWindow": 1,
+        "obsWindow": 8,
+        "poolKernel": 1
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onDecodeStep",
+          "args": [
+            1,
+            [
+              1
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            2,
+            [
+              0.5,
+              0.5
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            3,
+            [
+              0.25,
+              0.25,
+              0.5
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            4,
+            [
+              0.125,
+              0.125,
+              0.25,
+              0.5
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            5,
+            [
+              0.0625,
+              0.0625,
+              0.125,
+              0.25,
+              0.5
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            6,
+            [
+              0.0625,
+              0.0625,
+              0.0625,
+              0.125,
+              0.25,
+              0.4375
+            ]
+          ]
+        },
+        {
+          "call": "effectiveBudget",
+          "args": [],
+          "expect": 4
+        },
+        {
+          "call": "evict",
+          "args": [
+            6
+          ],
+          "expect": [
+            3,
+            4,
+            5
+          ]
+        },
+        {
+          "call": "keptCount",
+          "args": [],
+          "expect": 4
+        }
+      ]
+    },
+    {
+      "name": "boundary: a shallow layer's share cannot exceed what the caller allows",
+      "params": {
+        "budget": 6,
+        "layer": 0,
+        "numLayers": 3,
+        "pyramidRatio": 2,
+        "recentWindow": 1,
+        "obsWindow": 8,
+        "poolKernel": 1
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onDecodeStep",
+          "args": [
+            1,
+            [
+              1
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            2,
+            [
+              0.5,
+              0.5
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            3,
+            [
+              0.25,
+              0.25,
+              0.5
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            4,
+            [
+              0.125,
+              0.125,
+              0.25,
+              0.5
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            5,
+            [
+              0.0625,
+              0.0625,
+              0.125,
+              0.25,
+              0.5
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            6,
+            [
+              0.0625,
+              0.0625,
+              0.0625,
+              0.125,
+              0.25,
+              0.4375
+            ]
+          ]
+        },
+        {
+          "call": "effectiveBudget",
+          "args": [],
+          "expect": 8
+        },
+        {
+          "call": "evict",
+          "args": [
+            6
+          ],
+          "expect": [
+            5
+          ]
+        },
+        {
+          "call": "keptCount",
+          "args": [],
+          "expect": 6
+        }
+      ]
+    },
+    {
+      "name": "the middle layer of three gets exactly the average",
+      "params": {
+        "budget": 6,
+        "layer": 1,
+        "numLayers": 3,
+        "pyramidRatio": 2,
+        "recentWindow": 1,
+        "obsWindow": 8,
+        "poolKernel": 1
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onDecodeStep",
+          "args": [
+            1,
+            [
+              1
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            2,
+            [
+              0.5,
+              0.5
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            3,
+            [
+              0.25,
+              0.25,
+              0.5
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            4,
+            [
+              0.125,
+              0.125,
+              0.25,
+              0.5
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            5,
+            [
+              0.0625,
+              0.0625,
+              0.125,
+              0.25,
+              0.5
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            6,
+            [
+              0.0625,
+              0.0625,
+              0.0625,
+              0.125,
+              0.25,
+              0.4375
+            ]
+          ]
+        },
+        {
+          "call": "effectiveBudget",
+          "args": [],
+          "expect": 6
+        },
+        {
+          "call": "evict",
+          "args": [
+            6
+          ],
+          "expect": [
+            5
+          ]
+        }
+      ]
+    },
+    {
+      "name": "tiebreak: a ratio of one is the degenerate uniform pyramid",
+      "params": {
+        "budget": 6,
+        "layer": 2,
+        "numLayers": 3,
+        "pyramidRatio": 1,
+        "recentWindow": 1,
+        "obsWindow": 8,
+        "poolKernel": 1
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onDecodeStep",
+          "args": [
+            1,
+            [
+              1
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            2,
+            [
+              0.5,
+              0.5
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            3,
+            [
+              0.25,
+              0.25,
+              0.5
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            4,
+            [
+              0.125,
+              0.125,
+              0.25,
+              0.5
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            5,
+            [
+              0.0625,
+              0.0625,
+              0.125,
+              0.25,
+              0.5
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            6,
+            [
+              0.0625,
+              0.0625,
+              0.0625,
+              0.125,
+              0.25,
+              0.4375
+            ]
+          ]
+        },
+        {
+          "call": "effectiveBudget",
+          "args": [],
+          "expect": 6
+        },
+        {
+          "call": "evict",
+          "args": [
+            6
+          ],
+          "expect": [
+            5
+          ]
+        }
+      ]
+    },
+    {
+      "name": "a share below the recent window is raised to hold one choosable position",
+      "params": {
+        "budget": 10,
+        "layer": 3,
+        "numLayers": 4,
+        "pyramidRatio": 4,
+        "recentWindow": 4,
+        "obsWindow": 8,
+        "poolKernel": 1
+      },
+      "seed": 1,
+      "steps": [
+        {
+          "call": "onDecodeStep",
+          "args": [
+            1,
+            [
+              1
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            2,
+            [
+              0.5,
+              0.5
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            3,
+            [
+              0.25,
+              0.25,
+              0.5
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            4,
+            [
+              0.125,
+              0.125,
+              0.25,
+              0.5
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            5,
+            [
+              0.0625,
+              0.0625,
+              0.125,
+              0.25,
+              0.5
+            ]
+          ]
+        },
+        {
+          "call": "onDecodeStep",
+          "args": [
+            6,
+            [
+              0.0625,
+              0.0625,
+              0.0625,
+              0.125,
+              0.25,
+              0.4375
+            ]
+          ]
+        },
+        {
+          "call": "effectiveBudget",
+          "args": [],
+          "expect": 5
+        },
+        {
+          "call": "evict",
+          "args": [
+            10
+          ],
+          "expect": [
+            1,
+            2
+          ]
+        },
+        {
+          "call": "keptCount",
+          "args": [],
+          "expect": 5
+        }
+      ]
+    }
+  ]
+}

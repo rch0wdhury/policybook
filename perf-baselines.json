@@ -1,0 +1,161 @@
+{
+  "note": "Throughput baselines for the perf guard. Machine-dependent by nature: these were recorded on one machine and are only meaningful there. The guard fails at 40% of baseline and warns at 80%, so ordinary variation passes. Re-record with `pnpm perfguard <domain> --record`.",
+  "recordedOn": "2026-08-30T20:43:55.878Z",
+  "policies": {
+    "cache/2q": {
+      "zipf-1.0-100k": 23200000,
+      "zipf-0.75-1m": 10800000,
+      "scan-heavy": 20300000,
+      "shifting-popularity": 20600000
+    },
+    "cache/arc": {
+      "zipf-1.0-100k": 22300000,
+      "zipf-0.75-1m": 14900000,
+      "scan-heavy": 24600000,
+      "shifting-popularity": 25600000
+    },
+    "cache/clock": {
+      "zipf-1.0-100k": 33400000,
+      "zipf-0.75-1m": 20000000,
+      "scan-heavy": 33300000,
+      "shifting-popularity": 34300000
+    },
+    "cache/fifo": {
+      "zipf-1.0-100k": 108000000,
+      "zipf-0.75-1m": 95900000,
+      "scan-heavy": 112000000,
+      "shifting-popularity": 110000000
+    },
+    "cache/lfu": {
+      "zipf-1.0-100k": 24800000,
+      "zipf-0.75-1m": 16600000,
+      "scan-heavy": 24900000,
+      "shifting-popularity": 18500000
+    },
+    "cache/lru": {
+      "zipf-1.0-100k": 29100000,
+      "zipf-0.75-1m": 17700000,
+      "scan-heavy": 29100000,
+      "shifting-popularity": 29900000
+    },
+    "cache/opt": {
+      "zipf-1.0-100k": 15500000,
+      "zipf-0.75-1m": 11200000,
+      "scan-heavy": 14100000,
+      "shifting-popularity": 15900000
+    },
+    "cache/s3-fifo": {
+      "zipf-1.0-100k": 20500000,
+      "zipf-0.75-1m": 10700000,
+      "scan-heavy": 19500000,
+      "shifting-popularity": 19100000
+    },
+    "cache/sieve": {
+      "zipf-1.0-100k": 33100000,
+      "zipf-0.75-1m": 18900000,
+      "scan-heavy": 33400000,
+      "shifting-popularity": 31200000
+    },
+    "cache/w-tinylfu": {
+      "zipf-1.0-100k": 12400000,
+      "zipf-0.75-1m": 7950000,
+      "scan-heavy": 11800000,
+      "shifting-popularity": 11300000
+    },
+    "rate-limiter/dual-bucket": {
+      "steady": 45200000,
+      "bursty": 57100000,
+      "many-keys": 24600000,
+      "overload": 49500000
+    },
+    "rate-limiter/fixed-window": {
+      "steady": 72800000,
+      "bursty": 92600000,
+      "many-keys": 29700000,
+      "overload": 89700000
+    },
+    "rate-limiter/gcra": {
+      "steady": 55700000,
+      "bursty": 65700000,
+      "many-keys": 31000000,
+      "overload": 73000000
+    },
+    "rate-limiter/leaky-bucket": {
+      "steady": 49100000,
+      "bursty": 59000000,
+      "many-keys": 26400000,
+      "overload": 48700000
+    },
+    "rate-limiter/sliding-counter": {
+      "steady": 42000000,
+      "bursty": 49400000,
+      "many-keys": 24300000,
+      "overload": 45500000
+    },
+    "rate-limiter/sliding-log": {
+      "steady": 32700000,
+      "bursty": 46700000,
+      "many-keys": 11200000,
+      "overload": 49700000
+    },
+    "rate-limiter/token-bucket": {
+      "steady": 42500000,
+      "bursty": 47500000,
+      "many-keys": 22500000,
+      "overload": 44100000
+    },
+    "retry/constant": {
+      "outage-30s": 14900000
+    },
+    "retry/decorrelated-jitter": {
+      "outage-30s": 8970000
+    },
+    "retry/equal-jitter": {
+      "outage-30s": 8720000
+    },
+    "retry/exponential": {
+      "outage-30s": 12400000
+    },
+    "retry/exponential-full-jitter": {
+      "outage-30s": 8500000
+    },
+    "retry/retry-after-aware": {
+      "outage-30s": 8670000
+    },
+    "kv-cache/h2o": {
+      "decode-4096@256": 92100,
+      "decode-4096@512": 82700,
+      "decode-4096@1024": 76400
+    },
+    "kv-cache/pyramidkv": {
+      "decode-4096@256": 65900,
+      "decode-4096@512": 51900,
+      "decode-4096@1024": 37500
+    },
+    "kv-cache/scissorhands": {
+      "decode-4096@256": 91100,
+      "decode-4096@512": 84100,
+      "decode-4096@1024": 75800
+    },
+    "kv-cache/sliding-window": {
+      "decode-4096@256": 97200,
+      "decode-4096@512": 96100,
+      "decode-4096@1024": 91100
+    },
+    "kv-cache/snapkv": {
+      "decode-4096@256": 65300,
+      "decode-4096@512": 50700,
+      "decode-4096@1024": 37000
+    },
+    "kv-cache/streaming-llm": {
+      "decode-4096@256": 101000,
+      "decode-4096@512": 101000,
+      "decode-4096@1024": 95000
+    },
+    "kv-cache/tova": {
+      "decode-4096@256": 93100,
+      "decode-4096@512": 87300,
+      "decode-4096@1024": 76400
+    }
+  }
+}

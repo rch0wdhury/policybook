@@ -1,0 +1,19 @@
+{
+  "policy": "retry/retry-after-aware",
+  "generatedAt": "2026-01-01T00:00:00Z",
+  "coreVersion": "0.1.0",
+  "traces": {
+    "outage-30s": {
+      "metrics": {
+        "successRate": 0.996,
+        "meanTimeToSuccessMs": 14919.01004,
+        "meanAttempts": 4.576,
+        "p99Attempts": 8,
+        "peakRetryShare": 0.233501
+      },
+      "perf": {
+        "opsPerSec": 8670000
+      }
+    }
+  }
+}

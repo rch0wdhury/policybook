@@ -1,0 +1,19 @@
+{
+  "policy": "retry/decorrelated-jitter",
+  "generatedAt": "2026-01-01T00:00:00Z",
+  "coreVersion": "0.1.0",
+  "traces": {
+    "outage-30s": {
+      "metrics": {
+        "successRate": 0.258,
+        "meanTimeToSuccessMs": 9910.554264,
+        "meanAttempts": 7.604,
+        "p99Attempts": 8,
+        "peakRetryShare": 0.0106
+      },
+      "perf": {
+        "opsPerSec": 8970000
+      }
+    }
+  }
+}

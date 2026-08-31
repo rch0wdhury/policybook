@@ -1,0 +1,42 @@
+{
+  "id": "kv-cache/scissorhands",
+  "name": "Scissorhands",
+  "domain": "kv-cache",
+  "summary": "Count how many steps a token mattered for, not how much. Persistence of importance: a position that clears its share of the attention again and again beats one that spiked once and went quiet.",
+  "source": {
+    "title": "Scissorhands: Exploiting the Persistence of Importance Hypothesis for LLM KV Cache Compression at Test Time",
+    "authors": [
+      "Zichang Liu",
+      "Aditya Desai",
+      "Fangshuo Liao",
+      "Weitao Wang",
+      "Victor Xie",
+      "Zhaozhuo Xu",
+      "Anastasios Kyrillidis",
+      "Anshumali Shrivastava"
+    ],
+    "venue": "NeurIPS",
+    "year": 2023,
+    "url": "https://arxiv.org/abs/2305.17118"
+  },
+  "complexity": { "time": "O(budget)", "space": "O(budget)" },
+  "params": [
+    {
+      "name": "budget",
+      "type": "number",
+      "default": 512,
+      "description": "Maximum token positions kept in the cache."
+    },
+    {
+      "name": "recentWindow",
+      "type": "number",
+      "default": 32,
+      "description": "The most recent positions, never evicted whatever their vote count."
+    }
+  ],
+  "tags": ["attention-aware", "heavy-hitters", "persistence", "recency"],
+  "recommended": false,
+  "ports": ["ts", "python", "c"],
+  "notes": null,
+  "status": "stable"
+}

@@ -1,0 +1,39 @@
+{
+  "id": "cache/w-tinylfu",
+  "name": "W-TinyLFU",
+  "domain": "cache",
+  "summary": "Approximate frequencies in a four-bit sketch decide admission, so an unpopular newcomer never displaces a proven entry.",
+  "source": {
+    "title": "TinyLFU: A Highly Efficient Cache Admission Policy",
+    "authors": ["Gil Einziger", "Roy Friedman", "Ben Manes"],
+    "venue": "ACM Transactions on Storage",
+    "year": 2017,
+    "url": null
+  },
+  "complexity": { "time": "O(1)", "space": "O(n)" },
+  "params": [
+    {
+      "name": "capacity",
+      "type": "number",
+      "default": 1000,
+      "description": "Maximum number of entries held."
+    },
+    {
+      "name": "windowFraction",
+      "type": "number",
+      "default": 0.01,
+      "description": "Fraction of capacity given to the admission window."
+    },
+    {
+      "name": "protectedFraction",
+      "type": "number",
+      "default": 0.8,
+      "description": "Fraction of the main cache reserved for protected entries."
+    }
+  ],
+  "tags": ["admission", "frequency", "sketch", "scan-resistant", "aging"],
+  "recommended": false,
+  "ports": ["ts", "python", "c"],
+  "notes": "Keys must be integers: the sketch hashes them directly.",
+  "status": "stable"
+}

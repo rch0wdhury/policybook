@@ -1,0 +1,33 @@
+{
+  "id": "cache/sieve",
+  "name": "SIEVE",
+  "domain": "cache",
+  "summary": "A FIFO queue with a moving hand that gives each entry one chance. Simpler than LRU, scan-resistant, and no reordering on a hit.",
+  "source": {
+    "title": "SIEVE is Simpler than LRU: an Efficient Turn-Key Eviction Algorithm for Web Caches",
+    "authors": [
+      "Yazhuo Zhang",
+      "Juncheng Yang",
+      "Yao Yue",
+      "Ymir Vigfusson",
+      "K. V. Rashmi"
+    ],
+    "venue": "NSDI",
+    "year": 2024,
+    "url": null
+  },
+  "complexity": { "time": "O(1) amortised", "space": "O(n)" },
+  "params": [
+    {
+      "name": "capacity",
+      "type": "number",
+      "default": 1000,
+      "description": "Maximum number of entries held."
+    }
+  ],
+  "tags": ["scan-resistant", "no-locks-on-hit", "simple", "recommended"],
+  "recommended": true,
+  "ports": ["ts", "python", "c"],
+  "notes": null,
+  "status": "stable"
+}
