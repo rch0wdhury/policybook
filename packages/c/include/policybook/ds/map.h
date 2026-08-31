@@ -4,7 +4,7 @@
  * Cache policies need to answer "where is this key?" on every access, and in C
  * that means bringing your own hash map. This one is built for the same
  * constraints as everything else here: it takes all its memory in init, never
- * grows, never rehashes, and never allocates again (concept.md §12.2).
+ * grows, never rehashes, and never allocates again.
  *
  * Open addressing with linear probing, and **backward-shift deletion** rather
  * than tombstones. Tombstones would degrade a long-running cache — every
@@ -14,7 +14,7 @@
  * what a cache that evicts millions of times needs.
  *
  * Iteration order is never exposed, deliberately: no policy decision may depend
- * on it (concept.md §9).
+ * on it.
  */
 
 #ifndef POLICYBOOK_DS_MAP_H

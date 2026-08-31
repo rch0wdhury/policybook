@@ -4,7 +4,7 @@
  *
  * Policies never reach for a global random source. Anything that needs
  * randomness receives an `Rng`, seeded from a single 32-bit number, so a run is
- * reproducible on any platform in any language (concept.md §9). This file is
+ * reproducible on any platform in any language. This file is
  * the reference; `packages/python/policybook/rng.py` and
  * `packages/c/src/rng.c` reproduce it bit for bit, and
  * `rng.vectors.json` is the shared proof that they do.
@@ -126,7 +126,7 @@ export class Rng {
    *
    * Deliberately *not* the 53-bit variant: one `nextU32` divided by 2^32 is the
    * same in TypeScript, Python and C with no rounding argument to have
-   * (concept.md §9).
+   *.
    */
   nextFloat(): number {
     return this.nextU32() / TWO_POW_32;

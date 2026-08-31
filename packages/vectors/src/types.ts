@@ -2,7 +2,7 @@
  * The shape of a `vectors.json` file and of the `policy.json` metadata beside it.
  *
  * Test vectors are the contract between languages: a list of method calls and
- * expected results, language-neutral by construction (concept.md §8.3). A port
+ * expected results, language-neutral by construction. A port
  * is conformant when it reproduces them exactly. Nothing in this file is
  * TypeScript-specific — Python and C read the same JSON.
  */
@@ -55,7 +55,7 @@ export interface VectorsFile {
   cases: VectorCase[];
 }
 
-/** Citation for the paper or folklore a policy comes from (concept.md §8.1). */
+/** Citation for the paper or folklore a policy comes from. */
 export type PolicySource =
   | { type: "folklore" }
   | {

@@ -5,7 +5,7 @@
  * Every policy here sizes at least one table at budget + 1 slots, so a budget
  * of UINT32_MAX would wrap the capacity to zero and the constructor would
  * write position 0 into an empty allocation. The float64 reference has no
- * such edge, so the refusal is C's own (concept.md §12.2) and needs its own
+ * such edge, so the refusal is C's own and needs its own
  * test.
  */
 

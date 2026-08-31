@@ -5,7 +5,7 @@
  * deterministic random number generator, the canonical trace generators, the
  * per-domain interfaces and simulators, and the metric definitions. It contains
  * no Node-only APIs, so the same code runs in CI, in the CLI, and in the
- * browser (see concept.md §13.1).
+ * browser.
  *
  * Contents arrive with their milestones: Rng (T02), the cache domain (T07),
  * rate-limiter and retry (T22, T26), kv-cache (T29).

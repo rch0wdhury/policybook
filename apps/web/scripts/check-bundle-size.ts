@@ -3,7 +3,7 @@
  *
  * A budget that is not measured is a wish. These are read from `dist/` after a
  * real build, gzipped the way a server would serve them, and the build fails
- * when one is exceeded (concept.md §13.5).
+ * when one is exceeded.
  *
  * Gzipped rather than raw, because gzipped is what crosses the network and raw
  * bytes would flatter every change that adds repetitive code.
@@ -37,7 +37,7 @@ const DIST = join(HERE, "..", "dist");
  * first.
  */
 const BUDGETS: { name: string; match: string[]; maxGz: number }[] = [
-  // Per concept.md §13.5: each visualisation under 20 KB gzipped.
+  // Per: each visualisation under 20 KB gzipped.
   { name: "cache viz", match: ["CacheViz", "canvas", "useRepaint"], maxGz: 20 * 1024 },
   { name: "rate-limiter viz", match: ["RateLimiterViz", "canvas", "useRepaint"], maxGz: 20 * 1024 },
   { name: "kv-cache viz", match: ["KvCacheViz", "canvas", "useRepaint"], maxGz: 20 * 1024 },
@@ -69,8 +69,7 @@ function matchesModule(path: string, needle: string): boolean {
 }
 
 /**
- * Every byte of JavaScript the site ships, gzipped (concept.md §13.5: core
- * plus all policies under 200 KB).
+ * Every byte of JavaScript the site ships, gzipped.
  */
 const TOTAL_MAX_GZ = 200 * 1024;
 
@@ -171,7 +170,7 @@ function main(): void {
   /**
    * The whole site, not just the named budgets.
    *
-   * concept.md §13.5 puts the core plus every policy under 200 KB gzipped. This
+   * puts the core plus every policy under 200 KB gzipped. This
    * is that ceiling, and it is a loose one: the site ships around 50 KB because
    * policies load lazily, so the total has a lot of room before it complains.
    *

@@ -3,7 +3,7 @@
  *
  * The C tree carries no test framework: the generated vector tests have to be
  * readable and self-contained, and a dependency would defeat the point of a
- * library that builds anywhere with a C99 compiler (concept.md §12.2).
+ * library that builds anywhere with a C99 compiler.
  *
  * A test program includes this, calls the PB_CHECK macros, and ends with
  * `return pb_test_summary("name");`.

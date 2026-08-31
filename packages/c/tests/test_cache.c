@@ -3,7 +3,7 @@
  *
  * TypeScript sizes its tables in float64 and accepts any capacity; C sizes
  * them in fixed-width integers, so a capacity whose tables cannot be addressed
- * has to be refused in create (concept.md §12.2). The refusal, and the sizing
+ * has to be refused in create. The refusal, and the sizing
  * arithmetic just inside it, are what this file pins — through a probing
  * allocator, because the boundary tables run to gigabytes no CI machine
  * should actually allocate.

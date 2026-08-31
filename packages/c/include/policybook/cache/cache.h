@@ -3,7 +3,7 @@
  *
  * A cache holds at most `capacity` keys. When a new key arrives and the cache is
  * full, something has to go, and which one is the whole question. A policy
- * observes every lookup and names a victim when asked (concept.md §5.1).
+ * observes every lookup and names a victim when asked.
  *
  * Every policy exports a `const pb_cache_vtable` and a params struct with a
  * _DEFAULT initialiser, so a caller can swap policies at runtime by pointing at
@@ -77,7 +77,7 @@ typedef struct pb_cache_vtable {
      *
      * No v0.1 policy may set this. It exists so that one which cannot honour
      * the contract has to say so in its vtable rather than quietly breaking a
-     * caller's memory budget (concept.md §12.2).
+     * caller's memory budget.
      */
     bool allocates_after_create;
 

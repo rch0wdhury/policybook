@@ -10,7 +10,7 @@
  *
  * This is the proof that the C generator agrees with the TypeScript and
  * Python ones, bit for bit, which is what makes every seeded policy and
- * trace reproducible across languages (concept.md §9).
+ * trace reproducible across languages.
  */
 
 #include <stddef.h>

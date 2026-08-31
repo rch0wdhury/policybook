@@ -6,8 +6,7 @@
  * attempt that just failed.
  *
  * The Rng is supplied at construction, as it is for every policy in the
- * registry (see the domain interface for why this departs from concept.md
- * §5.1). This policy never draws from it.
+ * registry (see the domain interface for why). This policy never draws from it.
  *
  * Regenerate with: pnpm gen:vectors retry/constant
  */

@@ -4,7 +4,7 @@ name: Bench
 # the result.
 #
 # The tables in every README are generated from measurements rather than written
-# by hand (concept.md §8.4), so they have to be regenerated when a policy or a
+# by hand, so they have to be regenerated when a policy or a
 # trace changes. Doing it here rather than asking a contributor to remember
 # means the committed numbers always came from the same machine shape, which is
 # the only way the throughput column means anything at all.

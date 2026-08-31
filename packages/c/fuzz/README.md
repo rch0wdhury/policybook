@@ -17,7 +17,7 @@ keep:
   invented one;
 - the resident count never exceeds the capacity once evictions are done;
 - `memory_bytes` does not change after `create`, which is the
-  no-allocation-after-create rule of concept.md §12.2;
+  no-allocation-after-create rule of;
 - nothing reads or writes out of bounds, which AddressSanitizer decides.
 
 ## The always-on driver

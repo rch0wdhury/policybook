@@ -134,7 +134,7 @@ without seeing the future.
 No patents.
 
 **No C port.** OPT exists only as a benchmark reference line, and the canonical
-`bench.json` is produced by the TypeScript implementation (concept.md §12.1).
+`bench.json` is produced by the TypeScript implementation.
 The `future` array has no natural expression in a C params struct, and adding
 one would complicate the vector generator for a policy that will never run in a
 C program. Its status is `offline-bound` rather than `stable`, which is the

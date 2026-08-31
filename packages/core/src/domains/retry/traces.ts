@@ -9,7 +9,7 @@
  *
  * The harness draws those same durations itself, from the same per-episode
  * seed; this file exists so the draw can be committed and compared across
- * languages without running a simulation (concept.md §10). If a port's Rng or
+ * languages without running a simulation. If a port's Rng or
  * its seeding differed, these numbers would differ first.
  *
  * The full prose specification is in TRACES.md next to this file; the code and

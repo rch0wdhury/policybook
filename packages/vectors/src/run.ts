@@ -3,7 +3,7 @@
  *
  * Every language has one generic runner that reflects on method names, so
  * adding an implementation means adding one file and a registry entry, not a
- * new test (concept.md §12.3). This is that runner for TypeScript; the Python
+ * new test. This is that runner for TypeScript; the Python
  * one lives in `packages/python/policybook/_vectors.py` and the C one is
  * generated ahead of time, since C cannot reflect.
  */
@@ -17,8 +17,8 @@ import type { JsonValue, VectorCase, VectorsFile } from "./types";
  *
  * The registry's convention is that a policy's `index.ts` default-exports a
  * class constructed as `new Policy(params, rng)`: a single params object with a
- * documented default for every field (concept.md §5), and an `Rng` for the
- * policies that need randomness (concept.md §9).
+ * documented default for every field, and an `Rng` for the
+ * policies that need randomness.
  */
 export type PolicyFactory = (params: Record<string, JsonValue>, rng: Rng) => object;
 

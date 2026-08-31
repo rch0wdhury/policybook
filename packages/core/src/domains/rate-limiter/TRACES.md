@@ -2,7 +2,7 @@
 
 The canonical workloads every rate-limiter policy is benchmarked on. They are
 generated, not downloaded: a port in any language reproduces them event for
-event from the seed alone (concept.md §10).
+event from the seed alone.
 
 This document is the specification. `traces.ts` is the reference
 implementation, and `packages/python/policybook/domains/rate_limiter/traces.py`
@@ -12,7 +12,7 @@ reference.
 
 ## Shared machinery
 
-**Rng** is xoshiro128\*\* seeded by splitmix32 (concept.md §9), seeded once per
+**Rng** is xoshiro128\*\* seeded by splitmix32, seeded once per
 trace with the seed below and never reseeded.
 
 **Time** is an integer number of milliseconds, starting at 0. A trace is a list

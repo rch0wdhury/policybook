@@ -3,7 +3,7 @@
  *
  * C cannot reflect on method names or parse JSON without a dependency, so where
  * TypeScript and Python each have a generic runner, C gets a generated test
- * program (concept.md §12.2). The output is committed, so the C tree builds and
+ * program. The output is committed, so the C tree builds and
  * tests on its own with nothing but a compiler.
  *
  * Usage: pnpm tsx scripts/gen-c-rng-vectors.ts
@@ -55,7 +55,7 @@ function main(): void {
   out.push(" *");
   out.push(" * This is the proof that the C generator agrees with the TypeScript and");
   out.push(" * Python ones, bit for bit, which is what makes every seeded policy and");
-  out.push(" * trace reproducible across languages (concept.md §9).");
+  out.push(" * trace reproducible across languages.");
   out.push(" */");
   out.push("");
   out.push("#include <stddef.h>");

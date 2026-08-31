@@ -3,7 +3,7 @@
  *
  * Nothing on this site is a copy. Every page reads the same `policy.json`, the
  * same `README.md` and the same `bench.json` that the tests, the CLI and the
- * benchmark pipeline read (concept.md §13.6), so a page cannot disagree with
+ * benchmark pipeline read, so a page cannot disagree with
  * the repository — the failure mode where documentation drifts from code is
  * removed rather than policed.
  *

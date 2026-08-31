@@ -1,6 +1,6 @@
 #include "policybook/allocator.h"
 
-/* The only translation unit permitted to include <stdlib.h> (concept.md §12.2). */
+/* The only translation unit permitted to include <stdlib.h>. */
 #include <stdlib.h>
 
 static void *pb_default_alloc(void *ctx, size_t n)

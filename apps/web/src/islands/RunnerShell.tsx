@@ -3,7 +3,7 @@
  *
  * Everything shared between domains lives here: transport, trace selection,
  * the metrics readout, the URL sync, and the explainer every runner is
- * required to carry (concept.md §13.3). The picture itself is a `children`
+ * required to carry. The picture itself is a `children`
  * slot, which each domain's visualisation fills — T42 onward.
  *
  * The simulation runs in a worker. This component never touches a policy.

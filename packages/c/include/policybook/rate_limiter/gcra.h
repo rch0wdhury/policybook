@@ -31,7 +31,7 @@
  *
  * **`max_keys` is a C-only parameter.** The TypeScript and Python ports grow a
  * hash map without limit; C takes all its memory in `create` and never
- * allocates again (concept.md 12.2). Once the table is full a key that has
+ * allocates again. Once the table is full a key that has
  * never been seen is refused — fail-closed.
  *
  * Memory: 8 bytes per tracked key, plus the map.

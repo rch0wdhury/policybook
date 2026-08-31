@@ -1,7 +1,7 @@
 /**
  * Injects benchmark tables into the READMEs, between the bench markers.
  *
- * READMEs are the product (concept.md §2), and a README whose numbers were
+ * READMEs are the product, and a README whose numbers were
  * typed by hand goes stale the first time a policy changes. Everything between
  * `<!-- bench:start -->` and `<!-- bench:end -->` is generated from the
  * committed `bench.json` files and must never be edited directly.

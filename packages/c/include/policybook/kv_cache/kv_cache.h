@@ -5,7 +5,7 @@
  * At a 4,096-token context that is gigabytes, and the cost is linear in the
  * sequence while the value of any individual token is not — most attention
  * lands on a handful of positions. Dropping the rest is what makes long
- * contexts affordable, and *which* to drop is this domain (concept.md §5.2).
+ * contexts affordable, and *which* to drop is this domain.
  *
  * This is the domain where the C implementation earns its keep: the policy runs
  * inside an inference server's per-step budget, so it must not allocate, and it
@@ -67,7 +67,7 @@ typedef struct pb_kvcache_vtable {
      * Allocate the policy and everything it will ever need.
      *
      * Everything is allocated here and nothing after, which is binding in this
-     * domain rather than merely encouraged (concept.md §12.2): a policy that
+     * domain rather than merely encouraged: a policy that
      * called malloc on the decode path would add an unbounded pause to every
      * token. That means `budget` must be known at create, and the eviction
      * buffer sized from it.

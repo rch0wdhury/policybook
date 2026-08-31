@@ -1,13 +1,13 @@
 """The ``kv-cache`` domain interface.
 
 Mirrors ``packages/core/src/domains/kv-cache/interface.ts`` method for method;
-only the spelling is idiomatic Python (concept.md §12.3).
+only the spelling is idiomatic Python.
 
 A transformer's KV cache grows by one entry per token, per layer, per head. At a
 4,096-token context that is gigabytes, and the cost is linear in the sequence
 while the value of any individual token is not — most attention lands on a
 handful of positions. Dropping the rest is what makes long contexts affordable,
-and *which* to drop is this domain (concept.md §5.2).
+and *which* to drop is this domain.
 
 **Positions are absolute token indices**, not offsets into the kept set. A policy
 that renumbered on eviction could say nothing about where a token sits in the

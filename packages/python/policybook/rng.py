@@ -3,7 +3,7 @@
 This is the Python side of the generator defined in
 ``packages/core/src/rng.ts``. It must agree with it bit for bit: the same seed
 produces the same stream in TypeScript, Python and C, which is what makes a
-port verifiable at all (concept.md §9). ``packages/core/src/rng.vectors.json``
+port verifiable at all. ``packages/core/src/rng.vectors.json``
 is the shared proof, replayed by ``tests/test_rng.py``.
 
 The generator is **xoshiro128\\*\\*** (Blackman and Vigna) seeded by

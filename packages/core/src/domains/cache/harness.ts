@@ -4,8 +4,7 @@
  * Drives a policy over a trace and counts what happened. It is deliberately the
  * smallest thing that can produce a hit rate: residency is a byte per key, the
  * loop allocates nothing, and the policy sees exactly the calls its interface
- * promises — no more (concept.md §2, non-goals: this is not a general-purpose
- * simulator).
+ * promises — no more.
  *
  * The harness also polices the contract. A policy that evicts a key it does not
  * hold, or fails to free space, fails loudly here rather than quietly producing
@@ -75,7 +74,7 @@ export function runCacheTrace(
 
     const hit = resident[key] === 1;
 
-    // The policy learns about the access before any insertion (concept.md §5.1).
+    // The policy learns about the access before any insertion.
     policy.onAccess(key, hit);
 
     if (hit) {

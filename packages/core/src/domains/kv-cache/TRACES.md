@@ -3,7 +3,7 @@
 The synthetic workload every kv-cache policy is benchmarked on. It is
 generated, not recorded: a real trace would be gigabytes and would tie the
 registry to one model, and this way a port in any language reproduces it **bit
-for bit** from the seed alone (concept.md §10).
+for bit** from the seed alone.
 
 This document is the specification. `traces.ts` is the reference
 implementation, and `packages/python/policybook/domains/kv_cache/traces.py` and

@@ -114,7 +114,7 @@ nextDelay(attempt: number, error: RetryError): number | null
 a decision to give up, not an error.
 
 The `Rng` is supplied at construction rather than threaded through `nextDelay`,
-which departs from concept.md §5.1. Every other domain here supplies randomness
+which departs from Every other domain here supplies randomness
 at construction, including the C vtable's `create`, and making retry the
 exception would put a `pb_rng *` on the C hot path for no benefit. The property
 that matters, that a policy never reaches for a global source, is unchanged.

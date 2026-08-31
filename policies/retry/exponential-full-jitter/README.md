@@ -121,7 +121,7 @@ range.
 No patents known.
 
 The `Rng` is supplied at construction rather than passed to `nextDelay`, which
-departs from concept.md §5.1. Every other domain in the registry supplies
+departs from Every other domain in the registry supplies
 randomness at construction, as the C vtable's `create(params, allocator, rng)`
 already does, and making retry the exception would put an `pb_rng *` on the C
 hot path for no benefit. The property that matters, that a policy never reaches

@@ -5,7 +5,7 @@
  * the registry and wrong for a Python package: every module would be called
  * `policy`. So the package is assembled — `policies/cache/lru/policy.py`
  * becomes `packages/python/policybook/domains/cache/lru.py` — which is what
- * lets a user write `from policybook.cache import Lru` (concept.md §12.1).
+ * lets a user write `from policybook.cache import Lru`.
  *
  * It is also what lets the tree be type-checked at all: `mypy` refuses a set of
  * files that all share a module name, so `policies/**` can only be checked one
@@ -236,7 +236,7 @@ function main(): void {
     write(join(domainDir, "__init__.py"), initLines.join("\n"));
 
     // The public shortcut: `from policybook.cache import Lru` rather than
-    // `from policybook.domains.cache import Lru` (concept.md §12.1).
+    // `from policybook.domains.cache import Lru`.
     //
     // A domain with no policies yet still gets one, so its interface and traces
     // are importable by the documented path; the example names whatever it does

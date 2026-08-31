@@ -1,7 +1,7 @@
 """The ``rate-limiter`` domain interface.
 
 Mirrors ``packages/core/src/domains/rate-limiter/interface.ts`` method for
-method; only the spelling is idiomatic Python (concept.md §12.3).
+method; only the spelling is idiomatic Python.
 
 A limiter is asked one question — may this request go through, right now? — and
 the interesting part is what it does with the ones it refuses. A fixed window

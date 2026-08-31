@@ -18,7 +18,7 @@
  *   - `state_size` never exceeds `max_keys`, which is what the fail-closed
  *     bound is for;
  *   - `memory_bytes` does not change after `create`, which is the
- *     no-allocation-after-create rule of concept.md §12.2;
+ *     no-allocation-after-create rule of;
  *   - nothing reads or writes out of bounds, which AddressSanitizer decides.
  *
  * Time only ever moves forward, because the interface says `now_ms` is

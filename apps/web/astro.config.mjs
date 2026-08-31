@@ -12,7 +12,7 @@ const repoRoot = fileURLToPath(new URL("../..", import.meta.url));
  * Static output, because there is nothing here a server needs to decide: every
  * page is a policy, a domain or a comparison, and all of them are known at
  * build time. The only JavaScript that reaches a browser is the runner islands,
- * and those are opt-in per page (concept.md §13.5).
+ * and those are opt-in per page.
  */
 export default defineConfig({
   // GitHub project pages serve from a subpath, and every asset URL has to know
@@ -47,7 +47,7 @@ export default defineConfig({
       fs: {
         // The catalog is read from `policies/**` at the repository root, which
         // is outside the site's own directory. Nothing is copied in: the page
-        // and the tests read the same file (concept.md §13.6).
+        // and the tests read the same file.
         allow: [repoRoot],
       },
     },

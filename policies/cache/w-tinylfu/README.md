@@ -162,5 +162,5 @@ always at LFU's price.
 
 **This is the algorithm, not Caffeine.** Production implementations add batched
 update buffers, adaptive window sizing and a hierarchical timer wheel. Those are
-engineering around the policy rather than the policy, and concept.md §2 puts
+engineering around the policy rather than the policy, and puts
 them out of scope.

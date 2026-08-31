@@ -4,7 +4,7 @@
  * The numbers in this registry are the point of it. A decision table that says
  * "SIEVE is scan-resistant" is worth much less than one that says SIEVE reaches
  * 0.73 where LRU reaches 0.61 on a named, reproducible trace — so the tables are
- * generated from measurements rather than written by hand (concept.md §8.4).
+ * generated from measurements rather than written by hand.
  *
  * Each policy's results are committed. `metrics` are deterministic and are
  * asserted; `perf` is machine-dependent and is only ever informational

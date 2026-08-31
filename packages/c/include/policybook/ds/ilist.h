@@ -5,7 +5,7 @@
  * obvious implementation — malloc'd nodes with pointers — is the wrong one
  * here. It scatters the working set across the heap, makes memory use
  * unpredictable, and allocates on the hot path. This list instead stores two
- * uint32_t arrays indexed by slot, allocated once (concept.md §12.2).
+ * uint32_t arrays indexed by slot, allocated once.
  *
  * A "node" is a slot index in [0, capacity). The caller owns whatever the slot
  * means; the list only orders them.

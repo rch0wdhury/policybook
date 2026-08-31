@@ -2,7 +2,7 @@
 
 The Python side of ``packages/core/src/zipf.ts``. It must produce the same
 ranks from the same seed, draw for draw, or the traces diverge and the benchmark
-numbers stop being comparable (concept.md §10).
+numbers stop being comparable.
 
 **Why only two exponents.** A Zipf weight is ``1 / rank**alpha``, which wants
 ``pow``. ``pow`` is not correctly rounded — the same call can return different

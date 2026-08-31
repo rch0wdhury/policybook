@@ -1,9 +1,9 @@
 """The Python vector runner.
 
-A policy's ``vectors.json`` is a list of method calls and expected results
-(concept.md §8.3). Every language has one generic runner that reflects on method
-names, so adding an implementation means adding one file, not a new test. This
-is that runner for Python.
+A policy's ``vectors.json`` is a list of method calls and expected results.
+Every language has one generic runner that reflects on method names, so adding
+an implementation means adding one file, not a new test. This is that runner
+for Python.
 
 The vector files are written in the reference (TypeScript) spelling, so method
 names arrive as ``onAccess`` and are mapped to ``on_access`` here.
@@ -44,7 +44,7 @@ def camel_to_snake(name: str) -> str:
     """Map a reference method name to its Python spelling.
 
     ``onAccess`` becomes ``on_access``. Idiomatic naming per language is allowed
-    for methods (concept.md §12.3), and this is the mapping that permits it.
+    for methods, and this is the mapping that permits it.
     """
     out: list[str] = []
     for index, character in enumerate(name):

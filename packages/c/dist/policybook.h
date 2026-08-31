@@ -26,7 +26,7 @@
  * Compile the implementation with -ffp-contract=off. Fusing a multiply and
  * an add into one rounding would make a policy's decisions differ from the
  * TypeScript and Python implementations on the same input, which is the one
- * property this registry exists to guarantee (concept.md §9).
+ * property this registry exists to guarantee.
  *
  * MIT licensed.
  */
@@ -54,7 +54,7 @@
  * simply unwelcome: firmware, kernels, database engines. So every allocation
  * goes through a caller-supplied allocator, and every policy takes all the
  * memory it will ever need in its create function and nothing afterwards
- * (concept.md §12.2).
+ *.
  *
  * Passing NULL selects malloc/free, which is the right default for a test
  * program and the wrong one for a hot path.
@@ -113,7 +113,7 @@ static inline void pb_free(const pb_allocator *allocator, void *p, size_t n)
  *
  * This is the C side of the generator defined in `packages/core/src/rng.ts`. It
  * must agree with it bit for bit: same seed, same stream, in TypeScript, Python
- * and C (concept.md §9). `tests/gen/test_rng.c` is generated from the shared
+ * and C. `tests/gen/test_rng.c` is generated from the shared
  * reference vectors and is the proof.
  *
  * The generator is xoshiro128** (Blackman and Vigna) seeded by splitmix32. It
@@ -186,7 +186,7 @@ uint32_t pb_mix32(uint32_t value);
  *
  * A cache holds at most `capacity` keys. When a new key arrives and the cache is
  * full, something has to go, and which one is the whole question. A policy
- * observes every lookup and names a victim when asked (concept.md §5.1).
+ * observes every lookup and names a victim when asked.
  *
  * Every policy exports a `const pb_cache_vtable` and a params struct with a
  * _DEFAULT initialiser, so a caller can swap policies at runtime by pointing at
@@ -255,7 +255,7 @@ typedef struct pb_cache_vtable {
      *
      * No v0.1 policy may set this. It exists so that one which cannot honour
      * the contract has to say so in its vtable rather than quietly breaking a
-     * caller's memory budget (concept.md §12.2).
+     * caller's memory budget.
      */
     bool allocates_after_create;
 
@@ -910,7 +910,7 @@ size_t pb_heap_memory_bytes(const pb_heap *heap);
  * obvious implementation — malloc'd nodes with pointers — is the wrong one
  * here. It scatters the working set across the heap, makes memory use
  * unpredictable, and allocates on the hot path. This list instead stores two
- * uint32_t arrays indexed by slot, allocated once (concept.md §12.2).
+ * uint32_t arrays indexed by slot, allocated once.
  *
  * A "node" is a slot index in [0, capacity). The caller owns whatever the slot
  * means; the list only orders them.
@@ -1005,7 +1005,7 @@ size_t pb_ilist_memory_bytes(const pb_ilist *list);
  * Cache policies need to answer "where is this key?" on every access, and in C
  * that means bringing your own hash map. This one is built for the same
  * constraints as everything else here: it takes all its memory in init, never
- * grows, never rehashes, and never allocates again (concept.md §12.2).
+ * grows, never rehashes, and never allocates again.
  *
  * Open addressing with linear probing, and **backward-shift deletion** rather
  * than tombstones. Tombstones would degrade a long-running cache — every
@@ -1015,7 +1015,7 @@ size_t pb_ilist_memory_bytes(const pb_ilist *list);
  * what a cache that evicts millions of times needs.
  *
  * Iteration order is never exposed, deliberately: no policy decision may depend
- * on it (concept.md §9).
+ * on it.
  */
 
 #ifndef POLICYBOOK_DS_MAP_H
@@ -1166,7 +1166,7 @@ size_t pb_ring_memory_bytes(const pb_ring *ring);
  * takes uint64_t keys and leaves hashing to the caller. The C vector generator
  * maps those strings through this function and compares against the mapped
  * expectation, so the same vectors.json drives C without a JSON parser
- * (concept.md §12.2).
+ *.
  *
  * This is a key-mapping convenience, not the registry's hash function: policies
  * that hash keys internally use pb_mix32 (see rng.h).
@@ -1226,7 +1226,7 @@ static inline uint64_t pb_fnv1a64_str(const char *text)
  * At a 4,096-token context that is gigabytes, and the cost is linear in the
  * sequence while the value of any individual token is not — most attention
  * lands on a handful of positions. Dropping the rest is what makes long
- * contexts affordable, and *which* to drop is this domain (concept.md §5.2).
+ * contexts affordable, and *which* to drop is this domain.
  *
  * This is the domain where the C implementation earns its keep: the policy runs
  * inside an inference server's per-step budget, so it must not allocate, and it
@@ -1284,7 +1284,7 @@ typedef struct pb_kvcache_vtable {
      * Allocate the policy and everything it will ever need.
      *
      * Everything is allocated here and nothing after, which is binding in this
-     * domain rather than merely encouraged (concept.md §12.2): a policy that
+     * domain rather than merely encouraged: a policy that
      * called malloc on the decode path would add an unbounded pause to every
      * token. That means `budget` must be known at create, and the eviction
      * buffer sized from it.
@@ -1976,7 +1976,7 @@ uint32_t pb_kvcache_trace_hash(const pb_kvcache_trace_spec *spec, const pb_alloc
  * Zipf sampling for the canonical traces.
  *
  * The C side of `packages/core/src/zipf.ts`. It must produce the same ranks
- * from the same seed, draw for draw (concept.md §10).
+ * from the same seed, draw for draw.
  *
  * Only two exponents are supported, and that is deliberate. A Zipf weight is
  * 1 / rank^alpha, which wants pow — but pow is not correctly rounded, so the
@@ -2046,7 +2046,7 @@ double pb_zipf_weight(uint32_t rank, double alpha);
  * A limiter is asked one question — may this request go through, right now? —
  * and the interesting part is what it does with the ones it refuses. A fixed
  * window lets through twice its limit at a window boundary. A token bucket
- * absorbs bursts by design. A leaky bucket refuses to (concept.md §5.1).
+ * absorbs bursts by design. A leaky bucket refuses to.
  *
  * Every policy exports a `const pb_ratelimiter_vtable` and a params struct with
  * a _DEFAULT initialiser, so a caller can swap policies at runtime by pointing
@@ -2271,7 +2271,7 @@ size_t pb_ratelimiter_trace_generate(const pb_ratelimiter_trace_spec *spec, uint
  *
  * **`max_keys` is a C-only parameter.** The TypeScript and Python ports grow a
  * hash map without limit; C takes all its memory in `create` and never
- * allocates again (concept.md 12.2). Once the table is full a key that has
+ * allocates again. Once the table is full a key that has
  * never been seen is refused — fail-closed.
  *
  * Memory: 24 bytes per tracked key, plus the map.
@@ -2333,7 +2333,7 @@ extern const pb_ratelimiter_vtable pb_ratelimiter_dual_bucket;
  *
  * **`max_keys` is a C-only parameter.** The TypeScript and Python ports grow a
  * hash map without limit; C takes all its memory in `create` and never
- * allocates again (concept.md §12.2), so the number of tracked keys has to be
+ * allocates again, so the number of tracked keys has to be
  * bounded up front. Once the table is full, a key that has never been seen is
  * **refused** — fail-closed, because the alternative is to stop limiting the
  * moment an attacker cycles through keys. Size it above the cardinality you
@@ -2405,7 +2405,7 @@ extern const pb_ratelimiter_vtable pb_ratelimiter_fixed_window;
  *
  * **`max_keys` is a C-only parameter.** The TypeScript and Python ports grow a
  * hash map without limit; C takes all its memory in `create` and never
- * allocates again (concept.md 12.2). Once the table is full a key that has
+ * allocates again. Once the table is full a key that has
  * never been seen is refused — fail-closed.
  *
  * Memory: 8 bytes per tracked key, plus the map.
@@ -2469,7 +2469,7 @@ extern const pb_ratelimiter_vtable pb_ratelimiter_gcra;
  *
  * **`max_keys` is a C-only parameter.** The TypeScript and Python ports grow a
  * hash map without limit; C takes all its memory in `create` and never
- * allocates again (concept.md §12.2). Once the table is full a key that has
+ * allocates again. Once the table is full a key that has
  * never been seen is refused — fail-closed.
  *
  * Memory: 24 bytes per tracked key, plus the map.
@@ -2535,7 +2535,7 @@ extern const pb_ratelimiter_vtable pb_ratelimiter_leaky_bucket;
  *
  * **`max_keys` is a C-only parameter.** The TypeScript and Python ports grow a
  * hash map without limit; C takes all its memory in `create` and never
- * allocates again (concept.md §12.2). Once the table is full a key that has
+ * allocates again. Once the table is full a key that has
  * never been seen is refused — fail-closed, because the alternative is to stop
  * limiting the moment an attacker cycles through keys.
  *
@@ -2599,7 +2599,7 @@ extern const pb_ratelimiter_vtable pb_ratelimiter_sliding_counter;
  *
  * **`max_keys` is a C-only parameter.** The TypeScript and Python ports grow a
  * hash map without limit; C takes all its memory in `create` and never
- * allocates again (concept.md §12.2). Once the table is full a key that has
+ * allocates again. Once the table is full a key that has
  * never been seen is refused — fail-closed, because the alternative is to stop
  * limiting the moment an attacker cycles through keys.
  *
@@ -2666,7 +2666,7 @@ extern const pb_ratelimiter_vtable pb_ratelimiter_sliding_log;
  *
  * **`max_keys` is a C-only parameter.** The TypeScript and Python ports grow a
  * hash map without limit; C takes all its memory in `create` and never
- * allocates again (concept.md §12.2). Once the table is full a key that has
+ * allocates again. Once the table is full a key that has
  * never been seen is refused — fail-closed, because the alternative is to stop
  * limiting the moment an attacker cycles through keys.
  *
@@ -2708,7 +2708,7 @@ extern const pb_ratelimiter_vtable pb_ratelimiter_token_bucket;
  * The smallest decision in the registry and the one most often got wrong. A
  * request failed; when should the client come back? Retry too eagerly and a
  * service that was merely slow becomes a service that is down, because every
- * client in the fleet is now hammering it in lockstep (concept.md §5.1).
+ * client in the fleet is now hammering it in lockstep.
  *
  * Every policy exports a `const pb_retry_vtable` and a params struct with a
  * _DEFAULT initialiser:
@@ -2728,7 +2728,7 @@ extern const pb_ratelimiter_vtable pb_ratelimiter_token_bucket;
  *     pb_retry_exponential_full_jitter.destroy(policy);
  *
  * The `pb_rng` is supplied at `create`, as it is for every other domain here.
- * concept.md §5.1 threads it through the per-call function instead; putting it
+ * threads it through the per-call function instead; putting it
  * on the hot path would buy nothing, and the property that matters — a policy
  * never reaching for a global source — is unchanged.
  */
@@ -3315,7 +3315,7 @@ extern const pb_retry_vtable pb_retry_retry_after_aware;
  * src/allocator.c
  * ======================================================================== */
 
-/* The only translation unit permitted to include <stdlib.h> (concept.md §12.2). */
+/* The only translation unit permitted to include <stdlib.h>. */
 
 static void *pb_default_alloc(void *ctx, size_t n)
 {

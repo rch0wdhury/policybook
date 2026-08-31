@@ -2,7 +2,7 @@
  * Turns a policy's scenario script into its committed `vectors.json`.
  *
  * Vectors are generated from the reference TypeScript implementation and then
- * reviewed by hand (concept.md §8.3). That has one obvious hazard: if the
+ * reviewed by hand. That has one obvious hazard: if the
  * implementation is wrong, the captured expectations are wrong in exactly the
  * same way, and the vectors prove nothing. So a scenario step comes in two
  * flavours:

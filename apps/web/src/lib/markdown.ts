@@ -2,7 +2,7 @@
  * Rendering the repository's own markdown, and pulling structure out of it.
  *
  * The domain and policy pages are the READMEs. Not a copy, not a summary — the
- * same file, rendered (concept.md §13.6). That is what stops a page and a
+ * same file, rendered. That is what stops a page and a
  * repository from disagreeing, and it means the effort that went into a
  * README's "when not to use it" section reaches a reader rather than sitting in
  * a directory.

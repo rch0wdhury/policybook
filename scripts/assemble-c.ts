@@ -6,7 +6,7 @@
  * `policy.h`. So the library tree is assembled — `policies/cache/lru/policy.h`
  * becomes `packages/c/include/policybook/cache/lru.h` — which is what lets a
  * user write `#include <policybook/cache/lru.h>` and what lets the generated
- * vector tests compile (concept.md §12.2).
+ * vector tests compile.
  *
  * The copies are committed, so the C tree is self-contained. They carry a
  * generated header and must never be edited directly; CI regenerates and

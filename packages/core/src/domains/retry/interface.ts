@@ -13,13 +13,13 @@
  * the same failure retries at the same instant, and the recovering service is
  * hit by a synchronised wave rather than a spread. That is the thundering herd,
  * and it is why the policies in this domain differ mostly in where they put the
- * random draw (concept.md §5.1).
+ * random draw.
  *
  * A policy is handed an `Rng` at construction rather than owning one. That is
  * what makes a retry sequence reproducible in a test and a simulation, and it
  * is the same rule as everywhere else here: nothing reads a clock or a global.
  *
- * **Deviation from concept.md §5.1**, which threads the `Rng` through
+ * **Deviation from**, which threads the `Rng` through
  * `nextDelay` as a third argument. Every other domain in this registry supplies
  * randomness at construction — the C vtable's `create(params, allocator, rng)`
  * already does, and so do the cache and rate-limiter policies — and making

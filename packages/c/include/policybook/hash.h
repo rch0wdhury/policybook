@@ -5,7 +5,7 @@
  * takes uint64_t keys and leaves hashing to the caller. The C vector generator
  * maps those strings through this function and compares against the mapped
  * expectation, so the same vectors.json drives C without a JSON parser
- * (concept.md §12.2).
+ *.
  *
  * This is a key-mapping convenience, not the registry's hash function: policies
  * that hash keys internally use pb_mix32 (see rng.h).

@@ -3,7 +3,7 @@
  *
  * The catalog is the directory tree: `policies/<domain>/<policy>/`. Nothing
  * maintains a separate index that could drift, so adding a policy means adding
- * a directory (concept.md §7). This module is the single reader of that
+ * a directory. This module is the single reader of that
  * layout — the vector suite, the catalog validator and the CLI all go through
  * it.
  */

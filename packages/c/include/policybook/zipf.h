@@ -2,7 +2,7 @@
  * Zipf sampling for the canonical traces.
  *
  * The C side of `packages/core/src/zipf.ts`. It must produce the same ranks
- * from the same seed, draw for draw (concept.md §10).
+ * from the same seed, draw for draw.
  *
  * Only two exponents are supported, and that is deliberate. A Zipf weight is
  * 1 / rank^alpha, which wants pow — but pow is not correctly rounded, so the

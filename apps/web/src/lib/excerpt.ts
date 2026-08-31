@@ -2,7 +2,7 @@
  * Taking part of a real file, without pinning to line numbers.
  *
  * The tutorial imports every sample with `?raw` so it cannot drift from the
- * code (concept.md §13.6). Line numbers would quietly undo that: `lines: [24,
+ * code. Line numbers would quietly undo that: `lines: [24,
  * 48]` is itself a hand-maintained copy of something about the file, and the
  * day someone adds a comment near the top, the panel shows the wrong code with
  * no error anywhere. That is worse than pasting, because it *looks* generated.

@@ -138,9 +138,7 @@ the rules that matter most — determinism above all.
 
 ## Status
 
-v0.1. Four domains. [PROGRESS.md](PROGRESS.md) records how each
-piece was built and what was found along the way; [concept.md](concept.md) is the
-specification.
+v0.1. Four domains.
 
 ## Licence
 

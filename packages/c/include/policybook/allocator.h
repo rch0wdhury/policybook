@@ -5,7 +5,7 @@
  * simply unwelcome: firmware, kernels, database engines. So every allocation
  * goes through a caller-supplied allocator, and every policy takes all the
  * memory it will ever need in its create function and nothing afterwards
- * (concept.md §12.2).
+ *.
  *
  * Passing NULL selects malloc/free, which is the right default for a test
  * program and the wrong one for a hot path.

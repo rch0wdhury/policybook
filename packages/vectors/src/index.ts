@@ -2,7 +2,7 @@
  * @policybook/vectors — the TypeScript vector runner.
  *
  * A policy's `vectors.json` is a list of method calls and expected results
- * (concept.md §8.3). This package replays one against a TypeScript
+ *. This package replays one against a TypeScript
  * implementation, and knows how to find every policy in the registry.
  */
 

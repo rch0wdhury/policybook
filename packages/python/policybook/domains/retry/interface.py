@@ -1,7 +1,7 @@
 """The ``retry`` domain interface.
 
 Mirrors ``packages/core/src/domains/retry/interface.ts`` method for method;
-only the spelling is idiomatic Python (concept.md §12.3).
+only the spelling is idiomatic Python.
 
 A request failed; when should the client come back? Retry too eagerly and a
 service that was merely slow becomes a service that is down, because every
@@ -10,7 +10,7 @@ the delay curve but the randomness: without jitter, every client that saw the
 same failure retries at the same instant.
 
 A policy is handed an ``Rng`` at construction rather than owning one, and rather
-than receiving one per call as concept.md §5.1 shows. Every other domain in this
+than receiving one per call as shows. Every other domain in this
 registry supplies randomness at construction — the C vtable's
 ``create(params, allocator, rng)`` already does — and making retry the exception
 would put a ``pb_rng *`` on the C hot path for no benefit.

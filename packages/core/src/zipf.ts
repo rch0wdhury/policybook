@@ -3,7 +3,7 @@
  *
  * Real cache workloads are skewed: a few keys take most of the traffic. Zipf is
  * the standard model for that, and it is what the cache and rate-limiter traces
- * are built on (concept.md §10).
+ * are built on.
  *
  * **Why only two exponents.** A Zipf weight is `1 / rank^alpha`, which wants
  * `pow`. But `pow` is not correctly rounded — the same call can return

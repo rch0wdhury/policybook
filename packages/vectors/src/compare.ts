@@ -1,7 +1,7 @@
 /**
  * Deep comparison for vector expectations.
  *
- * The rules come from concept.md §8.3: deep equality, with floats compared to
+ * The rules come from: deep equality, with floats compared to
  * an absolute tolerance (1e-9 unless a case overrides it). Typed arrays compare
  * equal to plain JSON arrays, because several interfaces hand back a
  * `Float32Array` while the vector file can only hold a list of numbers.
@@ -10,7 +10,7 @@
  * a failing vector should tell you what broke without a debugger.
  */
 
-/** Default absolute tolerance for float comparisons (concept.md §8.3). */
+/** Default absolute tolerance for float comparisons. */
 export const DEFAULT_TOLERANCE = 1e-9;
 
 /** Renders a value for an error message, including the cases JSON cannot. */

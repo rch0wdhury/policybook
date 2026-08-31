@@ -6,7 +6,7 @@
  * untested:
  *
  *   1. `max_keys`. TypeScript and Python grow a hash map without limit; C takes
- *      all its memory in create and never allocates again (concept.md §12.2),
+ *      all its memory in create and never allocates again,
  *      so the number of tracked keys is bounded up front and a key beyond that
  *      bound is refused. That is a deliberate fail-closed choice — letting an
  *      unknown key through would mean an attacker who cycles keys turns the

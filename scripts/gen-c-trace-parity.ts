@@ -2,8 +2,7 @@
  * Generates the C trace parity tests from the committed reference prefixes.
  *
  * The Python parity test loads `trace-prefix.json` at runtime. C will not gain
- * a JSON parser just for a test, so the reference is compiled in (concept.md
- * §12.2). This is what makes the C benchmark numbers comparable with the
+ * a JSON parser just for a test, so the reference is compiled in. This is what makes the C benchmark numbers comparable with the
  * canonical TypeScript ones: if the C generator consumed a different number of
  * random draws, or summed its Zipf weights in a different order, the sequences
  * would split and this test would say exactly where.
@@ -72,7 +71,7 @@ function header(domain: string, events: number, includes: string[]): string[] {
     ` * The first ${events.toLocaleString()} events of every canonical ${domain} trace, as`,
     " * produced by the reference TypeScript generator. The C generator has to",
     " * reproduce them exactly, which is what makes C benchmark numbers comparable",
-    " * with the canonical ones (concept.md §12.1, §12.2).",
+    " * with the canonical ones.",
     " */",
     "",
     "#include <stddef.h>",

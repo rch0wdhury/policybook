@@ -1,8 +1,8 @@
 /**
  * Markdown to terminal text.
  *
- * `policybook show` prints the same README that GitHub and the site render
- * (concept.md §13.6), so this needs to make it readable in a terminal without
+ * `policybook show` prints the same README that GitHub and the site
+ * render, so this needs to make it readable in a terminal without
  * pretending to be a full renderer. Headings, emphasis, code, lists, tables and
  * links — that is what the policy READMEs use.
  */

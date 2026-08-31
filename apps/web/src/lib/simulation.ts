@@ -10,7 +10,7 @@
  * site whose runner disagreed with its own tables would be worse than one with
  * no runner at all, so `simulation.test.ts` runs each stepper to completion and
  * compares against the core harness event for event. That test is the only
- * thing making this duplication safe (concept.md §13.3).
+ * thing making this duplication safe.
  *
  * ## Going backwards
  *

@@ -1,7 +1,7 @@
 """The ``cache`` domain interface.
 
 Mirrors ``packages/core/src/domains/cache/interface.ts`` method for method;
-only the spelling is idiomatic Python (concept.md §12.3).
+only the spelling is idiomatic Python.
 
 A cache holds at most ``capacity`` keys. When a new key arrives and the cache is
 full, something has to go, and which one is the whole question. A policy

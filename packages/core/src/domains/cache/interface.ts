@@ -7,7 +7,7 @@
  * deal — the difference between a good and a bad eviction rule on the same
  * workload is routinely ten points of hit rate.
  *
- * The interface is deliberately tiny (concept.md §5.1): a policy observes every
+ * The interface is deliberately tiny: a policy observes every
  * lookup and names a victim when asked. It never sees the cached values, never
  * reads the clock, and never allocates on the hot path.
  */

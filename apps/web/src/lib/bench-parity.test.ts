@@ -1,7 +1,7 @@
 /**
  * The site cannot disagree with its own benchmark tables.
  *
- * This is the guarantee behind every number on the site (concept.md §13.3). The
+ * This is the guarantee behind every number on the site. The
  * runner reimplements the harness loops — it has to, because a runner stops
  * between events and `runCacheTrace` does not — and `simulation.test.ts` proves
  * those loops match the harness. This goes one step further and compares the

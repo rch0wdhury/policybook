@@ -4,7 +4,7 @@
  *
  * This is the C side of the generator defined in `packages/core/src/rng.ts`. It
  * must agree with it bit for bit: same seed, same stream, in TypeScript, Python
- * and C (concept.md §9). `tests/gen/test_rng.c` is generated from the shared
+ * and C. `tests/gen/test_rng.c` is generated from the shared
  * reference vectors and is the proof.
  *
  * The generator is xoshiro128** (Blackman and Vigna) seeded by splitmix32. It

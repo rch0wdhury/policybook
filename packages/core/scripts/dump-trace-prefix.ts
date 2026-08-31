@@ -3,7 +3,7 @@
  *
  * This is what makes a port's trace generator checkable. The Python and C
  * implementations regenerate the same prefix from the same seed and compare
- * event for event (concept.md §12.1, §12.2); if a port consumes a different
+ * event for event; if a port consumes a different
  * number of random draws, or sums its Zipf weights in a different order, the
  * sequences diverge and the parity test says exactly where.
  *

@@ -22,7 +22,7 @@
  *     `memory_bytes`. That is the stronger of the two: a policy could free and
  *     reallocate the same number of bytes on the decode path and keep
  *     `memory_bytes` constant while still calling malloc per token, which is
- *     exactly the pause a KV cache cannot afford (concept.md §12.2);
+ *     exactly the pause a KV cache cannot afford;
  *   - `memory_bytes` does not change after `create` either, which is the
  *     weaker check kept for the same reason the other domains keep it;
  *   - nothing reads or writes out of bounds, which AddressSanitizer decides.

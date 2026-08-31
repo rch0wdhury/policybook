@@ -4,7 +4,7 @@
  * Real attention traces would be gigabytes and would tie the registry to one
  * model, so the workload is generated — specified precisely enough that the
  * Python and C ports reproduce it **bit for bit**, which for a float trace is a
- * stronger requirement than anywhere else in this registry (concept.md §10).
+ * stronger requirement than anywhere else in this registry.
  *
  * The mixture is a caricature of what attention actually does, and it is a
  * caricature on purpose: every policy in this domain exists to exploit one of

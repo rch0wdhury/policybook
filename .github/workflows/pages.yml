@@ -5,7 +5,7 @@ name: Pages
 # Triggered by the Bench workflow finishing rather than by a push, so the site
 # is always built from a tree whose benchmark tables have already been
 # refreshed. Building on push would race: the site reads bench.json at build
-# time (concept.md §13.6), and a deploy that started before Bench committed
+# time, and a deploy that started before Bench committed
 # would publish yesterday's numbers alongside today's code.
 
 on:

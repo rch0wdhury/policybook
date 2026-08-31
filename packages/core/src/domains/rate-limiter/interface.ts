@@ -6,7 +6,7 @@
  * window is trivial to implement and lets through twice its limit at a window
  * boundary. A token bucket absorbs bursts by design. A leaky bucket refuses to.
  * Which of those is correct depends entirely on what is downstream, and that is
- * the choice this domain exists to make explicit (concept.md §5.1).
+ * the choice this domain exists to make explicit.
  *
  * **Time is an integer number of milliseconds, supplied by the caller.** A
  * policy never reads the clock: it cannot be tested if it does, and a caller

@@ -2,12 +2,12 @@
  * Turning a registry policy into a file you can drop into your own project.
  *
  * The recommended way to use this registry is to copy a policy in, not to
- * depend on a package (concept.md §2). That only works if what lands in your
+ * depend on a package. That only works if what lands in your
  * repository is *self-contained*: `policybook add` must never leave an import
  * pointing back at something you do not have.
  *
- * Policies are allowed to share the deterministic Rng and the C data structures
- * (concept.md §17), so those shared modules are inlined here. The whole helper
+ * Policies are allowed to share the deterministic Rng and the C data
+ * structures, so those shared modules are inlined here. The whole helper
  * module is copied rather than the one function used from it: a tree-shaker
  * that silently dropped a transitively-needed constant would produce a file
  * that compiles and computes the wrong answer, which is far worse than a few

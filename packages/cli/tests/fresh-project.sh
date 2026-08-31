@@ -4,7 +4,7 @@
 #
 # The registry's promise is that you copy a policy in and it just compiles —
 # no imports pointing back at us, no dependency added to your project
-# (concept.md §2). The only way to know is to do it: each language gets a fresh
+#. The only way to know is to do it: each language gets a fresh
 # empty directory outside the repository, the file is copied in, and it is
 # compiled or imported with nothing else present.
 #

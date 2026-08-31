@@ -5,7 +5,7 @@
  * At a 4,096-token context that is gigabytes, and the cost is linear in the
  * sequence while the value of any individual token is not — most attention
  * lands on a handful of positions. Dropping the rest is what makes long
- * contexts affordable, and *which* to drop is this domain (concept.md §5.2).
+ * contexts affordable, and *which* to drop is this domain.
  *
  * The policy sees, at each decode step, how much attention the current token
  * paid to each position it still holds. From that it must name positions to

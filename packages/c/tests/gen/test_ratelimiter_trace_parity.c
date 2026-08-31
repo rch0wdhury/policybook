@@ -9,7 +9,7 @@
  * The first 10,000 events of every canonical rate-limiter trace, as
  * produced by the reference TypeScript generator. The C generator has to
  * reproduce them exactly, which is what makes C benchmark numbers comparable
- * with the canonical ones (concept.md §12.1, §12.2).
+ * with the canonical ones.
  */
 
 #include <stddef.h>

@@ -4,7 +4,7 @@
  * The scaffold is opinionated on purpose. Every TODO marks something the
  * catalog validator will reject if it is left blank, so a contributor finds out
  * what is missing by running `policybook check` rather than by reading
- * concept.md §8.
+ *
  */
 
 /** The files a new policy starts with. */

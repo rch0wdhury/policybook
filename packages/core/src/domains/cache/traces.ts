@@ -4,7 +4,7 @@
  * A benchmark is only meaningful if everyone runs the same workload, so traces
  * are generated rather than downloaded: specified precisely enough that the
  * Python and C ports reproduce them event for event from the same seed
- * (concept.md §10). Nothing here reads a file, a clock, or an environment
+ *. Nothing here reads a file, a clock, or an environment
  * variable.
  *
  * The full prose specification is in TRACES.md next to this file; the code and
@@ -105,7 +105,7 @@ function specFor(id: string): CacheTraceSpec {
  *
  * @param id one of {@link CACHE_TRACES}.
  * @param maxEvents stop early after this many events. The site uses a reduced
- *   length for responsiveness (concept.md §13.6); the prefix of a trace is
+ *   length for responsiveness; the prefix of a trace is
  *   identical to the full trace, so a short run is still reproducible.
  */
 export function generateCacheTrace(id: string, maxEvents?: number): Uint32Array {

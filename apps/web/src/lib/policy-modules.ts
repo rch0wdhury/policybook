@@ -4,7 +4,7 @@
  * The runner runs the *same* code the tests and benchmarks run — not a
  * reimplementation, not a simplified version for display. `policies/**` is
  * globbed at build time, so each policy's `index.ts` is bundled and reachable
- * by its id (concept.md §13.3).
+ * by its id.
  *
  * Lazy, so a page loading one policy does not ship thirty.
  */

@@ -1,7 +1,7 @@
 /**
  * The runner's state, in the URL.
  *
- * Every configuration is a shareable link (concept.md §13.3): which policies,
+ * Every configuration is a shareable link: which policies,
  * which trace, which step, which parameters. Someone who finds a surprising
  * moment can send it to somebody else and have them land on exactly that
  * moment rather than on the default.

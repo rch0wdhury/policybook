@@ -4,7 +4,7 @@
  * The smallest decision in the registry and the one most often got wrong. A
  * request failed; when should the client come back? Retry too eagerly and a
  * service that was merely slow becomes a service that is down, because every
- * client in the fleet is now hammering it in lockstep (concept.md §5.1).
+ * client in the fleet is now hammering it in lockstep.
  *
  * Every policy exports a `const pb_retry_vtable` and a params struct with a
  * _DEFAULT initialiser:
@@ -24,7 +24,7 @@
  *     pb_retry_exponential_full_jitter.destroy(policy);
  *
  * The `pb_rng` is supplied at `create`, as it is for every other domain here.
- * concept.md §5.1 threads it through the per-call function instead; putting it
+ * threads it through the per-call function instead; putting it
  * on the hot path would buy nothing, and the property that matters — a policy
  * never reaching for a global source — is unchanged.
  */

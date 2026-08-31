@@ -4,7 +4,7 @@
  * TypeScript and Python each have a generic runner that reflects on method
  * names. C cannot reflect, and will not gain a JSON parser just for tests, so
  * the vectors are compiled into C ahead of time and committed — the C tree
- * builds and tests with nothing but a compiler (concept.md §12.2).
+ * builds and tests with nothing but a compiler.
  *
  * How a call becomes C is a per-domain question: it depends on the domain's
  * vtable, its parameter struct and its return types. So this script owns
@@ -34,7 +34,7 @@ const MASK_64 = 0xffffffffffffffffn;
  * Vectors use string keys where the key is opaque; the C API takes uint64_t and
  * leaves hashing to the caller, so the generator maps them here and the C test
  * compares against the mapped value. BigInt is fine in a build script — the ban
- * on it in concept.md §9 is about policy arithmetic, which must stay
+ * on it in is about policy arithmetic, which must stay
  * reproducible across languages.
  */
 export function fnv1a64(text: string): bigint {

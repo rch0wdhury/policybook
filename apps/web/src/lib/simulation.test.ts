@@ -4,7 +4,7 @@
  * The steppers in `simulation.ts` reimplement the core harnesses' loops so a
  * runner can stop between events. That duplication is only safe if the two
  * produce the same numbers, so these run each stepper to completion and compare
- * against the harness itself — which is the guarantee concept.md §13.3 asks
+ * against the harness itself — which is the guarantee asks
  * for, made at the level where it can actually be checked.
  *
  * And step-back has to be exact rather than approximately right, so a property

@@ -4,7 +4,7 @@
  * The point is that a reader can take one file. No build system, no include
  * path, no submodule — drop it in, `#define POLICYBOOK_IMPLEMENTATION` in
  * exactly one translation unit, and every policy in the registry is available
- * (concept.md §12.2, Distribution).
+ *.
  *
  *     #define POLICYBOOK_IMPLEMENTATION
  *     #include "policybook.h"
@@ -159,7 +159,7 @@ function banner(headerCount: number, sourceCount: number): string[] {
     " * Compile the implementation with -ffp-contract=off. Fusing a multiply and",
     " * an add into one rounding would make a policy's decisions differ from the",
     " * TypeScript and Python implementations on the same input, which is the one",
-    " * property this registry exists to guarantee (concept.md §9).",
+    " * property this registry exists to guarantee.",
     " *",
     " * MIT licensed.",
     " */",

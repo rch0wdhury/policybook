@@ -79,7 +79,7 @@ at its own defaults, so the table compares policies rather than settings.
 - **Determinism.** Same inputs, same decisions, in every language and on every
   platform. No wall-clock reads, no hidden randomness, no dependence on hash-map
   iteration order, and no transcendental functions in anything that generates a
-  trace. See concept.md §9.
+  trace. See
 - **No dependencies inside `policies/**`.** A policy is one file someone can
   copy.
 - **LF line endings**, everywhere. `pnpm eol` checks it.

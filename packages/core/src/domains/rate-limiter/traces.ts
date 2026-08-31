@@ -3,7 +3,7 @@
  *
  * As with the cache traces, these are generated rather than downloaded, and
  * specified precisely enough that the Python and C ports reproduce them event
- * for event from the seed alone (concept.md §10). Nothing here reads a file, a
+ * for event from the seed alone. Nothing here reads a file, a
  * clock, or an environment variable.
  *
  * Arrivals are a **per-millisecond Bernoulli process** rather than a Poisson
@@ -121,7 +121,7 @@ function specFor(id: string): RateLimiterTraceSpec {
  * @param maxEvents stop after this many arrivals. Generation is sequential and
  *   consumes the random stream in order, so a truncated trace is exactly a
  *   prefix of the full one — which is what lets the site run a short trace and
- *   still be reproducible (concept.md §13.6).
+ *   still be reproducible.
  */
 export function generateRateLimiterTrace(id: string, maxEvents?: number): RateLimiterTrace {
   const spec = specFor(id);

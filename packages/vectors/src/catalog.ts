@@ -2,7 +2,7 @@
  * Validates every policy in the registry.
  *
  * The catalog is only as good as its weakest entry, so the rules from
- * concept.md §8.1 and §17 are enforced mechanically rather than left to review:
+ * and §17 are enforced mechanically rather than left to review:
  * metadata is complete and matches the directory, declared ports have files
  * behind them, the README actually answers "when not to use it", and the
  * vectors include the cases that make them worth having.
@@ -35,7 +35,7 @@ export interface Warning {
 const VALID_STATUSES = ["stable", "experimental", "offline-bound"];
 const VALID_PORTS = ["ts", "python", "c", "go"];
 
-/** Sections every policy README must carry (concept.md §8.2). */
+/** Sections every policy README must carry. */
 const REQUIRED_SECTIONS = [
   "When to use it",
   "When not to use it",
@@ -142,7 +142,7 @@ function checkMeta(policy: DiscoveredPolicy, metaFile: string, problems: Problem
       if (typeof param["type"] !== "string" || param["type"] === "") {
         fail(`params[${index}].type is required`);
       }
-      // Every param has a documented default (concept.md §5, §8.1).
+      // Every param has a documented default.
       if (!("default" in param)) {
         fail(`params[${index}] ("${String(param["name"])}") has no default`);
       }
@@ -189,7 +189,7 @@ function checkMeta(policy: DiscoveredPolicy, metaFile: string, problems: Problem
   if (meta.status === "stable") {
     for (const required of ["ts", "python", "c"]) {
       if (!meta.ports.includes(required)) {
-        fail(`status is "stable", which requires a ${required} port (concept.md §8.1)`);
+        fail(`status is "stable", which requires a ${required} port`);
       }
     }
   }
@@ -200,7 +200,7 @@ function checkReadme(policy: DiscoveredPolicy, problems: Problem[]): void {
   const file = relative(process.cwd(), path);
 
   if (!existsSync(path)) {
-    problems.push({ file, message: "every policy needs a README (template in concept.md §8.2)" });
+    problems.push({ file, message: "every policy needs a README (template in)" });
     return;
   }
 
@@ -221,7 +221,7 @@ function checkReadme(policy: DiscoveredPolicy, problems: Problem[]): void {
           file,
           message:
             `"## ${heading}" is empty or near-empty. This is the section readers come for ` +
-            "— name the workload shapes, not generalities (concept.md §17)",
+            "— name the workload shapes, not generalities",
         });
       }
     }
@@ -296,7 +296,7 @@ function checkVectors(policy: DiscoveredPolicy, problems: Problem[]): void {
 }
 
 function checkBench(policy: DiscoveredPolicy, problems: Problem[]): void {
-  // "No policy ships as stable without a benchmark row" (concept.md §17). This
+  // "No policy ships as stable without a benchmark row". This
   // was a warning until the bench pipeline existed; now that it does, a stable
   // policy with no measurements is a real gap in the catalog.
   if (policy.meta.status !== "stable") return;

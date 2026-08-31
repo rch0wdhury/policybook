@@ -1,8 +1,7 @@
 # Retry episodes
 
 The canonical workload every retry policy is benchmarked on. It is generated,
-not downloaded: a port in any language reproduces it from the seed alone
-(concept.md §10).
+not downloaded: a port in any language reproduces it from the seed alone.
 
 This document is the specification. `traces.ts` and `harness.ts` are the
 reference implementation, and the Python and C ports must agree with them

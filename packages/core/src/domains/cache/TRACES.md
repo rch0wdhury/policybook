@@ -2,7 +2,7 @@
 
 The canonical workloads every cache policy is benchmarked on. They are
 generated, not downloaded: a port in any language reproduces them event for
-event from the seed alone (concept.md §10).
+event from the seed alone.
 
 This document is the specification. `traces.ts` is the reference
 implementation, and `packages/python/policybook/domains/cache/traces.py` and
@@ -11,7 +11,7 @@ T08 and T09 check the first 10,000 events of each.
 
 ## Shared machinery
 
-**Rng** is xoshiro128\*\* seeded by splitmix32 (concept.md §9), seeded once per
+**Rng** is xoshiro128\*\* seeded by splitmix32, seeded once per
 trace with the seed below and never reseeded.
 
 **Zipf sampling** draws a rank from `0 .. keyspace - 1`; the rank *is* the key,

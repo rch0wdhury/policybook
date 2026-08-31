@@ -4,7 +4,7 @@
  * A limiter is asked one question — may this request go through, right now? —
  * and the interesting part is what it does with the ones it refuses. A fixed
  * window lets through twice its limit at a window boundary. A token bucket
- * absorbs bursts by design. A leaky bucket refuses to (concept.md §5.1).
+ * absorbs bursts by design. A leaky bucket refuses to.
  *
  * Every policy exports a `const pb_ratelimiter_vtable` and a params struct with
  * a _DEFAULT initialiser, so a caller can swap policies at runtime by pointing
