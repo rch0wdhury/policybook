@@ -69,8 +69,13 @@ jobs:
         with:
           enable-cache: true
 
+      # The runner's system Python is externally managed (PEP 668) and uv
+      # rightly refuses to touch it, so the job gets its own environment.
       - name: Install
-        run: uv pip install --system -e packages/python pytest mypy ruff
+        run: |
+          uv venv
+          echo "$PWD/.venv/bin" >> "$GITHUB_PATH"
+          uv pip install -e packages/python pytest mypy ruff
 
       - name: Test
         run: pytest packages/python/tests -q
@@ -190,6 +195,11 @@ jobs:
 
       - name: Build
         run: cmake --build build-fuzz
+
+      # Only crashers are committed; the coverage corpus is a local artefact.
+      # The directories still have to exist for libFuzzer to read and seed.
+      - name: Ensure corpus directories exist
+        run: mkdir -p packages/c/fuzz/corpus/cache packages/c/fuzz/corpus/rate-limiter packages/c/fuzz/corpus/kv-cache
 
       - name: Fuzz cache
         run: ./build-fuzz/fuzz_cache -max_total_time=60 packages/c/fuzz/corpus/cache
